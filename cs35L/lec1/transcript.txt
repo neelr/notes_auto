@@ -1,0 +1,922 @@
+ What's the difference between algorithms and programs and building working software?
+ And this, there's sort of a story about how productive software developers are.
+ And the story goes like this.
+ A typical software developer writes ten lines of code per day.
+ Have you heard this one?
+ Statistics vary depending on which part of the software field you're in.
+ But the number of lines of code that software developers write is surprisingly small to people who have taken CS31.
+ And 31, you write like, how many lines of code a day could you write in 31, 100, 1000?
+ Doesn't it feel like you could just code and code and code forever?
+ But the problem is, you can't just write code.
+ You gotta build a program that works.
+ And a good chunk of that expertise and effort is not writing code, it's the other stuff.
+ The stuff that you kind of do in 31, except that's not what they want to talk about.
+ They want to talk about algorithms and order n squared and programs and C++ templates and all that sort of stuff.
+ So our goal is kind of to look at the other stuff here.
+ The origin for this course is that we have a bunch of other courses.
+ There's CS111, which is operating systems.
+ We have CS118, which is networking.
+ We have CS136, which is security, all that sort of thing.
+ And that's not the end of the list, there's a bunch of other courses here.
+ Some required, some not.
+ The idea is that they all share a common understanding or a common assumption,
+ which is that you know how to write code that works.
+ And what we try to do in 35L is take that common basis and say,
+ "OK, we're going to teach you how to write stuff that works in this course,
+ so that when you roll into those other courses, they can sort of take that for granted."
+ You'll know what a shell is, because a shell is an important part of building software that works nowadays.
+ And so when you walk into 111, they won't have to teach you what a shell is and how to build it and all that sort of thing.
+ You'll know at least two-thirds of it already.
+ So part of this course is, how can we save you guys time in the rest of the curriculum?
+ And in order to save time later, we'll get to invest some time now.
+ Lots of time.
+ Because we're going to do a lot of practical applications.
+ I'm a big fan of learning by doing.
+ And in our case, the way you do stuff is you're going to have a bunch of assignments
+ that will test various parts of classic and modern software development.
+ Plus, you're going to have a group project.
+ Because most software these days is not written by a single individual slaving away in their basement like you did in CS31.
+ Most software these days is written by teams of developers that are working together.
+ We're going to spend a good amount of time working in your own team.
+ Plus, multiple assignments will be assignments about software that helps you work together.
+ We'll be looking at the infrastructure for the most popular version of the control system out there,
+ which is Git, the basis of GitHub.
+ And that's what some of the assignments will be working on.
+ And that's going to help you work in your group project, because you'll be using similar techniques there.
+ So that's kind of the big picture of what we're going to be talking about.
+ How to write software that works.
+ If I do an outline of today's lecture, what should we talk about?
+ First off, goals of the course. I kind of did that already.
+ Second, we're going to do course mechanics and organization.
+ Things like grading and all that sort of thing, so that we are all on the same page on how people will be evaluated.
+ And ideally, we'll actually get into some real stuff.
+ We'll be talking about the shell and an IDE.
+ The IDE that we'll be looking at is going to be Emacs.
+ IDE is short for Integrated Development Environment.
+ There are several IDEs out there, that sort of thing. We'll be using Emacs partly because I contribute to Emacs.
+ Partly because it's the simplest of the IDEs out there.
+ And so I want to keep things as simple as we can, because we'll be looking at the internals of Emacs as well as its use.
+ So, questions so far? I like questions.
+ Anybody think that we should be talking about something else in this course, other than this big picture, for example?
+ What have I left out? What would you like to cover instead of this stuff?
+ Well, let's take a look at a news item that just came out today.
+ This is published today. The actual event that occurred was over the past 18 months or something like that.
+ A black hat software developer whose identity is unknown, but is presumably an employee of a major nation state.
+ So we're talking Russia, China, the United States. The list is pretty short.
+ They worm their way into a widely used compression utility called XZ. And you can read about it by just doing XZ backdoor into a Google search.
+ And you'll find dozens and dozens of articles because this is a big deal.
+ Why is it a big deal? Because what this developer did was a fairly complicated scheme in which...
+ If we can get down here. Here we go. Here's their plan.
+ They created a false persona in 2021 in GitHub that didn't do anything for months.
+ And then started making commits into the XZ repository, which at first looked good.
+ And eventually put in a commit using a wonderfully tricky technique.
+ You read the source code and it looks like this guy is just making XZ more reliable.
+ This person is just adding test cases to XZ to make sure that we catch some out of range things.
+ Prevent buffer overflows and that sort of thing.
+ But what the developer, whose identity we still don't know really did, was edit this file called m4/buildtohost.m4
+ to put in a trapdoor that looks, if you read the source code, vaguely nice.
+ But in reality it breaks into the person who's building XZ, causes that person to build a corrupted version of XZ.
+ Later on if you run XZ on a Red Hat or Debian-based if distribution, it has a way of logging into that system.
+ If for anyone who knows a particular public key, presumably who knows the privacy matching.
+ I got involved with this because this file name highlighted in red here, buildtohost.m4, is part of GnuLa.
+ Which is a free software project I helped to maintain.
+ You can look up GnuLa, buildtohost.m4.
+ And what you'll find is that the copy that's under GnuLa is not the same as the copy that's in the corrupted XZ.
+ These two files, which normally would be the same, are different, and this one has the malware version.
+ Naturally what happened when people discovered all this is they sent bug reports to me, blaming me.
+ Except it wasn't my file, it was somebody else's file.
+ So what I'm hoping you can get out of this course eventually, once you've studied for a while,
+ is the ability to read articles like this and to look at how this guy attacked XZ and to understand every step they took.
+ That would be my hope.
+ Realistically, we're not going to get there.
+ You'll be able to understand maybe two-thirds of the steps that the attacker took.
+ But that's alright, because part of the goal of this course is to get you up to speed on getting up to speed with software technology.
+ So this idea here, in terms of what we want out of this course, is you need to learn how to learn new software ecosystems.
+ Tools or ecosystems or whatever you want to call them.
+ Such that if you were working for a firm and your boss panics because your boss hears about this XZ back door
+ and wants to know whether any of your software has similar problems, you can come up to speed on those technologies relatively quickly.
+ Even though most of the stuff in this diagram isn't in any textbook.
+ It's not like you can go to a textbook and read about this stuff.
+ And if you try to Google, I don't know, "OX5 are registered with OX2D", you'll find nothing there.
+ But you still have to be able to look at this sort of software exploit or software system that you're learning new
+ and come up to speed on it relatively quickly.
+ So to that end, I'm going to be taking you up to speed in this lecture, hopefully on two different technologies,
+ which is an IDE Emacs and a Shell.
+ And each lecture that I give you is going to be doing something like that.
+ Bringing you up to speed on a new technology, but not explaining everything.
+ You need to fill in the blanks and learn more about that technology yourself.
+ The lecturers aren't going to give you everything you need to know to do all of the assignments.
+ But what I do hope to do in the lectures is get you started and show you where the documentation will be,
+ or in some cases, when the code isn't documented, where the source code is.
+ Because in the end, that's how you understand how software works.
+ Is you read the source code.
+ Sometimes it doesn't agree with the documentation, then you get to figure out which is right, that sort of thing.
+ So we'll be doing a lot of, how shall I say it, fairly cursory introductions to systems in lecture.
+ And ideally, you'll be slowing me down when I lecture by asking questions about stuff I'm going over very quickly.
+ And as you slow me down, well first off, that means there'll be less stuff to cover on the midterm and the final, right?
+ Because I can only cover it if I lectured about it.
+ And second, that kind of interaction is crucial in learning any new technology.
+ At least in my experience, you can pick up software tools a lot faster if the person in the next cubicle already knows how to use them.
+ And you can go and ask them, not every two minutes, but every now and then about something.
+ That's going to save you a lot of time versus you having to sort of beat your head against the wall against some detail or glitch that you don't understand.
+ So ideally, I would like this lecture to be like that.
+ I'll talk about general principles, you start asking questions because you don't want to beat your head against the wall figuring out that minor detail.
+ So that's kind of the thing here.
+ I want you to learn to learn as well as, you know, sort of learn well enough.
+ And then another goal of this course is I want you to have the confidence that you can at least start to build stuff yourself.
+ The end goal here is to change the world by writing software.
+ To use software as a leverage to build a better world than the one we've already got.
+ And the way you do that is you build stuff that works, you build stuff that people want to use and people that do use.
+ And in the end, that's really kind of the overall goal of the course.
+ All right. Well, that's kind of ambitious.
+ Let's talk in a little bit more detail about what we covered.
+ Obviously, you know, I can't expect this out of everybody and that sort of thing.
+ But, you know, sort of what we cover in order to get there, or at least get some of the way there, are the following.
+ First off, the file systems.
+ How you organize data on secondary storage.
+ What it means for storage to be secondary.
+ And how you can sort of make that organization intuitive and fast and reliable.
+ We'll be looking at the Linux file system organization, sometimes called POSIX, which is a standard for this kind of file system.
+ So you can think of POSIX being the spec and Linux being the implementation.
+ Another thing we'll be looking at is scripting.
+ Scripting is sort of an informal form of programming.
+ And nowadays it's safe to say people spend as much time scripting as they do the kind of programming that you did in CS31.
+ So we'll be looking a lot at scripting, and in particular, we will be looking at the shell, we'll be looking at Python, and we'll be looking at Emacs list.
+ As potential scripting languages for doing software construction.
+ To some extent, the exact language that you pick doesn't matter, as long as you get the attitude of scripting.
+ But to some extent, it's nice to see two or three different alternative approaches to scripting, which have quite a different feel and live in quite different ecosystems.
+ To give you a feel for sort of how scripting can vary from one place to another.
+ We'll also talk about building and distributing software.
+ So here, the idea is you've written your program, but it's just a bunch of source code.
+ Just a bunch of text files, essentially.
+ That's typically not enough.
+ What you're going to need to do is you're going to need to assemble the program, build it out of its components, and then make sure that the program gets to wherever it's supposed to get.
+ So here, we'll be talking about things like Python packages, for example.
+ There's a similar thing for ELIST and that sort of thing.
+ We'll talk about how you can build.
+ We'll also talk about Make, for that matter, which is a classic building tool for building++ programs, if you want.
+ We'll spend a good deal of time talking about version control.
+ If the XZ developers had done their homework with version control, that wouldn't have happened.
+ This is fundamentally a version control problem, because they let a bad version slip into their system.
+ We'll spend a good amount of time talking about this issue, which superficially sounds pretty simple.
+ You know, keeping track of the versions of the code that you run.
+ What's hard about that?
+ Just keep typing save, right?
+ What's hard about that?
+ Well, it turns out that it's a lot more fun and a lot more tricky than you might think.
+ And we'll be using Git as the primary version control system.
+ We'll talk both about how to use Git and use it as a primary customer rather than as a secondary one via GitHub.
+ But also how to implement Git, or how Git is implemented.
+ We're not going to ask you to re-implement it again from scratch.
+ But looking at how Git is implemented will be a nice sort of hook back to our file system.
+ Talk, right? Because Git is still at the top of the Linux file system.
+ We'll also talk about debugging.
+ At least we'll try to. I'll try to.
+ Debugging is everybody's least favorite topic in computer science.
+ Nobody likes to talk about debugging, because if you tell your boss, "I'm debugging," you're admitting failure.
+ You didn't write the program correctly in the first place.
+ What's wrong with you, right?
+ So nobody likes to talk about it, and yet everybody does it.
+ In this class, I'll actually try to talk about it and talk about different strategies for debugging and that sort of thing.
+ The classic tool for debugging, which we'll talk about, is GDB, but that's not the only thing.
+ There are lots of others where they came from.
+ To some extent, what I'm going to do is argue that classic debuggers, which you can find in any integrated development environment,
+ are actually often not the best way to debug your program.
+ There are better ways to debug your program, but you certainly should know this way.
+ We'll also talk, and you will do a bunch of client server stuff.
+ Here, your application is split into two pieces, sometimes more than two pieces.
+ You have to build a program that's operating both on somebody's laptop or somebody's cell phone,
+ and is operating in some server in New York or something like that.
+ You want the whole thing to feel like a single program to the end user.
+ That brings all sorts of wonderful opportunities for making really cool stuff, but also a lot of problems.
+ All right, so this is cut what we cover.
+ I also should mention what we don't cover.
+ What I'm not going to do is tell you how to be a software entrepreneur.
+ Once we start talking about dollar signs and costs, that's a different topic.
+ If you want to become rich, like Bill Gates got rich and that sort of thing, this is not a good course for you.
+ You should be talking to the Anderson School.
+ To some extent, that's a mistake. You can't get software written without paying people somehow, one way or another.
+ You've got to get paid, right?
+ Ignoring the dollar sign means we're leaving out some very important aspects of software construction.
+ It's almost like, I don't know, if I were to try to teach architecture
+ and try to ignore how much steel costs and concrete costs and how much you have to pay the construction workers,
+ you're getting a very limited view of what architects really do.
+ They have to worry about costs all the time.
+ We will only worry about costs insofar as your program is too slow or takes up too much memory and that sort of thing.
+ I'm not going to be worrying about how you can fund your startup. That's a different thing.
+ Also, I'm not going to cover how to become famous.
+ You may laugh. How can you get famous without getting rich? Well, it's possible.
+ But to some extent, fame is a problem that we had over here with XZ.
+ One of the ways that this bad guy broke into XZ is he or she or probably they developed a reputation as a reliable software developer.
+ They in effect built up a resume as somebody who could fix bugs and make XZ go faster.
+ They became famous. That's an important skill in this world.
+ You may think of it as making your resume look more impressive.
+ And you can do that by applying the tools in this course by saying, I worked on this piece of code, you know, this sort of thing.
+ But I'm not going to tell you how to become famous. You're going to have to.
+ Don't we have like a school of fame in this university? How to become famous?
+ School of Film and Television? Oh, there you go.
+ They'll tell you about how to become famous. So here's what we cover.
+ Here's what we don't cover. Does anybody have questions about the line between the two?
+ Stuff that you're not sure whether we should cover it or not. In fact, this is the scope of the course.
+ And to some extent, I'm making a point about it because one of the things you're going to do for your group project is you're going to specify.
+ I'm not going to tell you what your group program is going to do.
+ Other software engineering courses and construction courses do that, but I want you to tell me what your group project is going to do.
+ There will be a few guidelines for that project. In particular, I want your project to be client-server, right?
+ Because that will exercise this part of the course. I will want your project to be multi-person so that you learn how version control works in a multi-person environment.
+ So I'll give you sort of general constraints over what your project is going to do.
+ But you're going to specify the project. You're going to form groups, figure out what you're going to do.
+ And as part of this specification, it's important to nail down the scope of what you're going to do.
+ And by that I mean, here's your project, and here's not your project.
+ And you want to know what the dividing line is between what you plan to do and what you're going to not do,
+ because that will make the program too complicated or unpleasant or it's just out of scope for the project.
+ A good chunk, a good software construction is nailing down the scope, figuring out what you're going to do and not do.
+ And I hope you remember that when it comes to around second and third week when you're figuring out what your project is going to be.
+ All right, let's see what else is not in this course.
+ To some extent, the logical successor to this course is CS130, which is a software engineering course.
+ And I suppose I should mention what CS130 covers, because I don't want us to cover that.
+ That would be duplication of effort.
+ So it talks about a number of things.
+ CS130 does things like, oh my goodness, it does a lot of management stuff.
+ So a lot of the idea of CS130 would be, if you want to manage a bunch of programmers, what sort of disciplines should you use for that?
+ To some extent, this project management is a little bit like business management. You have a bunch of workers, you're trying to get some work done, how can you manage them to do that?
+ Well, I'm not going to talk about that in this course. You guys will have to sort of learn about it on your own.
+ Another thing that CS130 does a lot of, and we won't do more than just a little bit about it, is it's going to be sort of a static and dynamic analysis of software.
+ There are many sort of ways to look at programs to figure out what bugs they will have or what their performance will be like.
+ And CS130 looks into a lot of the underlying technology for that.
+ We will do some of this, but we'll be looking at this more as sort of users of this stuff, whereas CS130 says how to build this stuff.
+ Let's see, what else do they do? They also will do more testing strategies than we do. Again, you'll test your programs and that sort of thing.
+ CS130 goes into much more detail on important ways to do testing strategies and how to test your programs more effectively than the other guys do.
+ One other thing we don't cover, I'll put it up here, is C++.
+ You guys are all C++ experts now, right? You've taken CS31, I see a couple of people shaking their heads now.
+ What don't you know about C++ that you would like to know? Oh my goodness, yes?
+ Could you do client server stuff in C++? How would that work?
+ Oh yes, absolutely. A lot of people do. The thing you see on the screen is a browser, and that browser is written in C++.
+ We're running client server code right here, where the server is the arse technica, the publisher's server, and you're looking at a browser written in C++.
+ It's definitely possible. The problem with using C++ to do this sort of thing, although it's possible, is it requires a lot of time and a lot of expertise.
+ Let's face it, C++ is one of the world's worst programming languages to build anything. It's a miracle anything gets written at all and gets published and actually works.
+ We inflict C++ on you for CS31 for a number of good reasons.
+ One is that it gets you closer to the metal than the other popular introductory programming languages. It's a school of engineering, so we want you to understand how the computers actually work, as opposed to just the flighty software engineers that don't know what they're doing.
+ That's the main attraction of C++ is that really seeing, at not too far a distance, how the machine instructions get executed.
+ But for software construction, for the stuff that I want to do, scripting, building, distribution, version control, debugging, and all that sort of thing, C++ kind of gets in the way.
+ It's too easy in C++ to write programs that don't work. The goal of this course is to write programs that do work.
+ I used C++ last in about 1993. Thirty years ago, I managed and wrote code for a C++ project, and I swore I would never do it again.
+ So far, I've been mostly successful, except when I'm sometimes dragged into bug disputes or that sort of thing. To my feeling is, if you want to write object-oriented code, get a real object-oriented language.
+ Get something like Smalltalk or something like that. Don't try to inflict that stuff on C. C is designed to be low-level.
+ So I write code at the C level, and then I'll write code at the Python level, but I won't go in between the C++ level. That's sort of the worst of both worlds.
+ For example, in NumPy, a lot of languages may use other languages under the hood.
+ Oh yeah, a good chunk of NumPy modules are written in C or C++. Absolutely.
+ So how does that work? How can you just make a language and make another language run with it?
+ We will talk about that. When I talk about scripting, I will talk about it a little bit here and here and here.
+ These three approaches all have different ways of hooking in low-level code, written in C++ or C or Rust or something like that, to higher-level scripting code, which is a lot easier to write code and deal with.
+ Definitely, that's going to be a topic that we mentioned.
+ When we look at the source code for Emacs, for example, we'll look at both E-list code and the C code that Emacs also uses. It's written in a combination.
+ Other comments about the scope of the course and how it fits into all this?
+ I feel like I should introduce myself. I'm Paul A. My background is I went to school at a lesser university.
+ I graduated, and then I decided I wanted to actually study computer science more, so I went on and got my master's and then my PhD, which may have been a mistake, but that's all right.
+ I spent three years as an assistant prof at UC Santa Barbara.
+ I discovered that I hated being a professor because I had to spend all my time writing grant proposals.
+ Professors don't tell you about this. This is the dark side of academia.
+ I hated writing grant proposals, so I quit, and then I was three years at a startup.
+ It was an AI startup, but this was a long time ago, so we weren't doing the machine learning stuff.
+ It was symbolic AI and that sort of thing, but the idea was to build a natural language interface to databases and make it easy to program.
+ Like most startups, it failed.
+ I spent three years at a big computer company. It was, at the time, the number two computer company in the world.
+ A company called Unisys. At the time, IBM was number one, Unisys was number two, but I only worked at them because they bought the company that I actually started working at.
+ This is really a very small company called System Development Corporation, which has the distinction of being the first software company ever to exist in the world.
+ I'm not that old. SDC was formed in 1955, and it lasted until 1970-something.
+ I worked for them towards the end. They got bought by Unisys, and now it's turned into some other defense contractor and that sort of thing.
+ What I learned here was how software is built at a practical point of view and how you can use software technology to make software better.
+ While I was here, what I worked on was theorem proof, which is not a normal sort of activity.
+ We were proving the theorem about our code because we wanted to write the world's most reliable networking code that no bad guy could break into.
+ As far as I know, nobody ever did.
+ Then I spent 12 years at another startup.
+ This one, since it lasted 12 years, can be called to be a fairly successful company.
+ This was more a consulting company, in which most of our customers were in Japan or Taiwan.
+ The basic idea here was there would be some big bank in Japan that would have some software they would want written.
+ They would give it to their in-house team and give them a schedule of 18 months to finish it.
+ After about 14 months, nothing had happened.
+ So we were brought in in the last four months to finish it up and get it actually working.
+ Think of it as sort of a fire team to get stuff working.
+ I learned a lot about the practical pressures of software development, how to get stuff out the door quickly,
+ and also the importance of getting good configuration and version control.
+ I really pushed version control while I was at this company.
+ So much so that one of my co-workers here, who officially reported to me but was a really good guy,
+ is now the chief maintainer of Git.
+ I guess I've spent too much time here.
+ What happened was it's the dot-com boom,
+ and the chair of the UCLA computer science department meets me totally by accident
+ in the frozen food section of a supermarket at the corner of Sawtell and Sepulveda.
+ I said, "We're desperate. Can you come teach?"
+ I'm thinking, "I have young children. I don't like working 70 hours a week.
+ I'd like to work just 40 hours a week, and that's why I'm here."
+ If it weren't for that lucky meeting, I would still be working on my next startup.
+ While I've been here at UCLA, of course I've taught a bunch of Parsons.
+ But I've also contributed a lot of free software.
+ I'm a big believer in making software available to everybody.
+ In particular, I've worked a lot on the GNU ecosystem.
+ I've done a little bit of other stuff like a time zone database
+ and a few other small objects like that.
+ This is my background.
+ As you can see, if you subtract all these numbers back to the beginning,
+ I've been at this for a long time.
+ I've seen a lot of software technology.
+ I've seen a lot of bad software technology.
+ One of the things I've learned is that you have to be careful
+ about the company you keep in the software world.
+ What you don't want to do is invest your hard-earned brain cells
+ into software technology that's going away in two years.
+ Don't pick the last-place horse in the software development derby.
+ You should develop good taste and big pick tools that will last
+ because otherwise you'll find yourself constantly jumping
+ from one horse to the next.
+ That's my background.
+ Any questions about it?
+ Comments?
+ Don't try to have a career like this.
+ It's unadvised I should give.
+ I'm actually perhaps not the best person to ask.
+ For example, one of the things I did at this startup was in 1994,
+ we're trying to do a client server application.
+ Our choices are do it ourselves or use this fancy new technology
+ called a web browser.
+ This web browser was called Mosaic.
+ It's the ancestor of all modern web browsers.
+ Microsoft stole code from it.
+ Firefox was based on it.
+ Chromium kind of re-engineered it.
+ Basically, they took a whole bunch of ideas from it.
+ Mosaic was written in C++ by a bunch of grad students
+ at the University of Illinois who didn't think software reliability
+ was all that important.
+ So it crashed a lot.
+ As long as the users were physicists or scientists or that sort of thing,
+ they didn't care.
+ They just started that up again.
+ We were trying to build an application that would run on sales terminals
+ and something like that.
+ So I said let's not use a web browser.
+ Let's write our own client application that's written using technology
+ that we trust.
+ So to some extent, I took our company down the wrong path.
+ I said let's not join the web.
+ It took us another 12 months before we started using web browsers.
+ We lost 12 months of development time.
+ Yes, although we did make money on the project because it actually worked.
+ Yes.
+ Other questions about my history or background?
+ Yes.
+ What about theorem provers?
+ That sounds really interesting.
+ Well, yes.
+ In fact, theorem proving is something that I hope you do in CS130.
+ Because when you want to do static analysis,
+ to some extent I know that static is really --
+ having a good theorem prover is an excellent tool
+ for figuring out what your program will do.
+ Most of the theorems I was proving were about network protocols
+ as opposed to the actual code.
+ But you can apply the same technology to the code.
+ Historically, theorem proving has thought to have been something
+ that only very rich companies can do.
+ So IBM can afford to do it.
+ Intel, for example, uses theorem proving technology
+ to verify the microcode in its chip.
+ What we're seeing gradually with time is more and more of that technology
+ is coming into cheaper use, shall we say.
+ Because the theorem provers are getting better.
+ Computers are obviously getting faster.
+ The biggest obstacle, to my mind, to getting theorem prover to work right now
+ is that you need to take three or four courses at UCLA to understand them.
+ And by then you've graduated and all that sort of thing.
+ So the education part is the hard part now.
+ Other comments on background?
+ All right.
+ So let's just do something simple here.
+ We have a little bit of time, which is great.
+ So we can start up Emacs.
+ So this little thing here is the prompt for the computer that I'm running on.
+ This prompt is running inside a virtual machine inside this laptop.
+ So my demo laptop is a very limited machine.
+ It's only got four megabytes of RAM, which is tiny these days.
+ It's got a four-year-old Intel i3 CPU.
+ Nothing very good by today's standards.
+ And I think I've only got, what, 32, no, maybe even 16.
+ I'll say 32.
+ Maybe buying a flag.
+ So really, this is like the dumbest laptop you will see anyone give presentations on,
+ at least in our department, and I think in all of UCLA.
+ It's a very stripped-down machine.
+ It's running Chrome OS.
+ Chrome OS is an operating system developed by Google designed to run a browser and not much else.
+ The idea of Chrome OS is as follows.
+ You have the hardware, and then this hardware can execute instructions.
+ So this sort of interface is the instruction level of our system.
+ Above the hardware, you have a small stripped-down kernel, which is based on Linux,
+ except with some stuff taken out because they tried to keep things very small.
+ Above the kernel, you have Chrome, which is an application.
+ The original goal of Chrome OS is to say, "We're going to run all of our software as applications above Chrome."
+ So this is the Chrome browser.
+ You can have apps that are written in, typically, JavaScript,
+ or maybe Java, that will run atop that Chrome browser.
+ Now, what I'm doing here is something different.
+ I'm hijacking this computer, which cost -- I should tell you how much it cost -- $279.
+ This was like three years ago, so these days a computer like this will probably run you $400.
+ It will be a bit faster.
+ So it's the cheapest computer I could get.
+ I wanted to have a laptop that I could take and do lectures on
+ and not worry if I dropped it or lost it.
+ I tend to leave things behind at lecture halls and all that sort of thing, so I wanted to save money.
+ I hijacked this cheap machine by doing something else.
+ I'm running Debian Linux atop it.
+ Debian is a software distribution of Linux. That is, it's an operating system with a bunch of applications, including many apps.
+ I'm running Debian Linux inside a virtual machine atop this kernel.
+ What we have here is -- I'll draw a little hyphenated box here --
+ we've got a virtualized kernel and machine that is roughly equivalent to this interface here.
+ Luckily, the kernel that Google ships is powerful enough to support virtual machines,
+ In fact, I'm now running two operating systems on this computer.
+ The main one, which is Chrome OS, and then Debian Linux,
+ which is what I wanted to run because I want to demonstrate stuff using Emacs and the shell.
+ Here we have the shell running.
+ The shell standard prompt is $space.
+ What you can do with the shell is you can run programs.
+ The shell actually has two functions here.
+ It's both a command-line interface, or CLI, which is one of the older forms of talking to computers.
+ I can type a command here. A very simple command is echo, so I'll type that.
+ The echo command is very simple. When you run the command, it takes all of its arguments.
+ In this case, there's just one argument. Let's give it two. Why not?
+ I've given echo two arguments. It just outputs strings containing all of those arguments
+ to the standard output, separated by spaces, and followed by a new line.
+ I'm giving it the two arguments hello and world. I'll run the command,
+ and you see on standard output that echo has run, and it has done its thing.
+ A slightly more complicated command is the command cat.
+ Cat is a program that, if you give it no arguments, simply reads data from standard input
+ and writes a copy of that data to standard output.
+ It's almost as simple as echo. I can run the command cat, and here I can say hello world.
+ Cat will read that line, and it will output the line back to me.
+ In this form of usage, it's not very interesting. I can write more stuff, and it will echo that out.
+ Then I can type control-d, which is a signal to the operating system's terminal emulator
+ that that's the end of the input. Control-d at the start of the line means the end of the input.
+ Cat reads that end of file and says, "OK, I'm done."
+ Another program. Yes, go ahead.
+ Permissions is something we'll talk about later,
+ but the short version is that this virtual machine is at the mercy of the physical operating system.
+ You can't do anything here important without basically this kernel saying, "Yeah, I'll let you do that."
+ If you could, for example, from this virtual machine do something like, I don't know,
+ send a packet over the internet directly, that would be considered to be a bug in Chrome OS.
+ They would say, "You escaped this little virtual machine and went off and actually, I don't know,
+ put something on the screen directly or sent out a packet directly." You have to ask this kernel's permission
+ before you do anything important, if it's done right.
+ One other program that we can run is the program Emacs.
+ If I run this Emacs program on this virtual machine, by default it starts up an Emacs session,
+ gives it a new window, gives it some sort of logo that's a picture of a canoe,
+ and then a bunch of stuff that you can do.
+ But I don't want this interface. I want something simpler.
+ I normally use Emacs in this way, but for teaching purposes, I'm going to run Emacs in a different way.
+ That's the shell part. Over here is the Emacs part.
+ You can tell the shell, "Run Emacs," and it'll run Emacs for you.
+ One of the most important things that you should do for any new system is figure out how to get out of it.
+ How do we get out of Emacs? You type "Control-X, Control-C."
+ "Control-X, Control-C," and Emacs is done, and it gives me another prompt.
+ This means "Exit Ego."
+ How do you get out of the shell?
+ Well, the shell is reading from standard input.
+ The way that I can get out of the shell is I can tell shell, "Oh, let's read end of file."
+ I will sit here and type "Control-D," and now my shell has gone away.
+ I'll start it up again, because I want to have more fun with the shell later.
+ Why don't we take a break, and we'll see a little bit more about how the shell in Emacs works after the break.
+ What's the class name?
+ At like 5-15?
+ Yeah, 5-15.
+ Chat. Oh, we have a decent bit of time.
+ Your laptop's about to die.
+ I agree.
+ Even if you develop on Mac OS, you probably want to copy your stuff to CCNet and make sure it runs this.
+ If you are trying to get into this course and are not enrolled and not on the waiting list,
+ there is a URL here to click that will help you increase the probability that we can get another TA for the course.
+ What else do we have here?
+ We have a syllabus.
+ This lists all the topics that I would like to talk about.
+ We have 10 weeks to do it.
+ This syllabus is appropriate for a 15-week course.
+ I'll have to talk fast, or we'll have to maybe leave a few of these things out.
+ If we do, I'll try to let you know that we're leaving things out.
+ Here's all the topics that we'd like to cover.
+ They come in files, editing, and shells, which is what we started to talk about today.
+ Commands and basic scripting, which is also something that we talked about today.
+ Notice that the lectures are not necessarily in the same order as the syllabus.
+ The syllabus lists topics I'd like to cover, not necessarily the order that we're going to cover.
+ Scripting and construction is going to be things like integration and how you can use Python to glue stuff together.
+ We'll be talking about client-server apps and user interfaces, with the case study there being Node and React,
+ which is going to be the basis for most of your projects, I would say.
+ We'll do package management, which I've talked about.
+ Let's see, what else are we going to cover?
+ Change management, which is another way of saying version control.
+ We do a whole bunch of version control stuff, including decentralized version control and branching and merging,
+ and that sort of thing, and also Git internals.
+ We'll also do some low-level construction and debugging.
+ This part of the course overlaps somewhat with CS33.
+ We'll be looking at this more from a softer point of view, though,
+ whereas CS33 tends to look at it more from the machine instructions point of view.
+ We'll, in some sense, assume that you know machine instructions, or if you don't know them, we'll teach you a little bit about them,
+ and what you can build on top of that as you're debugging.
+ And last, we'll do some basics of security, a little introduction to our computer security course.
+ All right, what else do we have?
+ Occasionally, as part of assignments, we will ask you to write stuff.
+ One thing I'm a big fan of when you write material, either for this course or for other courses,
+ or when you go out in the real world, is make sure you give other people credit if you're basing your work on that.
+ That part of credit is a standard part of being a good scholar.
+ You need to refer to other people's work.
+ But even if you're not in academia, when you credit others, you're, A, being polite,
+ and B, you're helping the readers understand the context of what your work is doing.
+ So I'm a big fan of giving proper credit, and I even say be very careful about your citations.
+ I give an example here of a malware detection paper, a proper citation tool with all the links and the DOI,
+ and if you don't know what a DOI is, please read this webpage and learn what it is and how it works.
+ What else do we have?
+ When you make an oral presentation or written report, here's a bunch of good resources for how to do a good one.
+ You probably won't have time to read all of these resources, but please read one or two of them.
+ You might learn something.
+ You may think you know how to do an oral presentation, but if you see Simon Peyton Jones do it,
+ you'll realize that maybe you could step up your game a little bit.
+ All right.
+ What else have we got as far as course organization goes?
+ Assignments.
+ So we have several assignments in this course.
+ I think there are six main ones, and this is aside from the project that we'll ask you to do.
+ Many of them, in fact, I think most are divided into two parts.
+ Laboratory exercises in which are designed for the TAs and the LAs to sort of help you through them.
+ And then exercises, which are homeworks, I should say, which are intended for you to do by yourself.
+ All right.
+ So kind of the idea here is that, as I mentioned earlier, a lot of software learning occurs
+ because the developer in the next cubicle knows something that you don't.
+ The laboratory exercises are intended to be sort of that way.
+ So ideally you would do them during discussion set.
+ That's not always possible, but the idea is to do them relatively interactively.
+ And then the homeworks you sort of do yourself.
+ The main assignments are intended to be done solo, so please do them solo.
+ Don't sort of copy work from others or from sources you may find on the net.
+ And let's see, what else do we have?
+ Oh, please make sure that your programs behave robustly.
+ Don't put in a silly limit like the character string or lines can be at most 100 bytes long or something like that.
+ Make sure that your program works with arbitrarily long lines.
+ The assignments are due at five minutes before midnight on the specified date.
+ Here are some of the due dates.
+ Well, in fact, I think it's all the due dates.
+ So the first assignment is due the same day your taxes are due, April 15th.
+ And it's going to be 1% of the total grade for the course.
+ If you click on the assignment, you can see what it is.
+ Let's do that.
+ Basically, you start off doing a scavenger hunt where you're finding stuff out on cSNP and on Emacs.
+ And you're learning how to use Emacs and very simple things like edit and find stuff.
+ And you get to explore the operating system.
+ That's the sort of laboratory exercises.
+ And then you have homework where you get to write a shell script that will do spelling checking.
+ You'll write a spell checker in the shell.
+ Most of the assignments have suggested reading at the start.
+ So, for example, here in the lab it says here's three things that you can read.
+ I don't expect you to read every line of all of these readings.
+ Like this Emacs editor thing here is the reference manual for Emacs.
+ Which, if you click on it, goes on and on and on and on.
+ Look at all that stuff.
+ This is just a table of contents, right?
+ Nobody has time to read all that stuff.
+ I haven't read it all.
+ But what you should do is take a look at it.
+ Maybe read the introduction.
+ And then learn how to refer to the documentation when you're solving your problem.
+ So don't ignore it simply because it's too long.
+ Use it as a resource to help you solve your problem.
+ All right.
+ And we have lots more assignments where that came from.
+ Grading.
+ All right.
+ So here's the weights of all the assignments for the class.
+ We have eight percent of your total grade is due to the homeworks.
+ Which we just took a tour through the homework one.
+ Some of the homeworks are worth one and a half times the others.
+ So some of them are worth one percent of your total grade.
+ Others are worth, I think it's one and a half percent of the total grade.
+ The previous page showed you exactly what the weightings are.
+ The sum of all the homeworks is eight percent of the grade.
+ We have one and a half percent of the total grade is class participation.
+ The usual way that we measure that is how much you've contributed to Piazza discussion.
+ All right.
+ That makes it easy for us because we can just look and see what you've contributed there.
+ Then we have half the percent of the total grade is two feedback surveys that we'll give you.
+ They're actually mostly about the learning assistants, the LAs that we have in the course.
+ One of them will be around the time of the midterm, about fifth week.
+ And the other one will be a tenth week feedback survey.
+ And then the big three are the exams and the project.
+ The project is the biggest thing. It's 35 percent of the total grade.
+ This is going to be a client server project.
+ We have more details about what we're expecting, but the big picture is you need to think about what you'd like to write.
+ And you can start thinking about that this week if you like.
+ We'll ask for written proposals later on.
+ In fact, there was a due date for that that we already saw.
+ What is the due date for these proposals?
+ The project proposals will do on the 22nd, but you can start thinking about a client server app that you'd like to write now.
+ Since it is a group project, typically what happens is we look at the overall project and try to figure out how much everybody worked on the project.
+ Typically what that means is everybody who works on a particular project gets the same grade.
+ Because they all contributed equally enough that it's not worth worrying about.
+ The exams are, well, we have a midterm which will be at the end of the fifth week.
+ So Wednesday, fifth week. In class, it will be in this room, we'll have a midterm.
+ And then the final exam will be given whatever time and place the registrar decides for it.
+ That's not been decided yet. At least the place hasn't been decided yet, so I don't know where it will be.
+ It might be in this room, might be somewhere else, so please check before you go off to the final.
+ The exams are open book and open notes, but closed computer.
+ So if you feel like you would like to have reference material, please print it out rather than relying on reading it on your laptop.
+ The assignments cover everything covered in lecture, plus all the homeworks that were due up until the midterm.
+ We'll cover that on the midterm. And the final exam, of course, will cover the entire course.
+ The final exam is allowed to cover stuff taught in the first half of the course, but it will emphasize the second half of the course.
+ Maybe two thirds, one third, something like that.
+ Because the exams are open book and open notes, I can't ask you anything where the answer is obvious.
+ Because you could just look it up and write it down.
+ Because it's an open book exam, that means the exam is harder than it might otherwise be.
+ I have to ask you questions that are not simply something you could answer by reading stuff off of your notes.
+ I have to do some thinking and some combination of ideas from typically different parts of the course.
+ So in some sense, I view the exams as being, at least the final exam, is my last opportunity to teach you.
+ So we will sometimes give you new material on the exam that has not been lectured on or anything like that.
+ With the goal being, how can you sort of come up to speed and answer the questions intelligently even though you haven't actually read the underlying material.
+ We have to do that a lot in software construction.
+ Make intelligent decisions based on incomplete information.
+ So sometimes I'll do that on the exam.
+ For example, if the final exam were held today, I might ask you a question about that XZ vulnerability that was just put out in the news today.
+ That would be fair game.
+ But I would give you enough background material so that you could make an intelligent answer assuming that you'd studied the rest of the course.
+ We will give out sample midterms and sample finals to help you study.
+ We'll give them out the week before the midterm and the week before the final.
+ We'll spend a complete discussion session talking about the midterm and another complete one talking about the final.
+ Let's see.
+ I already mentioned this earlier, but I'll mention it again to put double emphasis on it.
+ For everything but the project, you're supposed to be doing the work yourself.
+ Because the homeworks are not worth all that much, 8% total, it's tempting to blow them off and not do them and say,
+ "Well, okay, maybe I won't get an A+ but I'll still pass the course."
+ Try to avoid that temptation because the exam questions will often heavily be based on the homeworks.
+ If you haven't done the homeworks and understood them, you'll find yourself somewhat at a loss, perhaps, to answer the question.
+ Also, do the homeworks yourself. Don't try to take answers from off the web or from your neighbor.
+ When we discover that happening, which we don't always discover, I admit it, but when we do discover it,
+ my standard policy is to take it to the dean and let things get very messy.
+ I've been to meetings with lawyers involved and you just really don't want to go that route, so do the work yourself.
+ Yes?
+ That will be on the homepage, but it's not set yet. I don't expect them to put up their office hours until later this week.
+ We haven't held our first meeting yet, but it should be up soon.
+ Other questions about how the courses run?
+ I didn't mention the group size is typically five.
+ We can't always hit exactly five because we don't necessarily have the number of students as the multiple of five.
+ Sometimes we'll have four or I don't like six, but if you ask the PA's permission and have a good story, maybe you can talk us into six.
+ The problem with large groups is that the amount of time it takes to organize the group
+ and get things sort of whipped into shape can be so large that you can't effectively make use of the extra people in the group.
+ Five seems to be about the maximum that we can mostly pull off.
+ When your assignments and mentions can stick to coding styles in the course material, where do we see those coding styles?
+ See which?
+ For example, we might give you a sample program and say here's a sample program written in Python.
+ Please, Python 2, rewrite it in Python 3.
+ The Python 2 program will be written in this style and you can use that same style in Python 3.
+ That's sort of it.
+ All right, other comments?
+ Yes?
+ You can use pretty much any sort of backend software as long as it's publicly available so that the PA's can sort of see what you're doing and that sort of thing.
+ Please don't use proprietary software because that's going to be hard for them to grade.
+ By the time you start working on the project, I'm hoping you'll be able to work yourself up to speed on any kind of backend technology.
+ To some extent, it will be tempting to use a backend that you've already used before.
+ Some of you guys do have experience with that stuff.
+ You might want to avoid that temptation.
+ You're getting a golden opportunity here to spend six weeks on a new technology.
+ Pick one that you think will be good.
+ In the past, people have used lots of different stuff.
+ Well, I can mention one that I should warn you about.
+ In fact, if you read the project write-up, there's a specific warning about it, which is be careful not to use a backend technology.
+ That is, a technology for a server that does all the work for you.
+ I want you to be writing code that runs on the client.
+ I also want you to write code that runs on the server.
+ If you find yourself using a backend, which is just some sort of GUI to hook together stuff, but you're not writing any code, that's probably not the backend you should be using.
+ I specifically call out Firebase as a backend that might be tempting to use that way.
+ You can use Firebase, but if you do, write code that runs there, not code that runs on the client.
+ I guess that was a bit of negative advice. Sorry.
+ Other comments about the way the course is organized.
+ We were talking about Emacs and Michelle.
+ Where were we?
+ Let's talk about some of the motivation here for Emacs.
+ From the Emacs point of view, you can think of it as being a text editor, plus a lot of other stuff.
+ This is sort of the basics.
+ When you run through the Emacs tutorial, you'll see a lot of the text editor basics.
+ But to some extent, the way Emacs is used nowadays mostly is you think of the text editor as being the front end to prepare the text that you really want.
+ Then you have a bunch of applications or functions that are written using the text editor.
+ Because what the text editor is, is its programmable.
+ You can, in effect, change how it's going to work.
+ I'm going to start off just by looking at the basics.
+ What are some of the basics of a text editor?
+ First off, this part doesn't tend to be talked about much.
+ We want our text editor to survive power-ups.
+ Or survive system crashes.
+ If your laptop battery dies and you are editing a file, you don't want to have lost all of your work.
+ Simply because the power died.
+ You want to plug it back in and get the battery charged up again.
+ You want to keep going from where you were.
+ You don't want it to have lost all of your work.
+ Another thing we want for the text editor is we want it to be fast.
+ That's obvious, right?
+ To some extent, what I'm doing here is I'm telling you all the obvious things about a text editor
+ that are so obvious that most people wouldn't bother to write them down in the first place.
+ And the third thing that we want, this one maybe is a little less obvious,
+ but if you're a software developer you'll know instantly what I'm talking about.
+ You want your text editor to be understandable.
+ I'll even underline that.
+ You want to know how your text editor works and how to change it
+ because if you want your text editor to be programmable, you need to know what programs you can write
+ and what programs that you can't write.
+ If we want to talk about these things, part of the problem is these are, to some extent, competing goals.
+ If you try to be really fast, most likely your code is not going to survive power outages very well.
+ Because how do you survive power outages?
+ It's by saving your work at every opportunity that's going to slow down your text editor.
+ These two goals compete.
+ One can easily see why these two goals compete and these two goals compete.
+ We have three goals, we want them all, we can't possibly optimize all three.
+ So as a practical matter of software engineering or software construction,
+ we have to come up with a reasonable compromise for doing a combination of these three things as best we can.
+ Let's see what happens when we try to run Emacs.
+ I'll start up the shell here.
+ Instead of typing Emacs this way and getting a graphical user interface, I'm going to do it this way.
+ The minus NW option tells Emacs don't use the windowing system.
+ Just use the terminal that we're operating in.
+ What Emacs is going to do now is it's going to run inside this terminal section
+ and it's operating by sending characters to the terminal, sometimes with little escape codes that say please underline stuff or turn it blue.
+ But basically this is just a character-based interface rather than a graphical interface.
+ There's two reasons I want to do this.
+ First off, this is a simpler interface. It's easier to program and I want to keep things simple at least while we start.
+ Second, if I'm running a text editor on a server in Tokyo and I'm in Los Angeles,
+ trying to use a graphical user interface is going to be a big mistake.
+ The latency is going to kill you because you're at least a quarter of a second away from the server and you type a character.
+ It's going to take a quarter of a second to echo it. That's bad enough.
+ But if you are doing a graphical user interface, every time you move the mouse another pixel it takes a quarter of a second to figure out what to do.
+ This kind of character interface is very common for people doing remote installation or remote software development.
+ They won't use a graphical user interface because it's too slow and it's too slow because of the physics of the problem, not because of the software.
+ In some sense what I'm doing here is I'm pretending that I've logged in to a server in Tokyo, although actually I'm just running Emacs on this laptop.
+ Let's first try to do something. What I'm going to do is type Ctrl+X, Ctrl+B.
+ What is that?
+ This gives you a list of all your buffers.
+ The first thing to understand with how Emacs works is the distinction between buffers and files.
+ A buffer in Emacs is simply a sequence of characters that live in RAM.
+ They're sitting inside of Emacs's memory. A sequence of characters in RAM.
+ Whereas a file in Emacs is the same thing that you understand when you see a file.
+ A file is a sequence of characters or bytes in secondary storage.
+ The difference between the two is pretty simple, right?
+ Since this is in RAM and this is secondary storage, if you lose power to your machine,
+ everything in RAM is gone.
+ RAM requires power to keep its memory state.
+ If you have no power, your RAM doesn't.
+ Files are persistent.
+ They survive power outages.
+ Assuming your operating system is at all effective, they survive operating system crashes.
+ Why would anybody want a buffer?
+ The advantage of buffers is that they're fast.
+ Accessing files is slow.
+ If you want to talk to a file, your program has to talk to secondary storage.
+ Flash memory is way, way, way slower than RAM.
+ Our disks are even slower.
+ The network is often even slower yet.
+ You don't want to talk to a file if you can avoid it.
+ You want to talk to a buffer.
+ When I go into Emacs, and let me do control-X-B, which means switch to a buffer.
+ I'll just create a new buffer, and I'll call it Hank.
+ I'm now editing this buffer Hank, but it's just a sequence of characters in RAM.
+ It's currently the empty sequence.
+ I can type some characters in here.
+ What I'm doing is I'm editing that sequence of characters.
+ Some people would call buffers character strings.
+ If you were writing a C++ program, you can think of it as a character string.
+ But buffers are probably better thought of as being highly mutable character strings.
+ You can change them in lots of different ways.
+ Eventually, maybe you will write the buffer out to a file, but maybe not.
+ One other way that you can create buffers is by doing something like this.
+ Control-X, control-F, which means find file.
+ Emacs prompts you for a file name.
+ I'll pick the file name, et cetera, OS release.
+ Notice I didn't have to type all those characters.
+ You can use tabs to do auto-completion.
+ There was only one file name slash et cetera slash OS something or another.
+ When I typed tab, it figured out what it was.
+ Then I can type enter.
+ Now what we have is a buffer called OS release whose contents are the same as the files.
+ Quite a few buffers in Emacs will be associated with files.
+ This is a copy of the OS release contents.
+ It's sitting in memory.
+ If at this point I type control-X, control-B, you'll see that we have one buffer now that we didn't have before.
+ The buffer named OS release.
+ I guess we also have the buffer Hank that I created on the spur of the moment.
+ Question?
+ It asks you to name a buffer.
+ If you use a name it hasn't seen before, it just creates a buffer with that name.
+ If it's already got a buffer with that name, it gives you that buffer.
+ You can use auto-complete when you type control-X, B.
+ If I at this point type control-X, B, and type tab, it'll say, "Oh, which buffer did you mean?"
+ There's a lot of buffers that you can pick up.
+ Then I can pick, I don't know, the scratch buffer, which is the one we started off with.
+ There we are at the scratch buffer.
+ If I go back to this OS release buffer, notice that in the buffers we have what's called a mode line underneath a buffer.
+ That has a bunch of funny characters at the start.
+ There's documentation in Emacs that will tell you what that U and that U and all those percent signs mean.
+ Then it will tell you maybe that word "all" there means we're seeing all the buffer in this part of Emacs.
+ That word "fundamental" says the mode that you're using to edit the buffer,
+ which in this case the fundamental mode is the basic mode for Emacs and that sort of thing.
+ If I were to now try to type here, I'll just type the letter X, it will give me an error message.
+ Buffer is read-only.
+ Some buffers are read-only.
+ You're not supposed to edit them.
+ Other buffers are read-write, and you can edit them any way you like.
+ Since the file /etc/os-release is a system file that I lack permission to write to, when I use find-file to visit the file,
+ Emacs will automatically make the buffer read-only.
+ Because it will assume that if you can't write to the file, we better not let you write to the corresponding buffer.
+ If, on the other hand, I use find-file to go to my home directory, the CS35L subdirectory, and let's do lecture 1, why not?
+ Here, if I now try typing stuff, here is something for the lecture.
+ I can type whatever you like.
+ Ordinarily, when you type an ordinary key in Emacs, it means please insert that character in the buffer where you've typed it.
+ It's the same way that most graphical user interfaces work.
+ I can use the arrow key to go somewhere else in the buffer and start typing again, and I can delete and all that good stuff.
+ Buffers, you can think of them as easily editable character strings.
+ Suppose, at this point, we go and look to see what's in this file.
+ Now, how can I do that?
+ I can type control-F-D.
+ Let's see what happens when I do that.
+ Control-X-D.
+ D means go into the directory editor.
+ What's going on here?
+ Well, in Linux, a directory is a special kind of file.
+ This file basically is a file that lists a whole bunch of other files and tells you their names.
+ If I type control-X-D and say I'd like to edit this directory, it will say, oh, oh my goodness, that color is atrocious.
+ I don't think you can see that.
+ Let's see if we can fix that.
+ Sorry about that.
+ There we go.
+ Here it is.
+ This directory has four files listed in it.
+ By convention, in Linux, every directory has two files in that directory.
+ At least two.
+ The first one is called dot.
+ Dot is the name of the current directory.
+ This directory lists as dot its own self.
+ This directory was created at time 1744, which is 544 PM, which is about the time that we did it.
+ Dot dot, by convention, is the name of the parent directory.
+ What we have here is a tree-structured file system.
+ I'm going to put that in quotes because, as we'll see later, it's not really a tree.
+ But it's mostly a tree.
+ A tree is a graph that is singly connected.
+ Between any pair of nodes in the graph, there's exactly one path.
+ The internal nodes are directories.
+ The leaf nodes are files.
+ Each directory, you can think of it as a little function that maps file names to other files.
+ By convention, if this was A, and this is B, and this is C, and this is D, and this is R,
+ you could name this file by this sort of path, RVD.
+ It's going to be the name of this file.
+ This is the root directory.
+ By convention, its name is slash. That gets you to the top of the file system.
+ Every time you walk through a file name, you look up the corresponding directory entry to figure out where you're going to go.
+ What we've seen here is that also every directory by convention has two entries.
+ Dot is an entry that points to the directory itself.
+ Dot dot is a directory entry that points to the parent directory, like that.
+ Question?
+ A directory can be empty, in which case it has only two directory entries, dot and dot dot.
+ It won't have anything more.
+ This directory isn't empty. It's got four entries.
+ In some sense, those first two are bureaucratic, paperwork, overhead, that sort of thing.
+ They don't really count as far as the tree structure goes.
+ But the other two entries are real.
+ Yes?
+ Let's try that.
+ What I'm going to do now is type a control X D,
+ and then I'm just going to say, let's look at the root directory here.
+ Notice, the root directory also has a dot and a dot dot.
+ But it cheat.
+ If you look at the root directory, there is an entry for dot.
+ Dot simply points to the root directory.
+ There's also an entry for dot dot.
+ Dot dot also points at the root directory.
+ The root directory is a special case.
+ If you go to the root directory and say, I'd like to go up from here, Linux laughs at you and leaves you where you are.
+ Another way of putting it is that, what's this file name?
+ That's just another name for the root directory.
+ We started at the root.
+ We went up one, except at the root, when you go up one, you stay where we are.
+ We stayed where we are, we stayed where we are, we're constantly staying where we are.
+ One other little quirk about Linux is that if you have multiple slashes in a row, they act like one slash.
+ I can do this.
+ You can just mentally substitute a single slash error.
+ Basically, what I'm telling you is that you can take any file name that consists only of dots and slashes.
+ If it starts with a slash, it's just a name for the root directory.
+ Now you know how the website slash dot got its name.
+ Any other comments on directories and files?
+ Let's go back to our other directory.
+ It was the directory cs35l.
+ We have two files here.
+ We have two directory entries here.
+ One is this funny file with the name starting with a pound sign.
+ Another one is something else.
+ It's not even a file.
+ You can tell what the type of directory entry is by looking at the first column of the DURED output.
+ D means it's a directory.
+ If the first column is a minus sign, that means it's a regular file.
+ If the first column is an L, that's a lowercase l there, it's not a 1, it means it's a symbolic link.
+ In order to tell you what that stuff means, we're going to need another lecture.
+ Essentially what's going on here is this is how Emacs tries to make your buffers persistent.
+ We're looking at the mechanism it uses to persist buffers into files.
+ It's doing something weird here, and we'll talk more about that next time.
+ [BLANK_AUDIO]
