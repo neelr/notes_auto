@@ -1,0 +1,504 @@
+ Joining me I thought I might start by just tell you a little bit about sort of my accidental way of stumbling into philosophy of science
+ Calculus prior to that and I learned you know standard stuff you learn in Newtonian mechanics where you know
+ I have to calculate the trajectory of a cannonball and stuff like that
+ I thought huh this is just calculus and you know my naive 18 year old self
+ thought that calculus was just sort of moving around scribbles on a page in very
+ rural regimented kinds of ways and I thought this is so puzzling that a bunch
+ of scribbles on a piece of paper could actually map things like gravity and forces and movement
+ stuff like that and I remember I asked my physics teacher at the time about this and he just said
+ it works and I thought this was a very unsatisfying answer and I sort of grappled with this for a
+ long time in a bunch of other arenas I did a lot of work in mathematical modeling and social sciences
+ as an undergraduate and the puzzle just kept on coming up come on in don't be shy and that was
+ sort of my first encounter with philosophy of science is this question of just how mathematics
+ could actually be an accurate representation of either the natural world or the social world
+ and as I this became a bigger and bigger obsession and I learned that there were lots of fascinating
+ things about science once you looked at it from a philosophical lens and so I'm hoping to share some of that exciting
+ with you throughout the course this quarter and I wanted to start off with the learning objectives of the course
+ so we're going to be asking three major questions the first is basically when does evidence support an hypothesis
+ that's going to take up a big chunk of the course starting today next question we'll ask is what role do moral, political, and social values have to play
+ if any in scientific reasoning and the last question I actually went out of order there so forgive me
+ is basically what does science tell us about reality and does it even tell us anything really new about reality at all
+ or is it enough if it's just sort of a good way of predicting things and so those are going to be the three main questions we ask
+ you're going to see there's lots of fun twists and turns along the way and that's roughly how we're going to do this
+ I want to just talk a little bit about class mechanics before we get into stuff let me just take a quick survey
+ how many people here are planning on being science majors either natural or science how many people are thinking about philosophy
+ okay good yeah so we've got not quite an even cross section the philosophers are a spirited minority
+ but that would be good I think what you'll see is hopefully there's lots of philosophy already in the science that you are doing
+ and perhaps that you will be doing and what follows and we're just going to get a taste of it because this is an intro course
+ but it should be fun so as you'll see there are three learning objectives here the first one is perhaps obvious
+ I want you to understand different positions in the philosophy of science the next one is basically improving your reasoning skills
+ we're going to see if there's lots of interesting ways in which we do this the sort of standard philosophical standard reasoning skills
+ that you get to develop in the context of any philosophy course but because this is a philosophy of science course
+ you'll actually learn a little bit about scientific reasoning as well it's not just sort of learning it as an object or philosophical study
+ but learning it as a skill you don't actually have to do a bit of scientific reasoning no laughter anything like that
+ but it'll just give you some relatively non tactical ways of understanding how scientists reach the conclusions
+ and then the last part is really a set of philosophical skills like I said that you see everywhere recognizing analyzing and criticizing philosophical arguments
+ you'll spend a lot of time doing that as well so the Brule Learn site is the brain the heart the soul of the course
+ if ever there's a question go there first and let me just give you a sense of the kinds of things that you might see there
+ if you haven't navigated the course already the website already so here's our homepage
+ there's lots of logistical things here I see only one of my TAs I saw them all now there she is ready are any of my other TAs here
+ ok I know Michaela is running late and the rest are just laughter so that's fine
+ yeah I did my homework yesterday cause I'm not a professional
+ yeah I know it doesn't cook he's an analytical mouse
+ the other thing I will say about the TAs and only one who will know this is they are really the first people you should consult about anything in the course
+ and this is just simply a logistical reason I'm accountable to 250 of you so if I have to be the first line of defense I'm going to get overwhelmed very easily
+ with emails they're accountable to exactly 50 of you with no overlaps if everything is going as it's supposed to go
+ so they can always pick it up to me if they have a question obviously if this is a life or death situation then feel free to share that with me if you don't feel comfortable sharing
+ I'm also going to mention this I'm not using a microphone generally my voice carries well but if you need me to get something like a microphone just shoot me an email and that would be another thing I'd be happy to do
+ ok let's see so these are the more interesting things on the course website that I want you to see so you'll see your reading is right here for today
+ you'll see there's also a handout and a powerpoint feel free to click on those links and read along as I go through the powerpoint if that helps you
+ I'm happy to do that I'm not really too picky about technology in the classroom as perhaps other people are
+ don't be downloading porn or anything like that during the class but other than that you're fine
+ ok and I'll just keep on populating this so we hand out some powerpoints throughout the quarter
+ wow that got a conversation going
+ alright good
+ you will see probably there's a couple links to handouts and powerpoints that are already up here or maybe I removed them all
+ if you see some old ones just maybe check them half an hour before class there's a chance that I put it up there from a previous iteration of this course
+ and it might just be worth checking to see if I've updated it
+ ok that's about all I have, oh last thing how are you going to be evaluated in this course
+ we'll have weekly quizzes that will be mostly automated on BruinLearn
+ I think you have about a four day window to complete those, there should be about six questions and the first one should pop up I'm hoping on Friday
+ Michaela is the quiz master for the first one so I'll get some details from her after this class
+ one final piece of housekeeping my office hours are on Fridays 1130 to 130 unfortunately this week and next I have presentations I have to do out of town so I won't be around
+ but feel free to email me if you want to have a meeting we can probably do something over zoom and that's that but after that I should be here
+ more or less the entire time and if there's another thing that comes up I'll be still waiting ok that's all I have in terms of logistics
+ does anyone have big picture logistical questions that pertain to everyone in the class alright Isaiah
+ you talk about reading and so are you expecting me to read this before or after class
+ good question so here's what I want you to do for today I ask you guys to read this before class so I'd like you to read beforehand this gives you a first take of the text
+ then basically we can use class time to clarify any misunderstandings that you have the idea is to get some redundancy with the initial reading
+ and then there's me discussing it and you know there's whatever like 250 of you in here but I'm happy to sort of field questions once again think of them not as like questions that might be peculiar to you
+ but if there's questions which you think might be good questions for everyone to have an answer to go ahead and raise your hand and I'll try to address them and we'll take a few minutes
+ I know this is a huge lecture but I try my best to make it as conversational and dialogical as possible where I'm not just the sage on the stage
+ but the short answer to your question is yes read beforehand so for Thursday when unfortunately I won't be here for the first of my conferences one of the TAs Alex will present on some basics of deductive reasoning
+ and then I'll be back on Tuesday to present a handful but the idea is you would read this before Thursday's class and ad nauseam keep repeating every class
+ any other questions about class mechanics? Yes in the back
+ [inaudible]
+ this is generating about the same amount of conversation as porn
+ so the question was are the quizzes mostly short answers they're going to be, because we're trying to automate this because the TAs would otherwise have a lot of grading, they're mostly going to be things like matching multiple choice things like that there may be some short one sentence answers the goal is probably to have most of them be fairly straightforward folks can we pipe down a little
+ the goal is to have maybe 10% of the quiz or so it'd be a little bit more challenging, but that doesn't necessarily mean it won't be multiple choice for example
+ yes? I know you said there's no final but just like on my UCLA it says on Wednesday June 25th. It's a lie, so I'm trying to make this manageable for everyone, I think it's still manageable for the last, once again like porn, anyway
+ if you have any other questions, feel free to email your TAs, they'll pick it up to me if you need, but let's get to actual philosophy
+ and so for today I asked you to read the Godfrey Smith chapter on induction and confirmation, we won't cover everything in here, partly because it's going to overlap a lot with what we do actually in the week from today when I get back
+ but we'll cover I think some core ideas and I think you'll see it's already quite rich, so here's the plan of attack, first thing I'm going to do is I'm going to give you sort of a big picture of the course that we've already kind of gotten a little bit, I'll try to do a little bit more with that
+ then we'll draw an important distinction between deduction and induction which perhaps some of you have encountered and if not don't worry, it's an intro class, I assume nothing, then finally we'll look at one of the first major questions, we'll look at the first major question of our course which is the problem of confirmation, what happened there?
+ It was off at the time, of course, this will be kind of second to last, alright what's going on here, it was up there just five seconds ago, it was completely loose
+ just holler at me if the screen sort of shifts the bed again, okay so we went over the overview, let's start with the big picture
+ so one way to think about this is what would this course be like if it were just a sort of standard introduction to philosophy with no science, and I think it's not unsurprising if you find that the following three topics are covered
+ first, you probably get something on ethics, right, so what makes an action morally right or morally wrong, second, you might get something on metaphysics, right, so what's the nature of reality, at least one answer is turtles all the way down
+ the third unit you might have is on epistemology, which is basically how do we know what we know, right, and there would be something like a philosophical method that you might see that's common to all of these things
+ and it's probably called critical thinking, right, and very roughly here's one way of characterizing how critical thinking in philosophy goes
+ you start off tracing out some puzzling consequences of common sense, right, you propose some solutions to those puzzles, and then you trace out puzzling consequences of each other's proposed solutions to those problems and of course the process then repeats again
+ and this is sort of in cartoon form what the history of philosophy is all about, now when you do philosophy of science a lot of this looks the same except a few things change, right, obviously because it's now about science
+ so the philosophical method looks very similar, but now we're not going to be talking so much about common sense, it's not going to be like do I know that I have AI or do I know that I'm being deceived by an evil demon, things like that, it's going to be how do scientists know when they have, for example, good evidence for a hypothesis
+ so we'll look at scientific practice, we'll look at cases of successful science and unsuccessful science and see what we learn about these sorts of questions
+ so sort of going backwards from the way that the course will actually go, when we talk about ethics these are the kinds of questions we'll ask, we'll ask can moral values legitimately influence science or should it focus only on facts, right, should it just focus on empirical testing and theorizing and things like that
+ you know hopefully this feels like a question that grips you, think about all the pressing scientific and technological issues that we're facing, global warming, what to do with AI, things like that, genetic testing and so on and so forth
+ and you can see that there's complicated issues about how on the one hand, right, science is supposed to be objective and seemingly that would discourage us from trying to incorporate political values on it
+ on the other hand science is supposed to be relevant to all these problems that we're dealing with and so we somehow have to figure out what the just right solution is
+ and which are legitimate roles for science for moral values. So at the end of the class we'll sort of look at this for one week at sort of a high level looking at the role of science in democracy
+ and then we'll look at it with a more specific case study which is abuse of race based medicine
+ so that's sort of our ethics. When it comes to metaphysics, we ask questions such as this, does science need to be true in order to be empirically successful
+ or is it enough if it's just good at predicting things and good at giving us technological innovations regardless of whether it's true or not, is it just a useful tool, who cares whether it accurately represents the world
+ A further question we might have is science is sort of conducted on multiple levels and we'll look in particular at the cognitive sciences and look at how say something like neuroscience might put pressure on higher levels of psychology
+ where they invoke beliefs and desires and things like that and one question we'll ask is well once we've figured out the brain sciences, why do we need to have beliefs and desires
+ that would be a question. And that gets into complicated issues not only about levels of reality but also about how different scientific theories relate to each other
+ And the question that we'll spend the most amount of time on and which we'll start this class with is what I call the problem of confirmation. This is basically when does evidence confirm a hypothesis
+ And so what we're going to do now is start to dig deeper into really the contours of this class. Anyone have any questions about the general structure of the class? Sort of what we're going to try and cover?
+ Okay great. So the important distinction is basically between what are called deductive and inductive inferences
+ And we'll be engaging in a little bit of both deductive and inductive reasoning throughout this course and maybe not even a lot of deductive and inductive reasoning throughout this course
+ So what I want to do is first of all give you a characterization of the genus, inference, and then we'll go through the two species, deduction and induction
+ And we'll end with a couple of puzzles that sort of arise from that. So what's an inference? An inference is a set of statements such that one of those statements, the conclusion, can be affirmed on the basis of the others which are called the premises
+ So just to give you the classic example that pops up a lot, we have if it's raining the streets are wet, it's raining therefore the streets are wet
+ So the two statements above the horizontal line there are our premises. They're the reasons on which you affirm that last statement, the conclusion
+ You see that the reason why we conclude that the streets are wet is because it's raining and if it's raining then the streets are wet
+ So that's hopefully not completely foreign to you. Sometimes you'll have inferences described as arguments. Each one, both premises and conclusions are called statements, sometimes they're called propositions
+ Don't get worried about that terminology. It's all interchangeable for purposes of this class
+ Okay, so a natural question that pops up is really what to do with this language of being affirmed on the basis of
+ And we have lots of ways we talk about this in conversation. We talk about premises backing up a conclusion or supporting a conclusion
+ Or sometimes we just talk about the conclusion being based on premises and so on and so forth
+ And when you think about this, this is a pretty profound philosophical question. This is when is one thing a good reason or something else
+ And we all like to give good reasons for our positions and prefer to do that over maybe some of the other ways that we might manage to persuade people
+ Sort of irrational persuasion like when you watch an advertisement and all of a sudden you're consumed mindlessly, things like that
+ The idea is there's something elevated about doing things when you give good reasons for your position as opposed to when you engage in these other ways of trying to convince people of your position
+ And I hope that this is one of the reasons that you guys are here, right, at the university. It's chiefly to become better reason
+ You can also hopefully see that this is a really deep philosophical question and there's lots that one could say about this. We're only going to sort of scratch the surface of this in some ways
+ But I think you'll see we'll learn quite a bit about the variety of reasons that are out there
+ So one way you might try to spell this out is there's a follow up, which is the premises have to somehow guarantee the truth of the conclusion
+ That means that the conclusion can always be affirmed on the basis of the premises if we're using that characterization of inference
+ And I hear people typing curiously, you are welcome to do so, but just also keep in mind all of this is online, right, so if it's easier for you to type less and listen and then just rely on that, feel free to do so
+ But I'm not going to prevent you from typing, go for it. Okay, so here's another way of saying that in a different way
+ There's no way that the premises could be true and the conclusion could be false at the same time, right, that seems like a pretty good guarantee
+ So this is what's called a deductive inference, right, so let me give you an example, so as you'll see I'm pretty infatuated with my dogs, this one's Cleo
+ So here's an inference, here are premises I should say, if Cleo's a mammal, if Cleo's more blooded, Cleo's a mammal, tell me in chorus what's the conclusion
+ So Cleo's more blooded, right, you guys didn't quite sync that up, but we'll work on it, right, so this is a deductively valid inference, let's sort of see the reasoning behind this
+ So the second premise, marked in yellow, says that Cleo needs to be, we're using Venn diagrams here, needs to be in a set of all mammals
+ Everyone sees that we've basically made that second premise true
+ Furthermore, we see that the first premise says that if Cleo is a mammal, then she's more blooded, so that yellow circle needs to be completely contained within that turquoise circle, everyone sees that?
+ And now, you can see that there's no way for Cleo not to be warm blooded, given that, right, Cleo would have to be out here, right, in order for the premises to be true and the conclusion to be false, and that's impossible, right, one of the premises would have to change
+ Does everyone see that?
+ Mostly, hopefully you just felt it, right, you just felt that Cleo had to be warm blooded when I showed you those two premises
+ But we can talk about that more, Alex will talk about this more on Thursday, so you'll get a deeper dive into the decoupling
+ So here's the official definition, you could probably be even more official than this, but this is fine for our purposes, right, a deductive argument is valid if and only if there's no way for all the premises to be true and the conclusion to be false
+ And you might think of this as something like the gold star of that question that we started off with, what does it mean to affirm a conclusion on the basis of the premises, this would be a really good way of doing that, right, so long as the premises are true, right, you guaranteed that the conclusion is going to be true
+ However, right, although this is sort of one way that we can proceed, what I want to point out is that we have many good arguments, right, that aren't deductively valid but still seem to be good
+ So let me just give you a few examples, these won't be science-y just because I want you to go for the concept before we start worrying about science, right, so take something like this, right, we often reason on the basis of observation, we say all of the peaches have pits, and the conclusion is that all peaches have pits, right, can everyone see how the premise can be true and the conclusion can be false?
+ Okay, who thinks they can state why? Yes, you? There might be a peach without a pit that you've not observed? Exactly, there might be an unobserved pitless peach, right, so that's exactly right
+ But no, what I want to hammer home, even if you don't like this particular peach example, there's probably genetically engineered peaches which don't have pits at this point, someone's probably, yes
+ The general idea that we see a bunch of cases and generalize from that hopefully feels like a pretty good pattern of reasoning, I'll give you a scientific one a little bit later
+ Here's another one, right, we rely on this all the time, right, previously when I flipped the switch the light goes on, right, so the next time I flipped the switch the light will go on, right, so everyone sees, you guys can even imagine examples where this doesn't work, who wants to give me a case where the premise is true and the conclusion is false?
+ Yes? The power goes out? Yeah, the power goes out, right, you guys can think of other ones anyway, but who thought of another situation? Yes? I break your light bulbs
+ Oh wow, that sounds menacing man, but yes, good, good
+ If the light's already on, if you flip the switch it won't go on
+ Yeah, it won't go on, right, it'll already be on, yes, good, clever
+ Anyone else? Yeah, so short circuits, etc, yeah, all sorts of things
+ Okay, good, once again when I run a hammer home is we rely on past performance going forward, like let me just give you a very concrete example of this, right, the last time I walked out of the door on the first floor of this building I didn't fall, you know, a million feet to my death, right, so the next time this won't happen either, right, like we do these sorts of things all the time
+ We sort of rely on things to be, as we've observed them in the past, right, you can flip that around, right, I'm on the third story of the building, right, and I might think, alright, this time it's really going to happen, gravity's going to just sort of go on holiday, right, it's not something that you want to do, right, you basically rely on the future being exactly like the past in certain kinds of regards, right
+ Okay, here's another one, right, my parents have told me my name is Karim Khalifa, right, therefore my name really is Karim Khalifa, right, who can give me an example, right, where the premise is true and the conclusion is false
+ You look like you want to raise your hand, okay, go for it
+ Say more
+ My parents told me this and then I go and change my name legally is sort of like the example you're thinking of, yeah good
+ Your parents could only be saying your first and last name off after you have like your middle name or anything else
+ Yes, I don't know if I would, that depends I guess on how you define, what would you have a name
+ Your parents lied to you?
+ Yes, right, so these are the ones I like to define, right, elaborate conspiracies, right, so my real name is like Bobo Laughing Stocks or something like that, my parents have falsified all the documents so that I've been led to believe that my name is Karim Khalifa but it's all just in elaborate rules, yeah, this is a possibility, right, the premise would be true and the conclusion would be false, right
+ So here's one that's starting to get a little bit closer to science, right, under a variety of conditions smoking is correlated with cancer and from this we infer smoking causes cancer, okay
+ Who can think of a situation where the premise is true and the conclusion is false, yeah
+ So you can imagine, we'd have to explain the correlation, right, but this might be one way we could do this, so imagine we have smoking, cancer and we see a correlation, right, but imagine that there's a common cause, let's say it's a hereditary factor, it could be any number of things, right, which causes me to have like an increased appetite for cigarettes, right, and also increases my chances for smoking, right
+ Everyone has seen these sort of common cause sorts of situations, right, so I think the famous one, if you haven't seen it, is ice cream consumption goes up and murder goes up, so obviously no one thinks that ice cream causes murder, right, who knows the actual cause behind this
+ Wasn't one of the reasons that heat causes more stress? High temperature is the main common cause, right, so when it gets hotter obviously we'd like to eat more ice cream and obviously we also get more irritable and so we get more violent, so yeah
+ One thing we'll be learning about is what to do with correlations, right, but the main thing I want to hammer home is we think of all these as actually pretty good inferences, yet none of them seem to be deductively valid, right, so how do we deal with this, right
+ Here's how we characterize the deductive validity, the crucial idea is basically that it's impossible for all of us to be true and the conclusion to be false at the same time, basically with an inductive argument we say that it's strong when it's improbable that all of the premises are true and the conclusion is false
+ So the idea would be given the way that we've tested say this hypothesis that smoking causes cancer, you know we could imagine, right, we start looking at all the variety of hereditary factors that are out there with a rather diverse sample of human beings
+ We find that there's no hereditary factor which plays this kind of role, we rule that out and we do this with a bunch of other factors until we sort of feel pretty confident that smoking causes cancer, we figure out the mechanism between smoking and cancer and so on
+ And we're going to be focusing largely, so I should say, let me tell you a little bit about the division of labor between deductive reasoning in this class and inductive reasoning in this class
+ So philosophers generally like to engage in deductive reasoning, so do mathematicians, computer scientists and so on and so forth
+ Scientists generally like to engage in inductive reasoning and hopefully you can see why, right, scientists rely on empirical evidence, right, there can always be something that's unobserved that changes the situation and so this is why quite frequently science relies on induction
+ So what we're going to do is we're going to often philosophize using deductive reasoning, we might do a little bit of deductive reasoning when talking about what scientists do but we're going to focus in broad outline on how scientists engage in different forms of inductive reasoning
+ We'll talk about that throughout the next few weeks
+ Okay, so the question you might have is why settle for induction, maybe some of you have even thought about this, couldn't we just like throw another premise in some of those inferences and it would be fine
+ There's something to be said about that but let me just sort of tell you why, I think it's just sort of not a big deal either way, right
+ So very roughly, here's maybe some reasoning that you started, maybe this is in the back of your head, right, so deductive validity says that there's no way for the premises to be true when the conclusion is false, right
+ That would mean that deductively invalid arguments, right, are ones where there's some way for the premises to be true and the conclusion to be false
+ So if you remember this is essentially a speech example with my name example with a light book name example, we just bought a counter example
+ Inductively strong arguments only require that it's improbable that the premises are true when the conclusion is false
+ And of course that means that in paramagnetic examples of inductively strong inferences they're going to be deductively invalid, there's going to be some way for the premises to be true and the conclusion to be false
+ So what do we do in these cases, right, how do we distinguish between deductively invalid arguments and inductively strong arguments
+ My answer is really don't sweat it, right, here's roughly the way I would think about it, when we're dealing with inductive arguments it's a really good idea to think about how it would be possible for the premises to be true and the conclusion to be false
+ And then think about how probable it is as well, right, but just even if you think about this, put your scientist cap on for a second
+ You're designing an experiment, wouldn't you want to know where the experiment breaks down, right, that's essentially just figuring out the possibility, so that's this bit right here, that first middle bullet point on the red rectangle
+ And then you want to make sure that it's very improbable that that happens, right, and so I think this is just good inferential hygiene
+ Okay, here are some other reasons why I think induction is important, right, deductive reasoning requires a certain kind of certainty, we don't need to get into exactly what that is
+ But we often have to reason with less than perfect information, right, we often have to sort of take an inductive leap, if I can put it that way
+ And that's really sort of what was animating the idea behind all those examples that we looked at, just a second ago
+ One thing that I think is interesting is think about our Clio example, right, Clio is a mammal and Clio is warm-blooded, Clio is a mammal and Clio is warm-blooded, right
+ One reason why the conclusion felt so automatic is because there's a sense in which all the information was already contained, right, within the premises, right
+ We didn't really learn anything, but now think about going from correlations to causation, right, you learn something going from the premises to the conclusion, right
+ And so there's a sense in which deduction is the way in which we get information by reason, right, we learn by reasoning
+ So that I think is another thing, so here's a paradigmatic way in which this happens in science, right, often scientists reason with models
+ And then they want to make their way over to reality, they don't want to just be talking about what happens in the model, right
+ That also is a kind of inductive reason
+ Here's another thing, is note that if we take an argument like if Clio is a mammal then Clio is warm-blooded, etc, etc, etc
+ We can keep on adding information to it and it will never make it invalid, right
+ If we said Clio is fuzzy and warm-blooded, therefore, sorry, Clio is a fuzzy mammal, therefore Clio is warm-blooded
+ And we just kind of kept on going through the inference, it wouldn't change, she was always going to continue to be a mammal, right
+ There's no way we can undo her from being a mammal
+ But there's lots of inferences where it doesn't work that way, so maybe some of you taking computer science classes might know this one
+ So suppose I say something like Tweedy is a bird, right, it's not unreasonable then to infer, right, that Tweedy can fly, right
+ But now suppose I throw a little bit of extra information at you, right, you learn, right, that Tweedy is a penguin, right
+ And you can see that that sort of undercuts this, right
+ So that's what's called non-monotonic reasoning, don't worry about the fancy word
+ The general idea is new information can make an inference that was previously good, bad, right
+ And you can only do that with inductive reasoning, you can't do that with deductive reasoning, right
+ So whereas the previous point I made is that you learn new things, right
+ There's a sense in which the inference allows, sort of, is responsive to new information
+ Is the way that I would put this, right
+ And that's obviously a nice feature to have, you want your reasoning to be sensitive to changes in the world and changes to your battle
+ So induction is important, like you can't get rid of it and just think of it as like a poor man's deduction
+ Is the main thing I wanted to sort of appreciate about that
+ Okay, another thing I need to do is I need to distinguish between the truth of the premises and the goodness of the inference
+ These things can come apart, and I'll do this with a couple of examples to help you out, right
+ So arguments can be valid or strong even if some or all of the premises are false, right
+ And here's sort of maybe a helpful analogy, right
+ Weak things can be connected by strong things, right
+ So the premises can have a strong link to the conclusion even if they themselves are not strong, right
+ The premises themselves are not strong, right
+ So think of the two old men up there as the premises and the elephant as, whether it's inductively strong or deductively strong, right
+ I just have to say, like the 12 year old me was giggling
+ There was no way to actually preserve the elephant's feet without putting a pile of shit around it
+ So this was, I found this very entertaining
+ This is just me being a sophomore
+ Okay, so anyways, oh god, I got cursed out for, I was cursed and now my feet are rebelling against me
+ Okay, so let's look at, what the hell is going on?
+ One second
+ There we go, alright
+ So let me just give you an example of this, right
+ So everyone sees that this is a valid argument, right
+ If Jumbo is a bird, then Jumbo is warm blooded
+ I'm sorry, this is an invalid argument
+ If Jumbo is a bird, then Jumbo is warm blooded
+ Jumbo is warm blooded, so Jumbo is a bird, right
+ Why is that?
+ Well, because imagine that this is Jumbo, right
+ He's warm blooded, and if he were a bird, he would be warm blooded, right
+ But what this shows to you is that, like, this general pattern of inference, which we'll see more of, right
+ So here's the general structure that we see here
+ If P, then Q, P, Q, so P, right
+ So this doesn't work because there can be multiple routes to Q that don't go through P, right
+ So in this case, this is a bird, and this is warm blooded
+ But we know that mammals are also warm blooded
+ So that's why this kind of inference is not going to be valid
+ But note that both of the premises are true, right
+ If Jumbo is a bird, then Jumbo is warm blooded, and Jumbo is warm blooded
+ Both of those are true, but this isn't a valid inference, right
+ Does everyone see that?
+ Yes
+ Is the difference a biconditional versus a conditional statement?
+ You certainly could get that to be valid if it were a biconditional on the first premise, is what you're asking
+ Yeah, you could do it that way
+ So if and only if, right
+ But note that that would then be a false premise, right
+ Because if Jumbo is a mammal, it's still warm blooded, right
+ Okay, so here's a case where both of our premises are true
+ But the argument is invalid and presumably not inductively strong as well, right
+ You can go the other way, alright
+ Okay, great
+ You can have arguments that are invalid or weak, even if all of their premises, that was actually what the other one was
+ Sorry, I think I messed this up
+ Let me fix that eventually
+ So here's a, I gave you two examples of the same thing, let me fix that
+ So here's an invalid argument, also a true premise
+ This is my other baby, Frieda
+ She's a dog, she's friendly, but you can see that this is a hasty generalization, not all dogs are friendly
+ So the other one we wanted was one where the argument was valid, but the premises were not true
+ So let's just use, alright, someone give me a true universal statement, all blanks are blanks
+ All bicycles stop, two wheels
+ Alright, all bicycles stop, two wheels
+ Is this readable or is this too faint?
+ It's okay
+ Let's see if this works
+ There we go
+ All bikes have two wheels
+ So, here we go
+ Cars are bikes
+ So, cars have two wheels
+ So here, right, you see that we have a false premise, but does everyone see that this is valid?
+ Does anyone not see that it's valid?
+ Okay, so the idea would be, if the premises are true, we can do exactly the kind of Venn diagram that we did last time
+ Of course, there are no eithers, alright, so okay
+ Same Venn diagram that we did with Cleo
+ So here are the set of two wheel things
+ Set of bikes have to be within it
+ And, alright, so you see that that makes that first premise true
+ Alright, next premise is cars are a subset of the points, so they would have to be in there
+ And so there's no way that you could have a bike out there
+ But what that tells you is obviously this is a false premise, but what it doesn't
+ But what it shows you is that if the premises are true, the conclusion has to be true
+ And that's the idea of validity, right, there's no way for the conclusion to be false when all the premises are true
+ Yes?
+ And Alex will go over that some more
+ Okay, I'll have to fix that on the slide, sorry
+ So now we can get to the problem of confirmation, this is sort of all stage setting for that
+ And so we'll sort of, here's the main question that we'll be asking
+ If I can get back there, there we go, I swear I'm not usually technologically clumsy
+ So the main question we're asking is basically the following
+ How do observations or empirical evidence confirm a scientific hypothesis, right
+ Let's do this another way, when we have an inductively strong inference, what's the relationship between the premises
+ That makes it just that once again you have an inductively strong inference
+ You in the back, I don't know what those flashing lights are, but could you please stop that
+ Yeah, you, it's just a bit distracting
+ Thanks
+ Okay, so how do we evaluate when we have a good answer to the problem of confirmation
+ I want to suggest there's at least three criteria
+ First is what I'll call unifying common argument patterns, or inference patterns
+ And then the next two are sort of classic puzzles in theories of confirmation
+ Which is solving the rigorous paradox and solving the group paradox problem
+ So what does it mean to unify different inference patterns
+ Essentially what we have to do is we're going to come up with a bunch of common argument patterns or inference patterns
+ These will all be inductive reasoning patterns
+ So these are common ways in which we infer from evidence to hypothesis
+ And then we'll talk about what's involved in this process of unifying
+ So I'll give you three, there's a lot more that we can offer and we'll see a lot more in the weeks to come
+ But we've already seen lots of examples of this, right, bless you
+ This is what's called enumerative induction
+ So I should also say, I'll actually use induction in a narrower way just to refer to this
+ I use induction in the broad sense of exactly the way I find it above where the premises essentially are probable
+ So we've seen examples of this, right, when we said all observed peaches have pits, therefore all peaches have pits
+ That was an example of an enumerative induction
+ So we're using f and g here as predicates
+ So here's a slightly more realistic example from science
+ All observed electrons have a mass of 9.1 times 10 to the negative 28 grams
+ And you can do the same thing with charge and coulombs if you wanted, right, and then you can infer that this is true of all of them
+ And this is roughly how we know that this works
+ It might be an example of an enumerative induction
+ People are running when I start using all that stuff
+ Here's another pattern of inference that we often use, it's called inference for the best explanation
+ And this gets used once again both in everyday context and also in science
+ So maybe here's just a very easy example, everyone's familiar with the expression where there's smoke, there's fire
+ You can think of that as an abbreviated inference for the best explanation
+ In that case, the fact to be explained is that there's smoke, the best explanation of it is there's a fire, so you can infer that there's a fire
+ Lots of bells and whistles we can get into with this
+ Here's an example, so this guy back here, these little green guys, this is what's called Helicobacter pylori
+ It's a bacteria in one's stomach that causes peptic ulcers
+ And one of the ways they actually figured out that this was the cause of ulcers is the fact that antibiotics cure peptic ulcers
+ So there's the fact that they explained that antibiotics cure ulcers, what's the best explanation for it?
+ That there's a bacterial cause of ulcers, right, like antibiotics cure bacterial infections
+ So from that you infer that there's a bacterial cause of ulcers
+ And then finally, one that we'll sort of zero in on a bit more, which is very close to inference to the best explanation
+ It's called hypothetical deductivism, I'll talk more about that bar verse label in a second
+ Here's basically what you need to notice, so like IDE, inference to the best explanation
+ It starts with some evidence, but it doesn't necessarily need to be explained
+ It just needs to be derived from a hypothesis
+ That's the deductive part of it, is that you deduce the evidence from the hypothesis
+ And when you do that, you can then infer the hypothesis
+ So if you remember the example they had with jumbo, it actually has the same form as this
+ This gets used a lot when we draw predictions, and then infer a hypothesis on the basis of a successful prediction
+ So in that case, E is the fact that it gets predicted
+ So what we predict is E, the hypothesis, is where we derive that prediction
+ And then we can infer the hypothesis because it made a successful prediction
+ So here's one of the phenomena that in 1919 gave credence to relativity theory
+ So for those of you who might know this, this is basically where the sun's gravity basically bends the light
+ And this was observed during the eclipse, and so this would be maybe how you'd represent it using a hypothetical deductive
+ I inverted these, sorry
+ But yeah, if the sun's gravity bends light, then the star will be on location B
+ The star is at B, and so from that you infer the sun's gravity bends light
+ Yeah, wow, it's amazing how many people are running away from science examples
+ I'm sure there are a lot of people like that
+ Okay, so let's look now at what it might mean to unify those common argument patterns
+ Essentially it's a two-step process
+ You take one of those patterns as basic, and there's a lot more patterns
+ We'll see probably three or four more, and we'll see that there's lots of embellishments on those patterns
+ Then what we do is basically show that the other patterns can be seen as special cases of that fundamental pattern
+ And you might help yourself to some deduction along the way
+ So let me just give you one example of this, and there's a lot more you can do with it
+ So let's look at HD because that's one that we'll be looking at a lot
+ The easiest one to see this with is inference to the best explanation
+ But I wanted you to sort of get a taste for what we'll see in a little bit
+ So here, note that the evidence that you're drawing your conclusion from is that all observed F's are G's
+ So we're going to treat E as a variable and this as a value of that variable
+ Then we notice the hypothesis is that all F's are G's
+ So we're going to let H be our hypothesis
+ And then here's how we unify these things
+ We say to ourselves, well look, it seems that a really good reason to draw this inference is because
+ I'm really struggling, is because this seems like a hidden premise
+ Note that if all F's are G's, so let's just take peaches are pits, so peaches have pits
+ If all peaches have pits, then of course it just followed trivially that all observed peaches have pits
+ Everyone sees that?
+ So the idea would be, here's the set of things with pits, here's the set of things with peaches
+ All peaches have those, and right then there's a subset that are observed
+ So note that this is just basically this follows as a matter of logic, that it would work that way
+ Does that make sense to everyone?
+ Any questions about that?
+ So the crucial thing about this is this gives you some explanation
+ So if you treat enumerative induction as basically a kind of hypothetical deductivism
+ You get a deeper explanation for why this works
+ Note that if you had something that seems obviously false here
+ You'd have reason to think that this was not a very good inference
+ That would be the thought, so just imagine for example, think of when you have biased samples
+ So there's a lot of polling going on for the election
+ Imagine what they do is they poll, I'm just trying to think of some good states like Montana and the Dakotas
+ And they find that it looks like Trump is up by 20 points for the nation
+ Everyone sees that that would be a very bad inference
+ And the reason why is because you wouldn't expect on the basis of that observation
+ That if everyone voted, let's just say it's like 80/20 Trump in those states or something like that
+ If everybody voted 80/20 then Montana would vote 80/20 let's just say
+ That would be kind of a curious thing because we know that Montana isn't like everyone else
+ But this gets even easier when we look at other patterns again
+ But the thought is if you do this with enough things you'll have a grand unified theory of induction
+ That's sort of the goal
+ The other thing you want to do is you want to make sure you can solve some puzzles
+ These are probably going to seem a little hokey
+ Unfortunately the schedule of teaching, I probably would have flipped around the order of a few things
+ So that you have the HD model first, which you'll get a lead from today
+ And then we'll look at these problems, but we'll just do it this way
+ So the Raven's Paradox
+ This is a classic, and it basically rests on three very, so a paradox happens when you have three very plausible things
+ Not all of which can be true, or two or more plausible things, not all of which can be true at the same time
+ And this basically rests on three principles, all of which seem plausible
+ The first one is called Nicot's Principle
+ It says instances of F's that are G's provide confirming evidence that all F's are G's
+ Instances of F's that are not G's provide disconfirming evidence that all F's are G's
+ So using the Raven example, roughly we have the following
+ It's not that I get sufficient evidence by seeing one black raven, but I get a confirming instance
+ I'm on my way to maybe getting confirmation
+ But if I found a non-black raven, let's say I found a white raven, that would be evidence that not all ravens are black
+ So that seems fairly uncontroversial
+ Here's a principle of deductive logic which says all F's are G's is equivalent to not all, sorry, all non-G's are non-F's
+ So let's just sort of look at that with a concrete example, we'll use mammals and warm blooded again
+ Oh, I might even have one, sorry, I have one here, using ravens, yes
+ So everyone sees that this nicely represents all ravens being black
+ So note then that you can't help but have that every non-raven has to be a non-black thing because it's the outside of the circle
+ And so those things are interchangeable, the only way to make one of those things false is by moving the raven circle
+ At least partly outside of the black circle
+ Okay, so then finally we get the equivalence principle, which to me seems like the least obvious of the three
+ You're welcome to grapple with this
+ But the equivalence principle says, look, if we have two equivalent hypotheses, then anything that's a confirming instance for one has to be a confirming instance for the other
+ And this is where things get weird when you piece this all together
+ So it just seems like if we buy this, these two things are equivalent, that basically means they're saying the same thing to a first approximation
+ And if two things are saying the same things, then they should be confirmed by the same body of evidence
+ That seems pretty plausible, but now let's think about that
+ If we take the post-principle and we apply it to what I call H2 here, all non-black things are non-ravens
+ That means what confirms that? Any non-black non-raven
+ So like a white shoe is the example that gets used classically
+ And if that's supposed to confirm that generalization, and that generalization then is equivalent to all ravens are black
+ That means that a white shoe confirms the generalization that all ravens are black
+ Super weird, very strange
+ And the question is, where does this go wrong? These all look like really strong plausible assumptions
+ And so we have to let one of them go
+ Now note that this is going to be a problem for any account that sort of has an exception-less commitment to a numerator of induction
+ And to a hypothetical inductive system
+ Because they're all committed to logical relationships between hypotheses and evidence, and that's basically all this requires
+ So that might be some reason to shy away from those
+ We'll try to get a good sense of why people were initially attracted to them starting with H2
+ Okay, let's look at one more puzzle that often needs to be addressed
+ It's what's called the Grue problem
+ So this was first put forward by Nelson Goodman, called the New Riddle of Induction in certain cases
+ So here seems like a halfway decent inference
+ All observed emeralds are green, therefore all emeralds are green
+ Here's another inference you might draw
+ All observed emeralds are Grue, therefore all emeralds are Grue
+ Now what's Grue?
+ Something is Grue if and only if it's observed to be green before May 10th, 3976, my 2000th birthday
+ So you guys can celebrate my birthday with me later this quarter
+ Not that one
+ Or it's unobserved after the state in blue
+ There's no reason, all of our evidence is consistent with both of these things
+ So why is it that we think the green inference is a good one and the Grue inference is a bad one?
+ This is a genuine question, what do we think?
+ (inaudible)
+ Well I think you could do that with every green emerald, that's the concern
+ You might say that's green and I'm going to say that's Grue
+ And the puzzle is, I seem like I'm crazy when I say it's Grue
+ And you seem sensible, but why is that? That's the puzzle
+ (inaudible)
+ Oh but I would think that predictions are good in science
+ I think the prediction that something will change on that date
+ Okay yeah, so there's something that seems odd about that
+ There's ways of working around this, I'm not going to get into all of it
+ But basically you can inter-define green and blue using Grue in what's called BLEEN
+ And I won't get into that but it's basically the blue equivalent of Grue
+ Yes but that would be one way to go
+ Other thoughts? I mean everyone does have the feeling that this is like a garbage inductive inference
+ Are people like, hey I'm down to the, yeah I don't know, maybe I'm just too Kurdish
+ Yeah what do people think? Note that we do have some hypotheses where things get to change over time
+ Think about evolution or developmental biology, stuff like that
+ We do allow for certain things to change over time, like all of you are allowed to change over time
+ You'll get old like me one day for example, I know, I satisfy
+ The big difference between these, I think contextually is the temporal thing
+ But then sort of stepping out of it and working on it from a logarithmic perspective is the number of cases of which it's true
+ And so is it that you limit the amount of cases that can be true and therefore it becomes a more valid argument?
+ And so it becomes less generalised?
+ So why are there less cases? I guess they're both talking about all the emeralds and we don't know, the issue is we don't know which one is going to be true given our current perspective
+ You know I just picked 3976, you could choose an arbitrarily later date if you wanted to
+ So they're all talking about emeralds so it looks like they're sticking their necks out over the same domain of objects, right? All the emeralds
+ And one of them is just claiming there's going to be a change to emeralds and one of them isn't
+ But we think that there's something funny going on with the career case
+ Keep on thinking about that, I guess we can wrap up a little bit early, I'll just sort of give you some parting shots
+ Here are basically what I think of as the three take home lessons for today and you know we'll start to dig deeper into this
+ So the first was just a general point about the class, thought like philosophy more generally, philosophy of science raises-
+ Guys just hold on one second please, raises- I'm letting you off, this could be three minutes please
+ Raises ethical, metaphysical and epistemological puzzles, we saw those
+ We're focused on the epistemological puzzle which is essentially the problem of confirmation, when does evidence confirm a hypothesis
+ And we've seen a number of criteria of adequacy for this which is that you basically have to unify different inductive patterns
+ You have to solve the Raven's paradox and you have to solve the Raven's paradox
+ But we'll look at all of these a bit more as we go on
+ I'd be happy to stick around if anyone has any questions

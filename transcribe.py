@@ -22,23 +22,7 @@ def read_file(file_path):
 def send_to_chatgpt(content):
     """Sends content to ChatGPT and returns the LaTeX conversion."""
     try:
-        # Start the conversation with note-taking
-        note_taking_response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are an expert professor that takes his lecture transcript and gives professor-like lecture notes. Nobel prize genius brilliant. Expressive long and detailed notes."},
-                {"role": "user", "content": f"""{
-                    content}
-
-                    This is a lecture transcript.
-                    generate a basic outline of what the lecture was about. make it bulleted and include everything in the transcript, its okay to be verbose/long."""}
-            ]
-        )
-
-        # Extract the note-taking response text
-        notes_content = note_taking_response.choices[0].message.content.strip()
-        print("Generated outline...")
-
+        print("Generating lecture notes...")
         non_latex = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -46,17 +30,24 @@ def send_to_chatgpt(content):
                 {
                     "role": "user",
                     "content": f"""
-                    {notes_content}
+
+                    actual transcript to convert to notes:
                     {content}
 
-                    write out a good students full lecture notes 2nd person (about 3-4 pages) while not leaving out details (feel free to include steps, ie. fill in steps/explain algorithms like A* or Existentialism or Gaussian methods if mentioned + details from your own knowledge) and include minute tips that might help people studying. Feel free to include paragraphs and annotate (bold/italics) accordingly. Label it accordingly + main topic. Feel free to loosely follow the structure above and add things as you go. \n\n.\n\n"""}
+                    - EXPAND AND INCLUDE ON DEFINITIONS, EXAMPLES, AND DETAILS IN YOUR NOTES—especially for uncommon terms or concepts (assume no prior knowledge).
+                       - the length of the note should be proportional to how long the topic was discussed in the lecture.
+                    - Second person, it should sound like a professor writing notes for a student.
+                    - 1500 words long—longer is better than shorter, should be proportional to the length of the lecture.
+                    - include all parts of the lecture (syllabus, rants, etc.), even if they are not directly related to the main topic.
+                    - bold key terms & use bullet points with paragraphs between chunks.
+
+                    write out a good students full lecture notes 2nd person include all details (feel free to include steps, ie. fill in steps/explain algorithms like A* or Existentialism or Gaussian methods if mentioned + details from your own knowledge) and include minute tips that might help people studying. Feel free to include paragraphs and annotate (bold/italics) accordingly. Structure it well with subsections, bullets, and content. Feel free to loosely follow the structure above and add things as you go. \n\n.\n\n"""}
             ]
         )
 
         non_latex_content = non_latex.choices[0].message.content.strip()
 
-        print("Generated lecture notes...")
-
+        print("Converting to LaTeX...")
         # Continue the conversation with LaTeX conversion, without including the original lecture transcript
         latex_conversion_response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -64,12 +55,10 @@ def send_to_chatgpt(content):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {
                     "role": "user",
-                    "content": f"""now convert it to a full latex document with a table of contents. only output the latex, no code block or extra text and it should compile standalone (use hyperref though).\n\n{
+                    "content": f"""now convert it to a full latex document with a table of contents. only output the latex (do conversions from markdown to latex bolding, url, italics, etc.), no code block or extra text and it should compile standalone (use hyperref though).\n\n{
                         non_latex_content}"""}
             ]
         )
-
-        print("Converted to LaTeX...")
 
         # Extract the LaTeX conversion response text
         latex = latex_conversion_response.choices[0].message.content.strip()
