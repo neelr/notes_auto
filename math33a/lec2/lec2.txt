@@ -1,0 +1,737 @@
+ You're just going to make things more complicated.
+ Somehow, it looks as simple as it's
+ going to get as far as basic operations.
+ We'll make this intuition precise.
+ But for now, we see that basic operations at this point
+ are kind of useless.
+ What is this equation actually saying?
+ The system is saying that x1, if I rewrite that first equation,
+ it's telling me this is 3x2 minus 4x5 plus 2.
+ I'm just moving everything that's not x1 to the other side.
+ The second equation is telling me that x3
+ is going to be x5 plus 2.
+ And the third equation is telling me now
+ that x4 is going to be 2x5 plus 3.
+ This is the same system of equations just rewritten,
+ shifted everything around.
+ And so I notice that, interestingly, x4, x3, and x1,
+ these are all on the left-hand side.
+ They don't appear at all on the right-hand side.
+ So now on the right-hand side, I see that I only
+ have x2s and x5s.
+ So particularly, this is telling me that I can basically
+ choose x2 and x5 to be whatever I want.
+ There's no restrictions on what they have to be.
+ And they will determine x1, x3, and x4-- x1, x3, and x4
+ are determined by what the other two are, x2 and x5.
+ So we see x2 and x5 can be anything.
+ But on the other hand, the other ones, x1, x3, and x4,
+ are somehow determined by what happens to x2 and x5.
+ x2 and x5 have a lot of freedom.
+ They can be whatever.
+ x1, x3, and x4, they are pinned down by whatever x2 and x5 are.
+ So if I want to systematically write down
+ every single solution, I see that x2 and x5,
+ they can be whatever.
+ To find all solutions, we can set x2 and x5 to be whatever.
+ So you can just call them whatever you want.
+ I'm going to call them s and t.
+ x2 is s.
+ Let's call x5 t.
+ Then x1, x3, and x4, these are determined.
+ These are just determined by whatever x2 and x5 are.
+ x1, x3, and x4 are-- let me just write it again.
+ They are determined by what x2 and x5 are.
+ So all solutions are of the form-- remember,
+ we're solving this system of equations.
+ What does it mean to solve it?
+ It means to find all values of x1, x2, x3, x4, x5
+ that make this all true.
+ So I need to tell you what x1, x2, x3, x4, x5 are going to be.
+ And they're going to be of the form--
+ x1 is going to be--
+ what was it?
+ Three x2s.
+ x2 is an s.
+ x minus 4, x5, which is t plus 2.
+ x2 is just whatever it was.
+ x3 is t plus 2.
+ t plus 2.
+ x4 is 2t plus 3.
+ And x5 is just t.
+ So you can pick s and t to be whatever you want.
+ You can pick them willy-nilly.
+ And then if you plug them all into here,
+ this will give you a solution.
+ And this actually gives you every single solution
+ to this system.
+ Any questions there?
+ So again, we see that some linear systems,
+ they can have no solutions.
+ They can have unique solutions.
+ Or they can have lots of solutions.
+ This one has infinitely many.
+ Somehow this actually has a two-dimensional space
+ of solutions.
+ Two degrees of freedom.
+ Questions?
+ So we can leave them in the variable form
+ as long as we define them before?
+ Right.
+ I mean, so this depends a lot on what the question exactly
+ is asking.
+ If I ask for all solutions, you should leave them
+ in terms of variables.
+ If for some reason I say find a single solution,
+ you would probably need to pick actual values for s and t.
+ OK.
+ Great.
+ All right.
+ OK.
+ So this system, it was rather easy,
+ mainly because basic operations--
+ I mean, we didn't need to do any basic operations.
+ So I want you guys to take a minute,
+ discuss with our friends, discuss with someone you hate.
+ What makes this system easy?
+ In particular, what sets x1, x3, and x4 apart from x2 and x5?
+ This was kind of the crucial difference that
+ made this whole thing work out.
+ So discuss with your friends, why is this easy?
+ Easy.
+ Oh.
+ Why is he dying?
+ Oh, my god.
+ So I think--
+ How did he know to get--
+ I didn't know her, though.
+ [INAUDIBLE]
+ I checked out on this.
+ I loaded up, because I was like, how is this
+ going to happen again today?
+ It happened yesterday.
+ Oh, wait, wait, wait.
+ So b, 3b, what's the question?
+ It was like, I want to be able to just put it in this system.
+ I divide it and make it all one.
+ Or like, makes it as small as possible, like unit values.
+ So like, the right side is all like--
+ Oh, yeah, that works, too.
+ All righty.
+ What do we think?
+ Why is this one easy?
+ Maybe not easy.
+ I mean, it was still a lot of work, a lot of tedious work.
+ But I mean, it was not so bad, right?
+ In particular, I didn't have to do any basic operations.
+ Why was that?
+ Does anyone want to offer up a thing?
+ Yeah.
+ x1, x3, and x4 are already on the diagonal.
+ Right, yeah.
+ Right.
+ Yeah, I mean, somehow you see x1, x3, and x4.
+ And what does it mean to be on a diagonal?
+ This is not really a square.
+ But they're still like, they're the leading things.
+ They're like, one's closest to the edge.
+ What are some other things?
+ Yeah.
+ Coefficient of 1.
+ They have coefficients of 1, right?
+ I don't need to divide out anything, right?
+ Exactly.
+ Something else?
+ Something else?
+ Yeah.
+ They also don't have any variables about them.
+ Right, yeah.
+ In particular, x1, x3, and x4, these
+ only appear in the first, second, and third equations
+ respectively.
+ This is exactly the sort of diagonal kind of thing.
+ x1 only appears in the first equation.
+ x3 only appears in the second equation.
+ And x4 only appears in the third equation.
+ This is exactly right.
+ So these are precisely the key things
+ that make this sort of thing easy.
+ This is the sort of thing that makes basic operations
+ to make things worse.
+ If you multiply any row by anything,
+ you're going to introduce leading coefficients.
+ If you add any row to a different row,
+ you're going to put x1 in several different equations,
+ which would make things worse.
+ So we see that some systems are easier than others
+ and that basic operations will not help you anymore.
+ So the upshot I want to draw from this is the following.
+ Systems like this cannot be simplified.
+ When I say this, I mean specifically this.
+ Cannot be simplified using basic operations.
+ They're somehow as simple as possible.
+ Just to be precise, remember, where are basic operations?
+ They are adding equations to other equations,
+ multiplying equations by a certain thing,
+ or swapping equations.
+ You see that if you swap these equations,
+ it's not going to do anything.
+ OK, so precisely what do I mean by like this?
+ So more precisely, what I mean is the following.
+ Like this means, importantly, the leading coefficient
+ in each equation is 1.
+ And when I say leading coefficient,
+ that means like if you write it--
+ I mean, usually your variables will be labeled like x1
+ through x5 or something.
+ You write them in that order, a natural order.
+ And then you look at that first coefficient.
+ Here is the coefficient of x1.
+ Here is the leading coefficient of whatever coefficient is x3.
+ Here is the coefficient of x4.
+ And you notice that all these coefficients are 1.
+ So each of those leading coefficients are 1.
+ Each of those leading variables, this x1, this x3, this x4,
+ the first variable in each equation,
+ it doesn't appear in any other equation.
+ The leading variable in each equation--
+ It doesn't appear in any other equation.
+ Sorry, it's just as equations.
+ So this leading variable, this x1,
+ only appears in equation 1, does not appear anywhere else.
+ And one last thing--
+ I mean, it's not super crucial, but it is helpful.
+ And it is that the leading variables come,
+ let's say, in order.
+ What I mean by that is that x1 appears in the first equation,
+ x3 appears in the next equation, x4 appears in the next equation.
+ Somehow they form like a staircase.
+ For example, if you swapped these second and third
+ equations, you would have x4 come before x3,
+ which would not look like a staircase.
+ So these are the features that make this system particularly
+ easy to solve, in that there's no more basic operations to do.
+ You just write everything.
+ Just leave the leading coefficients.
+ You leave the leading variables on one side.
+ You move everything else to the other side.
+ Everything that you move over, you
+ can pick to be randomly whatever you want.
+ So these are the things that make this system particularly
+ easy to solve.
+ Let's give this sort of a system a name.
+ So this is a definition.
+ So systems like these are called super duper nice systems.
+ And as you might guess, this is not literally--
+ this is not a real word.
+ We'll come up with the real world data.
+ For now, let's just call them super duper nice.
+ They're super duper nice in that I don't have
+ to do any more basic operations.
+ I can just go to figuring out which variables
+ I can set to be whatever, which variables I determine.
+ So we see that I have a super duper nice system.
+ It's rather easy to solve.
+ I just move-- sorry, yes?
+ So if you had negative 3x1 plus x2, would you first
+ divide everything by negative 3, or write it in terms of x2?
+ So have x1 be one of the degrees of freedom,
+ and have x2 be dependent?
+ It would be better to divide by 3.
+ For what's coming up, having the variables
+ be in the order that they come in
+ is going to be super important.
+ That is a very good observation.
+ If you allow yourself to relabel the variables,
+ you get a little bit more freedom out of it.
+ Perfect.
+ Other questions?
+ Let me just sit in silence as I erase.
+ Really hate whiteboards.
+ [SIDE CONVERSATION]
+ All right.
+ So we see that if I have a system that
+ happens to be in super duper nice form,
+ then it's easy to solve.
+ I move everything that's not a leading
+ variable to the other side.
+ They all end up over on the other side.
+ So everything on the other side, over on the right-hand side,
+ I can pick x2 and x5 to be whatever I want.
+ And x1, x3, and x4, these are determined
+ by whatever x2 and x5 are.
+ So you might wonder, OK, so clearly not every system
+ is going to be super duper nice.
+ Is there any way we can fix that?
+ And this is actually precisely what row operations--
+ or sorry, these basic operations are for.
+ Turns out, basic operations, if you use basic operations,
+ you can transform any linear system
+ into a super duper nice one.
+ As an example, I would like you to consider, first of all,
+ the following system, x plus 2y plus 3z is equal to 1.
+ x plus 3y plus 4z is equal to 3.
+ And x plus 4y plus 5z is equal to 5.
+ That's a system.
+ So I'd like you to do two things.
+ First of all, use basic operations
+ to make this transform it into a super duper nice system.
+ Super duper nice.
+ Should I just count a shorter word?
+ Great.
+ OK.
+ Once you have it in super duper nice form,
+ I would like you then to find all solutions.
+ Take a minute, try this out, see how far you can.
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ [SIDE CONVERSATION]
+ All right.
+ How's it going?
+ [SIDE CONVERSATION]
+ Great.
+ So we want to solve this linear system, right?
+ And the two steps are basically use basic operations,
+ make it super duper nice, and then
+ write out all the solutions.
+ So I'm going to label these equations as 1, 2, and 3.
+ So using our basic operations, how do I simplify this?
+ How do I make this super duper nice?
+ Well, probably the idea is really
+ to use your operations to eliminate variables that
+ make this not super duper nice.
+ For example, I want to use this x
+ and use it to, for example, eliminate these x's.
+ I can do that by, for example, subtracting one copy of row 1
+ from these other rows.
+ I just take this x, subtract it from this row, subtract it from this row.
+ But to do that, you have to subtract one whole row
+ from the other whole rows.
+ So when I do this, this leaves the first equation alone.
+ And so I have x plus 2y plus 3z.
+ It's fine.
+ Next equation, now, is y plus z is equal to 2.
+ And I have 2y plus 2z is equal to 4.
+ I've successfully gotten rid of this axis from here and here.
+ Now this is probably going to be one of my leading variables.
+ I see it has coefficient 1.
+ It's all the way off the left-hand side.
+ OK, so how do I continue?
+ Well, this is the next leading variable.
+ I'm going to use this y-- it doesn't have any coefficients,
+ so I don't need to divide by anything.
+ I can just use this y to eliminate these other y's.
+ And so I can use this one to eliminate this and this.
+ That's how I do that.
+ So I subtract two copies of row 2 now from row 1
+ and two copies of row 2 from row--
+ where does that get me?
+ That gets me-- so I have x.
+ I have no more y.
+ Here I'm going to have z is equal to negative 3.
+ Here I have y plus z is equal to 2.
+ And the last equation, interestingly enough,
+ ends up just being 0 is equal to 0, which I don't know.
+ Maybe it looks weird, but it's true.
+ So there's nothing wrong here.
+ So we're good.
+ True, nothing's wrong.
+ Some people see that and they're like, what happened?
+ Nothing happened.
+ This is fine.
+ So now we see this is super duper nice.
+ This is great.
+ So I see that's x leading variable,
+ y is the leading variable.
+ They don't appear anywhere else.
+ They have coefficient 1.
+ x is in the first equation, y is in the second equation.
+ This is super duper nice.
+ Now once you have a super duper nice system,
+ how do you solve it?
+ You leave all the leading ones on the left-hand side.
+ You leave-- you move all the non-leading ones
+ to the other side and then see what that tells you.
+ Now I rewrite the system.
+ It's telling me that x is equal to negative z minus 3.
+ It's telling me y is equal to negative z plus 2.
+ And the third equation is telling me just 0 is equal to 0,
+ which I will not write anymore.
+ It's true.
+ I don't really care though.
+ It's like nine interesting statements.
+ So this is my now--
+ this is my system.
+ This is telling me that z can be anything.
+ z can be whatever.
+ So then x and y are pinned down.
+ They're determined by whatever z is.
+ Well, let's just say z is equal to t.
+ And this is telling me that all solutions have to have x now
+ is going to be negative t minus 3.
+ y is going to be negative t plus 2.
+ And z is going to be t.
+ This is all the solutions.
+ If you want to pick a specific solution,
+ you would pick some particular value of t.
+ These are all solutions to this system of equations.
+ So for example, if you want to literally check a solution,
+ for example, you can take t to be 1, I guess.
+ Then hopefully, x being negative 4, y being 1, and z being 1.
+ This should be a solution.
+ This is a particular solution, and you can always check.
+ If I plug it back in, is that a solution?
+ You go through the whole thing, and you'll get a yes.
+ Yeah, I'll let you guys check.
+ I'm pretty sure this is a solution.
+ Is this called parameterization?
+ This is-- yeah, this is a parameterization
+ of all the solutions.
+ There's one way to say that.
+ You're finding all solutions in terms of a parameter t.
+ Or before, it was parameters s and t.
+ So this is a very systematic way of approaching these solutions.
+ Use basic operations to make things super duper nice.
+ Once you're super duper nice, you
+ can just write out all the solutions in this sort of way.
+ So this is a general strategy, general strat
+ for solving linear systems.
+ So the general strategy is step one.
+ Make the system super duper nice.
+ How do you do that?
+ Use row operations.
+ Sorry, basic operations.
+ You probably know, if you've read the textbook,
+ you probably know where I'm going with this,
+ using basic operations.
+ In other words, use your basic operations as far
+ as they will make things simpler.
+ Once they will no longer make things simpler, what do you do?
+ Well, once it's no longer simplifiable,
+ you can actually just write out the solutions.
+ Move everything that's not a leading variable
+ to the other side.
+ Those things can be whatever they want.
+ The things that are leading variables are then determined
+ by whatever you moved over.
+ All right.
+ So this general strategy seems very useful.
+ Pick its name.
+ This is called-- this is Gauss-Jordan elimination.
+ So this is admittedly not a very precise formulation
+ of Gauss-Jordan elimination.
+ There is a very precise formulation
+ of Gauss-Jordan elimination.
+ For that, I highly recommend reading the textbook for this.
+ I mean, it's one thing where I could write out
+ the precise formulation of Gauss-Jordan elimination,
+ but I don't think it's very useful for you
+ to see me write it off.
+ I kind of like this thing.
+ It's the kind of thing that I feel is best
+ learned through practice.
+ If you're curious, you should take a look
+ at the precise definition.
+ I'll just leave it there.
+ Question?
+ Can there ever be a case where the simplest form doesn't give
+ you a coefficient of 1?
+ A leading coefficient of 1?
+ Yeah.
+ I'm going to say no.
+ If your leading coefficient is not 1,
+ it's like simplifiable in that you just divide that row
+ by whatever the coefficient is.
+ Other questions?
+ Great.
+ OK.
+ So now I'm going to--
+ I take a minute.
+ Now we know how to solve linear systems, so the class is over.
+ There's still a lot to do.
+ One thing I want to address is something
+ that you've probably noticed.
+ It's extremely tedious to write out systems
+ of a linear equation like that.
+ The issue is that there's a lot of redundancy
+ in writing a system in this sort of way.
+ For example, I'm writing x, y, and z quite a lot,
+ but based on the way I've written things,
+ the positions I'm writing these numbers,
+ you see that I don't really need to write
+ the x every single time.
+ You know that whatever is in the first column, that's
+ the big coefficient.
+ The x, whatever's in the second column is corresponding to y,
+ whatever's in the third column is corresponding to z.
+ There's a lot of redundancy.
+ In particular, I mean, yes, I'm adding things,
+ but it's kind of redundant to write a plus every single time.
+ If we all agree to write x's, the coefficient for x
+ is always in the first column, the coefficient of y
+ is always in the second column, so on and so forth,
+ there's a lot of things that we don't need to write
+ in this sort of way.
+ In particular, we can condense these linear systems
+ quite a lot.
+ So it is the following, faced with an issue, writing is t's.
+ Specifically, writing linear systems in this way is t's.
+ So maybe sometimes there are things in life
+ that are tedious, and you can't do anything about it.
+ But here it's tedious, and there are things we can do about it.
+ We can just agree that the first column is just x's.
+ Stop writing x's.
+ So the solution in the sort of TDM in this case,
+ there is an effective solution.
+ It's to just agree, we all agree, each column, sorry,
+ each variable gets its own column.
+ This allows us to just write, instead of 3x, 5x, whatever,
+ I can just write 3, 5 in a corresponding column.
+ So if we all agree that the first column is x's,
+ second column is y's, so on and so forth,
+ then all I need to do is I just need to tell you
+ what the corresponding coefficient is
+ for each equation.
+ So for example, I'm looking at the system, for example,
+ x plus 2y plus 3z is equal to 4.
+ And I'm looking at 5x, 0y's, 6z's is equal to 7.
+ And this is a linear system.
+ And if we just agree that the first column is all x's,
+ the second column is all y's, which
+ is why I have this funny space here,
+ telling you that I have no y's, and the third column is all z's,
+ I can actually just simply write this as being 1, I have a 2,
+ I have a 3, I have a 4, I have a 5, I have a 0, I have a 6,
+ and I have a 7.
+ If we all just agree that the first column is coefficients
+ for x, second column is coefficients for y,
+ third column is coefficients for z,
+ the fourth column is the other side of this equation,
+ I can just, instead of writing all these tiny symbols,
+ I can just write just the numbers.
+ So this is a matrix.
+ It's finally-- we're using my word-- this is a matrix.
+ What is a matrix?
+ It's just a grid of numbers.
+ And I see that's using matrices.
+ It simplifies our lives quite a bit.
+ One thing to note is that, I mean,
+ the numbers over on this side versus the numbers
+ on this side, they have a different flavor.
+ The 4 and the 7, these are kind of like--
+ and for example, they're on the other side
+ and the equation side.
+ So typically, it's useful to remind yourself
+ that the 4 and 7 play a special role by drawing
+ a little dashed line.
+ So this particular kind of grid of numbers,
+ this is called an augmented matrix.
+ It's augmented in that I've attached a little bit more
+ to my matrix.
+ The 4 and 7 are kind of like smooshed
+ on the back end of this matrix.
+ Questions?
+ Does the shape of the bracket matter?
+ Does the shape of the bracket matter?
+ No.
+ Right, so a lot of people write parentheses.
+ Some people-- I mean, I think it would be weird to write
+ curly braces.
+ Some people just write bars.
+ I like square brackets, because it's, I don't know,
+ aesthetically pleasing to me.
+ You can write whatever you want, but I
+ would avoid just the bars.
+ I think having some sort of the same is important.
+ OK, so hopefully, we'll see that just writing just
+ the coefficients and doing these operations,
+ these basic operations, in terms of just these matrices,
+ hopefully, you'll find that that's
+ slightly less tedious than writing out
+ the equation every single time.
+ Let's do an example of this sort of thing.
+ Let's look at the following system.
+ Let's say x minus y minus z is 2.
+ Let's say x minus 2z is equal to 3.
+ Let's say 2x minus y minus 3z is equal to 5.
+ So this is a system of equations.
+ So what I would like you to do is to translate this
+ into an augmented matrix.
+ Remember, a matrix is just a grid of numbers.
+ An augmented matrix is a grid of numbers
+ where you put a little bar in.
+ So first of all, translate this into an augmented matrix.
+ Second, on that augmented matrix,
+ use the basic operations to make the augmented matrix super
+ duper nice.
+ In particular, this condition of being super duper nice,
+ this is a condition on a system of equations.
+ So I'd like you to think about, like,
+ what does that mean in terms of the augmented matrix?
+ Once you have it super duper nice, I'd like you to translate
+ back to equations, passing back and forth
+ between a system of equations and its corresponding matrix.
+ This is going to be something that we're going to do a lot,
+ so hopefully you get used to it.
+ Translate back into a system of equations,
+ and then find all solutions.
+ [COUGHING]
+ [RUMBLING]
+ [COUGHING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ [RUMBLING]
+ All right, hopefully, it's not going so bad.
+ How do we translate this into an augmented matrix?
+ The key idea is to stop writing all the x's, all the y's,
+ all the z's, all the minus signs, all the plus signs,
+ all the equal signs, and just write the numbers,
+ remembering which position they're supposed to be.
+ Importantly, I've intentionally tried to trick you.
+ I put the x in this column.
+ It's not supposed to be in this column.
+ You have to put all the variables in their corresponding
+ column.
+ So in particular, when I translate this to a matrix,
+ it's going to be 1, negative 1, negative 1, 2; 1, 0, negative 2,
+ 3; and 2, negative 1, negative 3, 5.
+ And sometimes, if you're just lazy,
+ you're just not like those dashed,
+ you can just write it as--
+ Any questions on translating between system versus matrix?
+ Crucially, I mean, we're all agreeing that x's have to go
+ in the first column, all the y's have to go in the second column.
+ Very important that you don't mix up the positions.
+ Now the positions are super important.
+ So once we're here, how do I make this super duper nice?
+ How do I make this correspond to something super duper nice?
+ I just focus on these coefficients.
+ I can use that 1 to eliminate that and that.
+ So I can subtract one copy of row 1.
+ Subtract two copies of row 1.
+ This ends up being the following.
+ So I'm going to get 1, negative 1, negative 1, 2.
+ I get 0, I get a 1.
+ Here I get a negative 1, here I get a 1, 0, 1.
+ [SIDE CONVERSATION]
+ So hopefully you're seeing some improvements
+ on how much random stuff you have to be writing.
+ Hopefully this is-- you'll find that this is way more efficient
+ to just write the matrix.
+ For example, this 2 to eliminate this.
+ What does that give me?
+ It gives me 1, negative 1, negative 1, 2.
+ 0, 1, negative 1, 1.
+ 0, 0, 0, 0.
+ So we see that this is the matrix.
+ And this is corresponding to a system
+ in super duper nice form.
+ Because the super duper niceness is telling you
+ that every leading number in each row, it's a 1.
+ And these are appearing in a staircase format.
+ They don't have a 1, a 1, and a 1 over here.
+ This is what it means to be in super duper nice form.
+ Now once I'm in this form, how do I find all the solutions
+ to the original system?
+ Well, you have to translate this back into a system.
+ Ah, sorry.
+ This is not in super duper nice form.
+ There's just a little bit more I have to do.
+ As you all may have noticed, this 1,
+ I need to use it to eliminate that 1.
+ But that's not so bad.
+ It's going to be 1, 0, negative 2, 3, positive 1, 2.
+ The top right corner should be 2.
+ 2, yes.
+ I'm telling you, arithmetic's more.
+ Then again, once you're in super duper nice form for a matrix,
+ translate it back into the corresponding linear system.
+ You translate this back into x minus 2z is equal to 2.
+ And y minus z is equal to 1.
+ So once you're there, you can actually
+ start writing out those solutions.
+ Isn't that supposed to be 2 and that's supposed to be 3?
+ Like, from the original equation,
+ the very, very top right 3 should be a 2, and then a 2.
+ OK, I think I messed up the arithmetic here.
+ That's not super important.
+ I have it hopefully correct in my notes.
+ I do want to point out one last thing.
+ So linear systems, we see that they correspond to matrices.
+ So we have a dictionary between linear systems
+ and the corresponding matrix.
+ If I have a basic operation on the matrix side,
+ it's called a row operation.
+ That's a literal term.
+ What does it mean to be a super duper nice system?
+ On the augmented matrix, it means being in row reduced
+ echelon form.
+ This is just what that means.
+ It means that you're corresponding
+ to a super duper nice system, also known as RRDF.
+ For a precise definition, please see your textbook.

@@ -24,7 +24,7 @@ def send_to_chatgpt(content):
     try:
         print("Generating lecture notes...")
         non_latex = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4-turbo-preview",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {
@@ -34,14 +34,16 @@ def send_to_chatgpt(content):
                     actual transcript to convert to notes:
                     {content}
 
+                    - *INCLUDE ALL LECTURE EXAMPLES* OR create your own. make sure it is clear and easy & formatted well
+                        - ex. if positive feedback loops are mentioned, give an example of ripe fruit ripening faster in a bowl.
+                        - ex. if grep is mentioned, explain how to use it and give an example of how to search for a string in a file + what the output looks like.
+                        - ex. if row echelon form is mentioned, give an example of converting a matrix to row echelon form.
                     - EXPAND AND INCLUDE ON DEFINITIONS, EXAMPLES, AND DETAILS IN YOUR NOTES—especially for uncommon terms or concepts (assume no prior knowledge).
                        - the length of the note should be proportional to how long the topic was discussed in the lecture.
-                    - Second person, it should sound like a professor writing notes for a student.
-                    - 1500 words long—longer is better than shorter, should be proportional to the length of the lecture.
-                    - include all parts of the lecture (syllabus, rants, etc.), even if they are not directly related to the main topic.
+                    - 3000 words long—longer is better than shorter, should be proportional to the length of the lecture.
                     - bold key terms & use bullet points with paragraphs between chunks.
 
-                    write out a good students full lecture notes 2nd person include all details (feel free to include steps, ie. fill in steps/explain algorithms like A* or Existentialism or Gaussian methods if mentioned + details from your own knowledge) and include minute tips that might help people studying. Feel free to include paragraphs and annotate (bold/italics) accordingly. Structure it well with subsections, bullets, and content. Feel free to loosely follow the structure above and add things as you go. \n\n.\n\n"""}
+                    write out a good professor full lecture notes for a student 2nd person include all details (feel free to include steps, ie. fill in steps/explain algorithms like A* or Existentialism or Gaussian methods if mentioned + details from your own knowledge) and include minute tips that might help people studying. Feel free to include paragraphs and annotate (bold/italics) accordingly. Structure it well with subsections, bullets, and content. \n\n.\n\n"""}
             ]
         )
 
@@ -50,7 +52,7 @@ def send_to_chatgpt(content):
         print("Converting to LaTeX...")
         # Continue the conversation with LaTeX conversion, without including the original lecture transcript
         latex_conversion_response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4-turbo-preview",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {

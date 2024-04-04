@@ -1,0 +1,1813 @@
+ It keeps track of what programs are available and all that.
+ But it really doesn't do much.
+ You talk to it.
+ It talks back to you.
+ Or more often, you talk to some of these programs that are run.
+ And you just use the shell as a gateway
+ to the more interesting part of your system, which
+ contains the bulk of the line code and the outputs.
+ So this original shell program, which was fairly small--
+ I don't know.
+ I'm guessing it was like 10,000 lines of code, not much--
+ was supposed to be very simple in that way.
+ Now, with time, the shell is thrown.
+ It's safe to say it's now kind of a fatter shell.
+ But that's still the basic idea.
+ You don't think of the shell as a complete program.
+ You just think of it as a program that
+ lets you manage other programs.
+ So here we are.
+ We're talking to the shell.
+ It's waiting for us to type some input.
+ And we can type some random command like this.
+ When the shell sees a command, what it does is it thinks,
+ what does this guy really want?
+ Ordinarily, if you just type a bunch of words like this--
+ echo-- oh, I didn't mean to do that.
+ Let's try this again.
+ I don't know what it does.
+ [INAUDIBLE]
+ Echo a, b, c, d.
+ Then it just-- you know, the shell says, OK,
+ I will run the command echo.
+ Echo is one of these little programs in here.
+ And the echo will take the arguments that it's given
+ and do whatever it wants.
+ The shell does it.
+ But in some cases, you can give the shell
+ some words with many characters in it.
+ A particular star is a meta-character
+ inside a shell word that says, well,
+ take all the files in the current directory
+ and let's do some pattern matching.
+ So that star, basically, the shell
+ says, look at all the files in the current directory
+ and replace this star with the names of all those files.
+ You can have something a little bit more limiting
+ if you do something like this.
+ This shell word is a pattern that
+ matches all the files in the current directory whose
+ names start with c.
+ This kind of pattern matching within the shell
+ is called globbing.
+ So globbing happens.
+ The name globbing comes from a function
+ inside the shell called glob, which is a function that you
+ give it a string.
+ And it gives you all the file names that it sets you.
+ Echo, in this case, doesn't know about the star.
+ Because what the shell does is it expands those names
+ before whoever sees it.
+ So if we type this, it's exactly as if we type this,
+ and Echo can't tell the difference.
+ Shell is the only part of the system that knows about it.
+ So when you're running a command like Echo or something
+ like that, we are talking via our login connection to Bash.
+ Bash is sending us output.
+ But Bash will, on our request, start off some other program--
+ in this case, Echo.
+ And it will tell that program, oh, well, you
+ can take those inputs as well.
+ And any outputs that you generate
+ will also be sent to the same place
+ that Bash is receiving input from and sending output to.
+ By default, that's what programs do.
+ They just inherit Bash's input and output.
+ Echo never looks at its input, doesn't care what it's input.
+ It never reads a file from any input.
+ It simply takes the arguments that you passed to Echo
+ and sends it to the output.
+ And that's why we see it on our screen.
+ We ran Echo.
+ It sent the output to the screen.
+ And then Echo exited and went away.
+ Yes?
+ Does Bash also translate output that you run programs through?
+ When Bash runs a program on your behalf,
+ it gives that program access to its standard input
+ and its standard output.
+ It's not filtering the output in any way.
+ So whatever your program outputs-- in fact,
+ when you run maybe a more complicated command that
+ takes longer-- OK, let's try another command like Sleep.
+ Sleep is a very simple command.
+ You give it a number of seconds to sleep.
+ And then it just sits there for that many seconds.
+ And then it exits.
+ One of the most dumbest commands you can imagine, right?
+ Why would you want to do this?
+ Well, because one has special effects in a Bash script.
+ You want the script to pause and let the user think for a bit
+ and all that sort of thing.
+ When we're running Sleep, Sleep basically
+ is in charge of standard input and standard output.
+ And since it doesn't do anything with them,
+ it's kind of ineffective.
+ The shell is just waiting for Sleep to finish.
+ That's by far.
+ Yeah?
+ Can you reiterate what Bash does when it sees
+ the echo and then the stop?
+ When you type an ordinary command like either
+ the echo command or the Sleep command, what Bash does
+ is it starts up a new program to run Sleep for you.
+ The more technical term for it is
+ it's a process, right?
+ A process is a program in execution.
+ While echo is running, Bash simply
+ is waiting for echo to finish.
+ It's not doing anything else, right?
+ Echo is now in charge of your kernel.
+ And if you type stuff at it-- I guess
+ echo would see the stuff it doesn't care,
+ so don't bother typing.
+ And whatever output echo generates,
+ it'll do that before it finishes.
+ So Bash is just sitting there waiting for echo to finish.
+ So when you type the star in it, all the files were produced.
+ That's echo running all those files, or is it Bash?
+ No.
+ This is actually-- Bash will extend that Sleep star
+ to the list of file names.
+ In alphabet order, it's very orderly about that.
+ And it does all that before it starts up there.
+ OK.
+ So after the file names are back on Bash,
+ and then echo just puts that out?
+ Then echo-- yeah.
+ Echo doesn't know that they're file names.
+ All echo does is it sees a bunch of strings, and it outputs them.
+ It doesn't care whether they're file names or not.
+ Yes?
+ [INAUDIBLE]
+ Oh, life would be simple if that were true.
+ But this is the real world, and it's not true.
+ So globbing patterns are different
+ from regular expressions.
+ [INAUDIBLE]
+ You can think of globbing patterns
+ as being sort of a stripped down version of regular expressions.
+ And that's kind of why I started with them,
+ because they're simpler.
+ They're easier to explain.
+ But regular expressions are more complicated and a lot more fun.
+ And we'll get to them again.
+ But we haven't got them yet.
+ Yeah?
+ [INAUDIBLE]
+ I was thinking for-- is Batch essentially just the Linux
+ implementation of shells?
+ Yes.
+ There's a standard for a POSIX shell,
+ and Bash is an implementation of that.
+ There are other implementations as well.
+ I think Apple prefers ZSH and that sort of thing.
+ But the subset that we're talking about
+ is common to all the shells.
+ Other questions?
+ Yes?
+ Wait.
+ So when you open a terminal window in your pack,
+ and you kind of put the med there,
+ what's the difference between that and then
+ typing in Bash into the terminal window [INAUDIBLE]
+ Oh.
+ Well, all right.
+ So that's a good question.
+ And I'd like to answer that by distinguishing programs
+ from processes.
+ A program is a static thing.
+ In Linux, programs are represented as files, right?
+ You can almost think of them as being executable files.
+ You look inside the file.
+ You might see machine code.
+ You might see Python code.
+ You might see a bunch of other stuff.
+ But for now, let's just say, OK, these
+ are files that you can run.
+ But if you just see that program, it's not running.
+ In fact, let's take a look at Bash.
+ We can find out where Bash is by using this built-in shell
+ command type.
+ And type Bash says, well, if you were to run the command Bash,
+ here's the executable file that I would actually
+ go and execute for you.
+ We can take a look at the meta information for that file
+ with the command ls minus l, one of my favorite commands.
+ Don't forget this command.
+ And what we can do is say, OK, user local.
+ There must be an easier way to do this.
+ What this does is it tells me what that executable file is
+ instead of how it works.
+ Oh my goodness, am I in trouble.
+ See what that file is?
+ I briefly mentioned files like this last time.
+ First column of the ls output tells us the file type.
+ And then I'm going to honor it.
+ Well, let's go through all of this.
+ What we can do is talk about ls minus l.
+ ls is short for list files.
+ And ls minus l says, not only list the file names,
+ but list many-- not all, but many-- of the file attributes.
+ Also list attributes.
+ Think of the attributes as information about the file,
+ except it's not the contents of the file.
+ It's sort of the metadata about the file.
+ By convention, the columns of ls minus l always look like this.
+ First, we have this over column, which
+ tells us the type of file and its permissions.
+ So file type and permissions.
+ This permissions is sometimes called the mode.
+ And in our case, the permissions look like this,
+ and the file type looks like this.
+ So far, in this lecture and previous lectures,
+ we've seen three file types.
+ D means directory, minus means regular file,
+ and l means symbolic language.
+ A symbolic link is an interesting kind of file,
+ because it doesn't have contents in the ordinary sense.
+ The contents of the symbolic link is a string.
+ And when used in certain ways, that string is true like a file.
+ So over here, the contents of the symbolic link,
+ which is listed after the error with ls minus l alpha,
+ is the contents of that symbolic link.
+ It's a little bit too long to put on the line,
+ so it goes over to this line.
+ But I wanted to finish the columns here
+ before we get too far.
+ So file type and permission.
+ The second number here is the link count.
+ This link count counts the number of directory entries
+ anywhere in the system that point to this line.
+ So what you can have in the Linux file system
+ is I'm using this for directories,
+ and let's use this for regular files.
+ And I need another symbol for symbolic links, all right?
+ Symbolic links.
+ As you'll recall from last time, the tree structure
+ and hierarchy of the links file system
+ is really referring to the directory structure.
+ So you have directories that look like this.
+ Here's the root directory, whose name is slash.
+ Here are subdirectories.
+ And eventually, you'll get to a bunch of regular files.
+ They're very common.
+ And occasionally, you'll see a symbolic one.
+ But it's not entirely a tree structure.
+ Only the directories are in a tree structure.
+ You're allowed to have multiple names for the same file.
+ So we can have a link like this.
+ We can have a link down to here.
+ We can even have two links from the same directory
+ to the same file.
+ As long as those are different names, that's OK.
+ You can even, if you want-- this is especially tricky,
+ so I'm naturally going to show it to you--
+ you have two hard links to the same symbolic one.
+ The link count of a file tells you
+ how many pointers there are to that file.
+ So what do we have here?
+ The link count is going to be two for this guy.
+ The link count is going to be one, and so forth and so on.
+ The link count is three.
+ Here, what's the link count of this guy?
+ You might think it's going to be one,
+ but if we do something along those lines,
+ let's make a directory.
+ The command maker will make a directory.
+ And we'll call it foo.
+ Why not?
+ Somebody else is already free to come here and fool me.
+ Oh, well, that's not very helpful.
+ I should warn you, ls minus l is a little flaky in the sense
+ that if you specify a directory, it
+ lists all the files in that directory.
+ I just created an empty directory,
+ and so it says-- there's nothing here, total zero--
+ but I didn't want to look at all the files in foolish.
+ I wanted to look at foolish itself.
+ ls has a flag for that.
+ ls minus b means don't treat directories
+ any different from anything else.
+ Just treat it as a file, right?
+ Don't look inside in directories.
+ Let's try this with that option.
+ And we see that this thing has a link count of two.
+ Why would foolish have a link count of two
+ if it's an empty directory?
+ We just created an empty directory, something like this.
+ It's called foolish.
+ Here it is with nothing in it.
+ Why does it have a link count of two?
+ Any thoughts?
+ Yes?
+ [INAUDIBLE]
+ Right.
+ Remember, we have inside here dot points to this directory.
+ So its link count is two, even though it's empty.
+ Also, there's an entry dot dot that points to the parent.
+ By making the foolish directory, we
+ increase the link count of its parent,
+ because dot dot points to the parent.
+ But basically, that's what the link count is.
+ It tells you how many pointers there
+ are to this particular file, regular file, or directory,
+ or symbolic link.
+ Yes?
+ Does that [INAUDIBLE] also extend to regular files
+ and symbolic links?
+ Would they, because they're pointing to the other directory,
+ if we wanted to go to their parent, would that work?
+ Or would that just--
+ Oh, that's very interesting.
+ The thing is, you cannot go to the parent of a regular file.
+ You cannot go to the parents of a symbolic link.
+ They don't have parents in the usual sense.
+ For example, suppose you're sitting here.
+ You've got two guys pointing to you.
+ And you say, I'd like to know my parents.
+ Well, there's two possible answers.
+ This file doesn't really have just one parent.
+ It has two.
+ So unless the link count is one, in which case, OK,
+ the parent is whoever it's pointing to,
+ the question is, who is my parent?
+ It's a question that doesn't necessarily have a good answer.
+ Another way to put it is the following.
+ In Linux, files don't have names.
+ I'm going to write that in big letters.
+ They don't have names.
+ Files are just files.
+ It's up to you to name them.
+ And by creating a bunch of hard links,
+ you can give them whatever name you like.
+ The things that have names are directories.
+ So the real thing here is directories
+ have directory entries.
+ Each directory entry maps a name to the corresponding file.
+ So you can think of a directory entry
+ as something really simple here.
+ It says, OK, here's my name, foolish thing.
+ And over here is the file.
+ And it's just a pointer to the file.
+ That's all it is.
+ So you can think of a directory as just a collection of names
+ mapped to files.
+ The names all have to be unique.
+ And that's the only constraint we have on directory.
+ Now, this idea that you're using these-- I call them pointers.
+ But these are not pointers in the sense of C++.
+ They're not machine addresses, interbrand, or anything
+ like that.
+ They're a different kind of pointer.
+ They're a pointer into persistent storage.
+ You can think of them as being a pointer into your flash drive
+ or into your hard disk.
+ It's not exactly that, but that's close enough for that.
+ And there's a way in Linux to find out
+ the values of these pointers.
+ And that's the minus i flag of ls.
+ This says, list the inode.
+ The inode number is a unique integer that belongs to a file.
+ Every different file on the system
+ will have a different inode number.
+ And you can use ls minus i to figure out
+ the structure of all the files in your file system,
+ even if that structure is really complicated with a lot
+ of shared links and all that sort of thing.
+ So for example, what I could have done back here
+ is I could have said ls minus li, user local cs then bash.
+ And notice it has an extra column now.
+ This symbolic links inode number is 9827816.
+ So you can say, all right, we have root file system.
+ It has a directory entry usr.
+ It has, down here, another directory called local.
+ And then down here, we have a directory entry called cs.
+ And then down here, we have a directory called bin.
+ And then down here, we have a directory entry called bash.
+ Bash is a symbolic link.
+ Its contents are dot dot slash 5 2 26 bin bash.
+ Oh my goodness.
+ I'll write that down here.
+ Dot dot slash bin?
+ No.
+ Dot slash bash.
+ 5.2 dot 26 slash bin slash bash.
+ It's really all sitting inside the symbolic link.
+ And this particular symbolic link in our system
+ is numbered 9827816.
+ [INAUDIBLE]
+ Question?
+ With regards to like kind of numbers,
+ would they change based on like virtual machines
+ and virtual memory, physical memory,
+ or will it always match physical memory on your computer?
+ They're not virtual, and they're not physical.
+ There's something else.
+ They're numbers of parts of your secondary store.
+ So they're not kept--
+ I mean, yeah, I mean, at some point,
+ these numbers have to be included [INAUDIBLE]
+ and print them out.
+ But they're really addresses of data structures
+ in the file system.
+ They're not memory-oriented at all.
+ All right.
+ So what we can do--
+ don't try this at home.
+ Don't try this on CSET even, but I'm going to do it anyway--
+ is I can do something like this.
+ ln, user local csbin dash, user local csbin foolish.
+ All right.
+ If we now do that ls minus li, we'll
+ see that we have two different names, bash and foolish,
+ for the same symbolic link.
+ Symbolic link has got the same content.
+ It's got the same unique ID.
+ So you know it's the same symbolic link.
+ And what I've done is I've gone to user local csbin,
+ and I've created another name, foolish,
+ for this same symbolic link.
+ OK?
+ So how did I do that?
+ I used the command ln.
+ When you say ln ab, this creates a hard link to a file.
+ The file it creates a hard link to is called a.
+ And b is the new name for that file.
+ a still exists afterwards.
+ It's just now that you have two names instead of one.
+ So this is the source, which has to already exist.
+ This is the decimator.
+ And ln won't necessarily succeed.
+ You can try to do ln in ways that aren't going to work.
+ For example, suppose I did something like this.
+ Here, what I'm trying to do is create yet another name
+ for this symbolic link.
+ I'm trying to create another name up here called ouch.
+ And since csnat doesn't trust me, the School of Engineering
+ is very strict about who they're going to trust.
+ And faculty members are not that high on the list.
+ When we try to do that, it'll say,
+ you're not allowed to do that.
+ You lack permissions to create that hard link.
+ So you can't always create hard links.
+ Only sometimes.
+ But when you can, you can create a new name for the same file.
+ Yes?
+ What's the danger of making one such a hard link?
+ The danger would be the following.
+ Let's look at the permissions on the root file system.
+ Here, I am using all three options at the same time.
+ The minus l option, the minus d option, and the minus i option.
+ And notice that root has two hard links.
+ But look at the permissions on root.
+ I haven't explained permissions, so let's go back and explain.
+ When you look at permissions like this,
+ they're divided into three parts,
+ belonging to the user, the group, and the other.
+ These permissions apply to you if you
+ are the owner of the file.
+ These permissions apply to you if you don't own the file,
+ but you are in the files group.
+ And these permissions apply to you if you're neither.
+ You're just some other person.
+ The three bits that we're talking about here
+ are r stands for read, w stands for write,
+ and x stands for execute.
+ And it's fairly common for people
+ to specify these permissions using a fancy computer science
+ technology called octal numbers.
+ So this set of permissions would be called 7-7-7,
+ because all three bits are on, and octal 7 stands for 111.
+ Or you might see permissions that look like this-- r, w, x,
+ r minus x, minus minus x.
+ Here, the permissions are-- I don't want to see it, sorry.
+ And this permission is 7-5-1, because we have 111, 101, 001.
+ You all remember octal numbers and binary numbers
+ and all that sort of thing.
+ Did they teach you that stuff in CS31, perhaps?
+ No?
+ How did you get this far without learning octal?
+ Did they teach you a hexadecimal?
+ In '33.
+ In '33.
+ All right.
+ Well, all right, so it's entirely a coincidence
+ that we use base 10 arithmetic, and we have eight fingers.
+ And two thumbs, right?
+ What they should have done is just
+ let you count on your fingers, and then
+ you would count 0, 1, 2, 3, 4, 5, 6, 7, 10, right?
+ Skip 8 and 9, because they're just trouble, right?
+ That would make it so much easier,
+ because then you could do octal arithmetic
+ with your thumbs on the rest of your fingers.
+ Unfortunately, we're stuck with decimal.
+ But in computer science, we thought
+ we could reinvent the wheel and start
+ using octal and hexadecimal, since they're
+ so much better, trust me.
+ Everything should be done in binary.
+ In fact, I think we should even look
+ like doing the class time in binary, or octal or hexadecimal.
+ So if you haven't learned octal, go look it up.
+ It's easy to pick up.
+ Only takes 10 minutes, unless you want to do multiplication,
+ and we won't do that.
+ All right.
+ Anyhow, where were we?
+ Permission.
+ Oh, notice the permissions here are 555,
+ which means that even root can only read and execute
+ this directory.
+ All right.
+ I should call this, really, the execute search permissions.
+ It means execute for regular files.
+ It means search for directories.
+ When you search a directory, you're
+ looking up a directory entry in that directory.
+ So basically, what these permissions say
+ is you can look at slash, you can read it.
+ You can look up directory entries in slash,
+ but you can't write to it.
+ And when you create a file or a hard link anywhere,
+ you can do that only if you have write permission
+ to its directory, to the name that you're about to create.
+ Because essentially, what the ln command does is,
+ if this is a long file name, and this is a long file name,
+ ln, what this command does is it writes to de.
+ What does it do?
+ It puts in this directory, d slash e,
+ a new directory entry for f.
+ This new directory entry will point to the same place
+ that the c directory entry points to in a slash b.
+ So ln needs search permission at a to find b.
+ It needs search permission in b to find c.
+ It doesn't need any permission at all to c.
+ All it needs to know is what c's I know now.
+ And then over here, we need search permission
+ in b to find e.
+ We need write permission in e, because we're
+ about to create this directory entry.
+ And if we have all those permissions,
+ the ln command will work.
+ And if we lack some of them, the ln command will fail
+ and will give us a root error message like that.
+ Question?
+ If we lack the ability to write to root,
+ how can we create child directories?
+ You cannot create child directories under root, not
+ with those permissions.
+ The only way you could do it would be on superuser.
+ The superuser can ignore all of this permission stuff.
+ It can do whatever it wants.
+ It's like there's an extra rwx attached to every file
+ that only root can use.
+ In order to become the superuser, though,
+ you're going to need to be properly authenticated,
+ like know the root password and that sort of thing.
+ I don't know the root password on this c-SNP machine.
+ So I can't go and modify the root directory.
+ And in some sense, I'm glad about that.
+ Because if I could modify the root directory, I could mess up.
+ And everybody on this machine, all of a sudden,
+ their stuff would stop working.
+ There's a lot of power that comes with being superuser.
+ There's a lot of responsibility as well.
+ Yes?
+ Where do the r knowing that [INAUDIBLE]
+ Well, you can think of ls minus l is outputting
+ the metadata for the file.
+ That metadata is stored in the file system
+ along with the contents of the file.
+ So it's the file system that's keeping track of these bits
+ that we're talking about.
+ [INAUDIBLE]
+ Oh, when you create a new file, what are its permissions?
+ Oh, that's a good question.
+ Let's do that.
+ By the way, before I go further, since I
+ have messed with user local CS bin, what that means now
+ is I can type the command foolish,
+ and I'm now running a shell.
+ I don't want this to happen.
+ I don't want you guys to log in and start
+ running a foolish command.
+ So I'm going to remove this.
+ Now notice, this is very important.
+ RM doesn't actually delete files.
+ What RM does is it deletes directory [INAUDIBLE]
+ and that's a different thing.
+ So what's going to happen here?
+ When I run RM is I'm not removing batch.
+ This batch symbolic link is still going to be there.
+ But-- oh, this failed, so I'm going to erase this.
+ All that's going to happen here is what RM does is it
+ modifies this directory, user local CS bin,
+ so that it will no longer have the foolish directory in it.
+ So this directory entry will go away,
+ but the batch directory entry will still be there.
+ And so this way, I will have cleaned up the mess that I made
+ in user local CS bin.
+ Question?
+ Because it removes the directory entry,
+ they're kind of using your DO like a pointer.
+ How would you basically change the I
+ node of whatever file was in there
+ to make sure you're not losing out on space or memory?
+ Well, all right, there's two things going on here.
+ First off, you cannot change a file's I node.
+ A file's I node is immutable.
+ There's nothing you can get.
+ It's always going to be that same I node number,
+ because that's the unique ID for the file.
+ You can't change a unique ID.
+ Second notion here is, though, what about we
+ ran out of disk space?
+ We're getting low on space.
+ And you just told me that if you remove a file, all you're doing
+ is editing a directory entry.
+ That's like saving a few bytes.
+ That doesn't really save much.
+ And the answer to that is as follows.
+ When you remove the last link to a file,
+ the operating system knows, hey, wait a second.
+ The link count is now zero.
+ That means I can free up all the space associated
+ with the file.
+ Let's try to do that.
+ I'm going to get maybe into a little bit of trouble--
+ I hope not much-- by doing the following.
+ First off, there's a built-in file called dev0.
+ dev0 is a file that contains an infinite number of zeros in it.
+ Not really infinite.
+ Eventually, the system will run out.
+ But for our purposes, it's close enough to infinity.
+ It contains two of the 64 zeros.
+ So if I run cat now, it's going to read that file
+ with an infinite number of zeros and send the op to my terminal.
+ That's what's going on right now.
+ We're shipping a whole bunch of null bytes across the network
+ onto my screen.
+ Well, that's pretty boring.
+ Let's do something else.
+ I'm going to use a different feature of the shell called
+ "greater than."
+ When you put "greater than" in front of a word in the shell
+ command, the shell takes over and says,
+ before I run the cat program, I'm
+ going to create a file called "big."
+ It'll be empty.
+ And then I'm going to make cat's standard object go to big
+ rather than to the terminal.
+ We are redirecting standard out.
+ This is just a dead normal thing to do in the shell.
+ People do this all the time in the shell.
+ So if I run this and wait for a bit,
+ I am now filling up the disk or the flash drive
+ or whatever it is that's storing here with a bunch of zeros.
+ And eventually, I'm going to wipe out the disk.
+ Sorry, but this won't be completely full.
+ So maybe we should stop before we get into trouble.
+ I'll type Control-C. Uh-oh.
+ [LAUGHTER]
+ Oh, my.
+ Oh, my.
+ I waited too long.
+ Oh, my.
+ Oh, I think the C-Snap police are
+ going to come after me now.
+ [LAUGHTER]
+ How should I recover from this?
+ Any advice?
+ Problems.
+ This is the standard sort of thing
+ you run into with software construction.
+ All right, so here's what I'm going to do.
+ I'm going to create a new terminal.
+ And I'm going to log in again.
+ [SIDE CONVERSATION]
+ Uh-oh.
+ [LAUGHTER]
+ Come on.
+ I think we've found kind of a bug in C-Snap.
+ All right.
+ So this is where the rubber hits the road.
+ I want to tell you about a different command.
+ It's called PS.
+ And what I'm going to do is see who's logged in
+ and who the troublemaker is.
+ And I'm guessing it's PPS2.
+ All right, so this tells me all of the programs
+ that are running attached to Terminal 2.
+ Cat is the guilty party.
+ So I'm going to kill it.
+ I'm going to kill the cat.
+ Absolutely.
+ [SIDE CONVERSATION]
+ It's still running.
+ [LAUGHTER]
+ All right.
+ I'm going to try one more thing.
+ If this doesn't work, I'm going to have to put myself
+ on C-Snap's mercy.
+ They might have to reboot the machine.
+ [LAUGHTER]
+ Oh my.
+ Well, whatever it did think was too big,
+ let's see what we can look at, can't we?
+ My goodness.
+ [SIDE CONVERSATION]
+ All right.
+ So there's a number of things going on here
+ that I should explain.
+ First off, we have sort of switched into Ops mode.
+ That is, there is sort of the distinction
+ in software construction between developers and operations staff.
+ And it's got the acronym or short phrase DevOps,
+ which stands for you've got developers writing the code,
+ and then you've got the operations staff making sure
+ that everything actually works.
+ The DevOps mantra is that you shouldn't
+ have two groups of people.
+ You shouldn't have developers who get paid, you know,
+ half again as much as the operations staff.
+ It's bad for morale.
+ It also means that developers don't
+ know how things actually work.
+ And the operations staff don't know how to fix things.
+ Instead, the DevOps philosophy is
+ developers should also be operations staff.
+ You should be associated with a project
+ rather than have a particular developer or operations role.
+ In this particular context, I guess I'm the developer,
+ although I wasn't developing much,
+ and the C-SNET operations staff is trying
+ to keep this machine working.
+ What I'm going to have to do after class
+ is confess to them that I ran a program I shouldn't,
+ and they're going to have to fix it, I guess, using root powers,
+ because I don't see how to fix it often.
+ However, I can tell you about the PS command.
+ The PS command is normally used by operations staff,
+ and what it does, by default, is it
+ lists the programs, the processes, that are currently
+ attached to your terminal.
+ In this particular login, what command am I running?
+ And right now, when PS runs, there's
+ only two programs running.
+ There's bash, because that's the command that
+ starts up when you log in.
+ And then there's ps, which bash is waiting to finish.
+ We can have something more complicated,
+ though, by doing something like this.
+ We can do ps minus ef.
+ This option basically says, don't just
+ tell me about the current terminal
+ and what's attached to it, those processes.
+ I want to look at every process in the system.
+ And f says, I want a lot of details about those processes.
+ That's probably too much for me to do first.
+ Let's do a ps minus f first.
+ So ps minus f tells me, for each process that's certainly
+ running-- these are running programs-- who's running them?
+ That's the user ID.
+ What the process ID is-- every process has a unique number.
+ What the parent process ID is-- notice
+ that the parent process for ps is the process ID for bash.
+ So processes have their own relationship.
+ You can almost think of this as being my inode number,
+ except they're for processes, not for files.
+ C, I have not a clue what it stands for.
+ S time is when did this command start.
+ TTY is the controlling terminal, the terminal that it's
+ attached to, so you can sort of see who's to blame.
+ Time is how my CPU time has been spent.
+ And then the command gives you the command line
+ that was used to invoke the command.
+ So what I can do is, in situations like this,
+ is something like the following.
+ This is a new kind of shell command.
+ Here, I'm telling the shell, don't just run one program.
+ I want you to run two programs.
+ And I want you to run them in parallel.
+ They will both be running simultaneously.
+ And I want the standard output of the first program
+ to be the standard input for the second.
+ So in a sense, if you think of processes
+ as sort of being, you know, you read from standard input,
+ you output the standard output, here's PS running.
+ I want graph to get whatever PS is put on.
+ One way to think about it would be the following.
+ We don't have to do it this way.
+ We could run it this way instead.
+ I'll type Control C here and not actually do it.
+ PS minus DF greater than T. This runs the command PS,
+ puts the output-- oh, I'm really interested.
+ Oh, wait.
+ I just checked.
+ It's eight gigabytes.
+ I think it's OK now.
+ All right.
+ I'll put it somewhere else.
+ Luckily, I have a different disk quota on temp.
+ And then I could type grab eggert temp t.
+ And this will run and tell me all the processes that are-- hey,
+ wait a second.
+ Cat died.
+ There is no cat there anymore.
+ Oh, are we in luck?
+ What that means is eventually the cat
+ died after it created this enormously big file.
+ It's eight gig for you.
+ It's only eight gig.
+ What's the problem?
+ But CSAT puts everybody on ridiculously small quotas.
+ This has been a longstanding tradition at UCLA.
+ I can still remember when I was a very young graduate student,
+ as young as you people, my faculty advisor complaining
+ because CSAT only gave him a one megabyte quota for this file,
+ which at the time was totally ridiculously small.
+ Now 88 is ridiculously small, but there we are.
+ All right.
+ So as you can see, I've used up my disk quota.
+ But luckily, there is only one hard link to this file.
+ But if I were to do something like this, ln big bigger.
+ But let's call it big two.
+ It's not actually bigger, right?
+ Notice we have two hard links to this same relatively large
+ file.
+ So now if we remove big, we still
+ haven't saved any disk space, right?
+ Because there's still big two floating around.
+ Another name for the same file.
+ So the system can't free up the disk space for this file.
+ All right.
+ Question.
+ For the parallel processes, how is it truly parallel
+ if one requires the other two to terminate and have
+ an output before it?
+ Oh, yes.
+ Oh, that's a good point.
+ Let's go back to that, right?
+ So what I did was I ran these two commands, right?
+ I ran one command and then the second one.
+ What I really wanted to do was this.
+ When you run the command this way,
+ it acts sort of like what I did before.
+ You run one command, send the output to the file.
+ Except with a pipe, there is no file.
+ This is just a memory buffer.
+ If the buffer fills up, then the operating system
+ tells PS, slow down, slow down.
+ When PS tries to write something,
+ it'll hang, waiting for the buffer to become empty.
+ If the buffer becomes empty and grep tries to read from it,
+ the operating system will say, you got to wait for some more
+ data.
+ Both programs are running in parallel.
+ If they both have an appropriate amount of computation in I/O,
+ they can really-- this guy can chew up one entire CPU core
+ and this guy can chew up another one.
+ More typically, though, one will hiccup for a while
+ and one will hiccup a while.
+ So you won't get exactly two times the performance
+ you would have.
+ But you still get better performance
+ than if you did it sequentially.
+ Among the other things, what this means
+ is grep can start processing instance PS outputs anything.
+ If PS just outputs a little bit, grep
+ can start searching that little bit.
+ It doesn't have to wait for PS to finish before it
+ can start doing useful work.
+ Question?
+ Is grep waiting for the buffer from CS to go up
+ before it takes input, or it's like--
+ Basically, the instant it sees anything in the buffer,
+ it's going to grab it.
+ Now, grep is a very simple program in some sense.
+ If you say grep foo, it reads input in every line that
+ matches this pattern-- and this is an ordinary pattern that
+ just matches itself-- every line that
+ contains a foo in it somewhere, grep will output.
+ Every line that doesn't contain a foo,
+ grep will just throw it away.
+ So you can think of it as a filter.
+ It'll take a big file and generate, hopefully,
+ a smaller file.
+ It never generates more output than you gave it input.
+ So when we run it this way, we get the same output,
+ but we didn't have to create that temporary file.
+ And notice, I'm out of disk space.
+ If I try to make any file, the system's going to yell at me,
+ you're over quota.
+ And so I can still run this because I
+ didn't create a file.
+ And what this told me is that our cat finally
+ died after all that effort to kill it.
+ And now we can get back and cease good graces
+ by removing our big file, which took a while,
+ but we finally got it working.
+ Any questions on files and links and that sort of thing?
+ I haven't really covered how symbolic links work,
+ but we can do that perhaps later, yes?
+ What are your permissions for LN?
+ So LN requires write permission and search permission
+ on the directory where you plan to create the new Heartland.
+ That's the permissions that are required.
+ Questions?
+ Is search directly the same as [INAUDIBLE]?
+ Almost.
+ When I type this, LS had to read the root directory.
+ I have permissions to do that.
+ So it had to read the directory in order
+ to figure out what the file links were on.
+ On the other hand, if I do something like this,
+ here LS does not have to read the root directory,
+ but we need search permission in the root directory
+ to find the media entry underneath it.
+ And when I do this, I'm going to look-- oh, boy.
+ When we're looking at the hardware,
+ there's nothing attached to a server somewhere in C.
+ Other questions?
+ Yes.
+ Can you create hard links to directories?
+ Oh, no.
+ No hard links to directories.
+ Why not?
+ Because then we have two parents?
+ They're not allowed.
+ Very important property.
+ The reason they're not allowed is
+ if you could create hard links to directories,
+ the directories would no longer necessarily be a tree structure.
+ In fact, they would stop being a tree structure.
+ And there's a whole bunch of software out there
+ that assumes that directories are in a nice tree structure.
+ And it will go ballistic if you're
+ allowed to create loops or anything like that.
+ So you're not allowed to create hard links to directories.
+ That's an ironclad rule in Linux.
+ If you try it, it will just say, no, it's not allowed.
+ Question?
+ Can you explain what the process ID is?
+ So when we're talking about programs,
+ programs can on occasion decide that they
+ want to launch other programs.
+ They want to start other programs.
+ The details of that I'm not going to go into.
+ That's a CS 111 topic.
+ But when one program launches another one,
+ it's considered to be the parent of the other program.
+ So processes in Linux form a tree.
+ It's a different kind of tree.
+ It's not the file system tree.
+ It's the process tree.
+ Every process has a parent.
+ And the parent is the process that launched this process.
+ So for example, I can sit here on C-Snet,
+ and I can run Emacs.
+ Once I'm in Emacs, I can run a shell.
+ At this point, we have bash, which
+ is what I logged into, being the parent of Emacs.
+ Emacs, in turn, is the parent of a different process
+ that's running batch.
+ There are two batch processes here.
+ One is the parent of Emacs, and one is the child of Emacs.
+ Those two batch processes are completely independent,
+ other than they're running the same program.
+ So you can send one command to one, and the other one
+ won't know about it.
+ Question?
+ What is the parent's process of the first batch?
+ Oh.
+ There are other processes sort of above you.
+ When you log in, you can look up at them.
+ So there's a log in daemon.
+ On this particular system, I believe
+ the big parent of everything process is called systemd.
+ Let's see if we can find it.
+ As you can see, there's a lot of them.
+ The important one is process ID number one.
+ The very first process listed here
+ is the parent, or grandparent, or great-grandparent,
+ or whatever, of all the processes in the system.
+ If systemd goes down, oh my goodness, bad things happen.
+ Other questions about processes or files?
+ [INAUDIBLE]
+ What's the significance of the d flag?
+ If I type ls slash, let's make it ls minus i slash, right?
+ It will say, OK, I'll give you all the files,
+ all the directory entries in slash, and for each one,
+ I'll tell you what time I'm done.
+ Whereas if I say ls minus i minus d slash,
+ it won't look inside slash to tell you
+ all the directory entries in slash.
+ It will just tell you about slash itself.
+ And that's true for any directory.
+ If you want to find out about the directory itself,
+ as opposed to the directory entries it contains,
+ use the minus d option in ls.
+ I don't know if I'm reading the output of this correctly,
+ but it seems like multiple.
+ In this case, [INAUDIBLE]
+ You caught me, proc there is item number one.
+ Sys is item number one.
+ What a mess I've gotten myself into.
+ All right.
+ So what I told you about inode numbers was correct,
+ but only up to a point.
+ Linux can have multiple file systems.
+ How do you direct me?
+ Each file system has its own set of inode numbers,
+ which means that inode number one in one file system
+ could talk about a different file than inode number
+ two in another file system.
+ When you log in to cset, the root file system is up here,
+ but there may be some other file system, say, located here
+ or located here.
+ And in this particular case, we have one file system
+ at the proc entry of the root file system.
+ And its own root directory is inode number one,
+ because that's OK.
+ It's in a different file system.
+ So really, to uniquely identify any Linux,
+ you have to know not only the inode number.
+ You have to know the file system that it's in.
+ All right.
+ Other comments?
+ Yes.
+ Can you re-explain the relationship
+ between an inode number and a symbolic representation?
+ OK.
+ A symbolic link is, in some sense,
+ just a file whose contents is a string.
+ But that string isn't treated as the contents of the file
+ the way a regular file is.
+ Instead, that string is used when
+ you use that symbolic link as if it were an ordinary file.
+ Oh my goodness, let's see how that works.
+ So suppose we do this.
+ ls minus l, user local cs dim dash.
+ This is a symbolic link, and it's
+ a symbolic link whose contents is dot dot slash whatever.
+ Now suppose we decide we want to run this program.
+ So we just try.
+ User local cs dim dash.
+ We're giving a whole name for the program.
+ What happens when you specify a file name-- or in this case,
+ it's an executable file name, but it's the same thing--
+ is the system looks at that leading sub, says, OK,
+ let's start with the root directory.
+ It sees the USR, says, oh, I'll go to the USR subdirectory,
+ and so forth and so on.
+ But every time it sees a file named component, like local
+ or cs or whatever, it checks to make sure
+ that that file name component is a directory,
+ or it could be a symbolic link.
+ So as we're walking across here, if we see a, b, c, b,
+ if it turns out that b is a symbolic link to, say, x, y,
+ what the operating system does is it mentally
+ substitutes this name, because the symbolic link
+ b expanded into-- let's leave that slash off--
+ expanded into x slash y.
+ This process recurses.
+ If it turns out, for example, that x is a symbolic link to ab,
+ it's going to turn this into a, a, b, y, c, b, link.
+ So every time you specify a file name,
+ if that file name contains a symbolic link anywhere in it,
+ the system mentally substitutes the contents
+ of the symbolic link for the name of the symbolic link
+ and then reinterprets the name.
+ Now, there could be-- so let's see if we can find some
+ examples of that.
+ ls minus l slash bin.
+ So bin is a symbolic link to user bin
+ with no slash at the start.
+ So if I type the name bin sh, the system
+ sees that bin is a symbolic link to user bin,
+ so it mentally substitutes user bin sh.
+ And if we take a look at that name-- I'll do it this way.
+ We can see that here there are no symbolic links,
+ but by the time we get to the end of the file,
+ sh is a symbolic link to bash.
+ So it substitutes bash for sh and keeps going.
+ If we try this again with bash, it, I think,
+ will be no symbolic link.
+ So finally, we've gotten to the final one.
+ We've followed two symbolic links to get there.
+ The rule the system uses when it follows a symbolic link
+ is if the symbolic link starts with slash,
+ it's an absolute symbolic link, which
+ means you throw away the context where you found it,
+ you always restart at the root directory.
+ But if the symbolic link doesn't start with slash,
+ you interpret it in the context that you found it and keep
+ going.
+ So as a consequence, we can see something
+ that looks like this.
+ Where are we?
+ Let's go into the cs35l directory.
+ And we'll make two subdirectories, d and e.
+ We'll create a symbolic link.
+ ln minus s says, please create a symbolic link.
+ And xxx, d, y, y, y.
+ Notice now that there's a symbolic link
+ in the directory d named yyy that points to xxx.
+ And we can have a file here, echo d as xxx to d slash xxx.
+ And then we can say cat d slash yyy.
+ And it'll say, oh, yyy is a symbolic link.
+ So it's another name for xxx.
+ So we're looking at the contents of xxx.
+ We can also do something like this.
+ Echo e has xxx to e xxx.
+ We can do a link of d, symbolic link, to e yyy.
+ We'll call it zz, why not?
+ Now we have this structure, right?
+ Notice our symbolic link now has a link count of two.
+ There are two names for our symbolic link.
+ The contents of the symbolic link is xxx.
+ But one of the names for that symbolic link is e slash zzz.
+ Another name is e slash yyy.
+ If we now do something like this, cat e slash zzz,
+ we'll get e's xxx.
+ So notice the same symbolic link has different interpretations
+ depending on where you find them.
+ Because it's always-- since its contents don't start with slash,
+ it's interpreted in the directory that you find them.
+ Yes?
+ When we do the link command, you mentioned earlier
+ that for giving example a, b, your source of destination,
+ the source has to exist first.
+ So we have to assume that when we made that command, xxx
+ is already existed.
+ Right.
+ That is required for hard links.
+ But symbolic links are just strings.
+ Their contents are just strings.
+ You can put anything in them that you want to.
+ For example, you can do something like this.
+ ln minus s, now is the time to, I don't know, e slash nowhere.
+ So now we have a symbolic link called e slash nowhere
+ that points to, that says, OK, here's a string.
+ If I were to now do something like this, cat e slash nowhere,
+ it would say, there's no file there.
+ I tried to follow the symbolic link.
+ And there's no file called e slash now is the time.
+ Yes?
+ So is the string inside a file link, or yes?
+ The string inside a symbolic link
+ is just a string until you try to use
+ the symbolic link as a file link.
+ At that point, this algorithm springs into place,
+ and it tapes that string and says,
+ I'm going to try to use it as a file link.
+ You can later make--
+ this is a dangling symlink, right?
+ It's a symlink that points nowhere.
+ We can make it point to somewhere.
+ I don't know, 4 o'clock, why not?
+ And we'll put that into e slash now is the time.
+ So now, notice, there is a file called now is the time.
+ So if we say cat e slash nowhere, it's going to work.
+ Yes?
+ [INAUDIBLE]
+ Greater than means send the output
+ to a file with that name.
+ I used it earlier in the lecture.
+ This one is a little tricky, though,
+ because the file name has spaces in it.
+ Normally, if you put spaces in a command,
+ it starts a new argument.
+ But you can quote a word in the shell.
+ In that case, it treats it as a single word.
+ So that's a single file name, d slash now is the time,
+ with spaces in the file.
+ Normally, you don't want to put spaces in file names.
+ It gets kind of tricky if you do, but I was tricky to do that.
+ [INAUDIBLE]
+ You can put a string that maps to nowhere in the file system.
+ Linux won't care.
+ It's just a string, so you try to use it.
+ But in the case of using it, for example,
+ if I wanted to put like dot dot dot,
+ it would go up to the parent directory.
+ Oh, yes, absolutely.
+ So you can do something like this, ln minus s.
+ I'll put that there, dot dot dot dot dot dot dot dot dot.
+ Is that enough?
+ Good, right?
+ So now we have a symbolic thing.
+ But if you look at it, it's pointing to enough
+ up into the directory hierarchy that we're back up
+ at the top of it.
+ One more question before the break.
+ Yes?
+ Do you need the -s for async policy?
+ Yes.
+ The -s option of ln says, please create a symbolic link.
+ Completely different rules in hard links,
+ but it's the same command.
+ Let's take a break, and we'll start off in about,
+ I don't know, eight minutes, seven minutes.
+ So here's some ln minus l output,
+ and you can see it's symbolic links.
+ The first column is l's, and then you
+ can do anything you like with them,
+ and you can just read them.
+ Their link counts are all one.
+ What's that third column?
+ The third column is the owner of the file.
+ The owner of the file has lots of things
+ they can do with the file that a regular person can't do.
+ For example, we can, I don't know,
+ change the timestamp on it or that sort of thing.
+ The next column is the group.
+ CSFAC is short for Computer Science Faculty.
+ That's a group of about 40 people, right?
+ So I can give permissions to faculty
+ that I wouldn't give to everybody else.
+ Column five is the size of the file.
+ For symbolic links, the size of the symbolic link
+ is the number of characters in the string,
+ 'cause that link really is.
+ As you can see, we have one symbolic link.
+ Its contents is just four bytes,
+ and two of them have contents of five.
+ The next column is a timestamp.
+ By default, ls minus l gives you
+ the last modification time of the file.
+ The system stores other timestamps as well,
+ but most people care about when it was last modified.
+ The next column is the name of the file.
+ In this case, loop or loop one or loop two.
+ And then, if it's a symbolic link,
+ ls minus l puts a little arrow
+ and tells you the contents of the symbolic link.
+ The regular files and directories, it does the following.
+ Question?
+ - Could you explain the number one,
+ the second column again?
+ - That's the link count,
+ which is the number of hard links to this file.
+ Remember, files don't have names.
+ Instead, you have directory entries in the system
+ that point to files.
+ Each directory entry to a file will add one to the link.
+ Yes?
+ - Is the reason you specify hard links
+ that symbolic links don't count for exactly?
+ - Symbolic links do not count for the link count.
+ That's right.
+ Because symbolic links don't really matter
+ until you use them.
+ And then when you use them, maybe they work,
+ maybe they don't, right?
+ Whereas hard links, if you have a hard link to a file,
+ that file has to stick around, right?
+ It's not something that can have a dangling hard link
+ or anything like that.
+ Quite different models.
+ All right, other comments about this?
+ Yes?
+ (student speaks off mic)
+ Good thought.
+ One, two, three, four, five, six, size.
+ So for example, we could do something like this.
+ (students speak off mic)
+ Maybe I shouldn't.
+ What do you think?
+ - What is?
+ (student speaks off mic)
+ - Yeah, but it took too long.
+ So I used a command called bd,
+ which you don't have to learn.
+ What it did is it created a file of 51,200 bytes, right?
+ So that's column file.
+ This tells you how many bytes are in a regular file.
+ For a directory, it kind of,
+ I don't know what it does for a directory.
+ Let's try it.
+ That tells you sort of how many bytes
+ that the system is using to represent the directory.
+ There's something else interesting with this example,
+ which I constructed during the break.
+ Notice that we have a symbolic link loop
+ that points to itself.
+ So the algorithm that I gave to you earlier,
+ where the system sees a symbolic link
+ and mentally substitutes its contents
+ and then repeats, will repeat forever.
+ However, Linux has a counter.
+ If it finds that it's examining more than, say,
+ 20 symbolic links and resolving a file name,
+ it says there's something fishy going on here,
+ and it refuses to keep expanding.
+ It will give you an error message
+ if you try to open a file,
+ and you can see that up towards the top of the screen.
+ I tried to follow the symbolic link loop,
+ and it said there's too many levels of symbolic links.
+ That doesn't mean there was a loop.
+ All it meant was that Linux ran out the end of its counter
+ of 20 symbolic link expansions,
+ which is a cheap way to prevent this.
+ Yes?
+ (student speaks off mic)
+ The link count counts only hard left, right?
+ So this loop points to loop
+ does not add to the link count of loop.
+ The link, loop has a link count of one
+ because its parent directory points to loop.
+ (student speaks off mic)
+ What's that?
+ (student speaks off mic)
+ Remember, symbolic links don't really point to themselves.
+ Symbolic links are just strings.
+ It's the operating system, when it interprets file names,
+ that causes them to sorta act like they point somewhere,
+ but when they're sitting in the file system,
+ they don't point anywhere.
+ They're just strings.
+ Yes?
+ (student speaks off mic)
+ Yeah, it counts the total number of symbolic links
+ in resolving a single file name.
+ So if you have 20 legitimate symbolic links,
+ your sysadmin will come yell at you
+ and say you have too many symbolic links.
+ Don't do that.
+ Yes?
+ (student speaks off mic)
+ 20 symbolic links expanded in the course
+ of expanding a single file name,
+ which can have slashes in a lot of file names.
+ Yes?
+ (student speaks off mic)
+ Then you lose.
+ You get that error message.
+ It's not smart, right?
+ Other comments?
+ Yes?
+ (student speaks off mic)
+ (student speaks off mic)
+ Well, how do we know the owner of the file?
+ (student speaks off mic)
+ So when you log in, the files all have the same owners
+ that they did when you logged out.
+ When you create a new file, you own it, right?
+ That's the simple rule.
+ So you can kinda tell who owned the file originally.
+ Now, there are commands to change the ownership
+ of a file and do funny things like that,
+ but that's typically something only root can do.
+ We can change the permissions on the file if we like.
+ So we can change the permissions on loop big, for example.
+ We can say g plus w loop big.
+ Notice that the permissions used to be 644.
+ Now they're 664, because we've granted group permissions
+ to other faculty members in the Theater Science Department
+ to be able to write this file.
+ Oftentimes, you'll see this done numerically.
+ So I'll do something like this.
+ Semicolon separates commands in the shell
+ just like it does in C.
+ And so now, notice that I've changed the permissions
+ to 755, which lets anybody execute the file
+ and lets me write the file and lets everybody read the file
+ and nobody else can write the file.
+ That's it.
+ All right, questions on permissions.
+ Yes?
+ (student speaks off mic)
+ Yes, that's a part of the shell syntax.
+ You can put semicolons at the end of the line too
+ if you want, but nobody wants.
+ Semicolons are for whips, yes.
+ (student speaks off mic)
+ Oh, we get to talk about the shell next, that's good.
+ All right, let's do that.
+ So we've been talking about files for most of this lecture.
+ I now wanna talk a little bit more about the shell.
+ We haven't gotten much about Emacs yet,
+ but we'll squeeze it in at some point.
+ So you have simple commands, right?
+ And a simple command is just going to be
+ a bunch of words, right?
+ Something like that.
+ Each simple command is sort of executed
+ by running just one program,
+ and you're kind of off to the races.
+ Right?
+ Let's see what we've got here, all right?
+ Then you can start,
+ you can also send output to something like this, right?
+ You can also redirect standard input like this.
+ This means run the command w,
+ give it the three arguments x, y, and z,
+ send the standard output to f,
+ read standard input from g.
+ You can put spaces after the angle brackets,
+ that's fine, either way.
+ There are other ways you can do IO redirections.
+ We'll get to the ampersand eventually.
+ But the important thing to remember here
+ is IO redirections are done by the shell.
+ The program, when it's running,
+ doesn't know and doesn't care
+ where standard input comes from
+ or where standard output goes to.
+ It just runs and does its thing.
+ The shell, in effect,
+ is configuring the environment for the program
+ so that its output and input are going to
+ and coming from the correct place.
+ You can also redirect standard error, like this.
+ Here, you have to jam the two
+ right next to the grade event.
+ By convention, standard input is
+ file descriptor zero,
+ standard output is file descriptor one,
+ and standard error is file descriptor two.
+ So this says, make file descriptor two
+ be an output file, and you send the output to h.
+ I should write that somewhere.
+ Zero is input, one is output, and two is error.
+ There are even fancier, oh yes, question.
+ - In this case, what fgh of files are other programs?
+ - These are files.
+ So the shell basically just reads the IO redirections
+ left to right and all, in effect, executes them
+ before it starts the program.
+ You can even cause trouble with something like this.
+ This says, send standard output to a file named c.
+ This says, oh, I changed my mind.
+ Send standard output to a file named d.
+ The shell will create two empty files, c and d.
+ D will contain the output of the command a.
+ C will say empty.
+ This is not the kind of command I would hope to see
+ in a real program, but that's what the shell will do.
+ This one here?
+ This means take standard input from g.
+ So this means read from g, this means write to f.
+ There's another notion which looks like this.
+ Two greater than sign, meaning append rather than
+ create the file empty and then start writing to the file.
+ So this says, whatever it was in c, keep it around.
+ I want to send output to c, but I want that output
+ to be appended to the end of c rather than start over
+ from scratch.
+ And you can combine these notions.
+ This says, run the command a and send its error messages
+ to c, but concatenate them to the end.
+ Don't don't don't rewrite what's,
+ don't lose what's already in c.
+ Questions?
+ - Sir, is two just the code for error messages?
+ - Yes, two is standard a.
+ Questions?
+ - So it reads from g and puts everything in f?
+ - This says send standard output to f,
+ read standard input from g, and put standard errors into h.
+ - Okay, so the source of the output for f is g?
+ - Well, w is a program.
+ Inside w there are like print statements
+ or something like that.
+ It can decide to print whatever it wants to.
+ It can also decide to read whatever it wants to,
+ and presumably what it reads has some effect
+ on what it writes, although it's not necessary.
+ Other questions?
+ Yes.
+ - What happens if you use the number of, like,
+ blank reports of standard output files?
+ - The default for standard output is one.
+ This default, the default for output files is one,
+ and the default for input files is zero.
+ So if I put a zero here,
+ I haven't changed the meaning of the program.
+ The shell command means exactly the same
+ as if I left a one out and I left a zero out.
+ However, the two is never the default.
+ So if you want to put standard error somewhere,
+ you gotta put a two in it.
+ Notice you can also do stuff like this.
+ You can do, uh, uh.
+ Whoops.
+ But don't write code like this.
+ Your boss will sort of have a quiet talk with you, right?
+ Because what you're saying here is
+ make the standard output stream an input file from F.
+ Make the standard input stream an output file to G.
+ When your program runs,
+ it'll try to read from standard input,
+ and the operating system will say,
+ there's nothing here because you're outputting, right?
+ So this is bad stuff.
+ Don't do this.
+ Forget I said that.
+ All right, yes.
+ - If you try to append to a file that doesn't exist,
+ will it try to create it?
+ - It'll create it for you.
+ Yes.
+ (student speaks off microphone)
+ The default is whatever the shell's standard error is
+ is the standard error for the programs that you run.
+ Same as standard input and output.
+ By default, programs inherit the file descriptors
+ of their parent.
+ Question.
+ - Can I redirect standard output
+ and standard error to the same file?
+ - Sure.
+ We can do something like this.
+ (student speaks off microphone)
+ Oh, a new notation.
+ Somebody was asking about ampersands.
+ This is not the ampersands they were looking for.
+ This is a different ampersand.
+ This basically says,
+ I want standard error to basically be the same stream
+ that standard output is, right?
+ This basically says close standard output
+ into standard error.
+ So now, whenever A outputs an error message,
+ it'll go to the file C.
+ Whenever it outputs ordinary output,
+ it'll also go to file C.
+ You can also do something like this.
+ Here, the implied parentheses are here.
+ So what this does is it sets up this command
+ and sends its output into the pipe.
+ Greco will read from that pipe.
+ And then it says, oh, by the way,
+ let's make standard error the same thing as standard output.
+ So standard error also goes into the pipe.
+ Here, you're directing both A's standard output
+ and A's standard error all intermixed.
+ This is actually a fairly common combination
+ to do this sort of thing.
+ All right, question?
+ [INAUDIBLE]
+ Want to do-- oh, yeah, we can do it over here.
+ So we can do, say, cat, loop, star, and then, say,
+ 2 greater than ampersand 1.
+ And then we can say, grep, loop.
+ So cat here is going to be trying
+ to read those four files-- loop, loop 1, loop 2, and loop 3.
+ It won't be able to read from the first three
+ because they're symbolic linklets, right?
+ It will be able to read from the fourth one.
+ The fourth one just contains a bunch of null bytes.
+ So grep will see those null bytes
+ and complain that it looks like a binary file.
+ And it will also see the error messages.
+ And maybe, if we're lucky, it will tell us
+ what the error messages are, right?
+ So it basically reps all the error messages.
+ And I'll put it to us because they match to the word loop.
+ And it took all the trailing null bytes
+ and ignored them because there's no match.
+ Question?
+ Did you clarify the significance of the and/or sign of the one?
+ So this funny notation, greater than ampersand digit--
+ and there can't be any spaces here, no spaces allowed.
+ This basically says, make this file descriptor
+ a copy of this one.
+ Whatever this one is going to be sent to,
+ make this-- send it to the same thing.
+ So that's kind of a strange syntax,
+ but that's what it means.
+ All right?
+ One more syntax, and I'll be done, all right?
+ This means I'd like to both either read from or write to f.
+ So this makes-- we can make-- I don't know.
+ We'll take a call to scripture three.
+ This says, file to scripture three
+ will be both able to read from f and write to f.
+ You don't see this one used very often.
+ I'm kind of listing it for completion.
+ All right.
+ So that's not the ampersand you were looking for.
+ Let's do the ampersand that we were looking for.
+ You can run commands in parallel.
+ We've already seen how to do that.
+ You can connect commands together by the pipe symbol.
+ But there is a simpler and more primitive and low-level way
+ to run commands in parallel, and that's to use ampersand.
+ We can do something like this.
+ This runs the two commands, a and b, in parallel.
+ a is given the arguments bc, d is given the arguments ep.
+ In some sense, they're treated a little bit differently,
+ but a and b will both be running at the same time.
+ We can try it here.
+ We can say sleep three, and we can say echo foo.
+ This will run sleep and echo in parallel.
+ Foo, the echo command, finishes right away and outputs it.
+ The shell, in effect, gives us a little error message.
+ And you're not just an error message.
+ Your diagnostic said, oh, by the way,
+ you're running some other program in parallel,
+ and here's its process ID.
+ Now, the next time we do anything to the shell,
+ it's going to let us know that that sleep finished.
+ We can say echo bar here, and it'll run that command.
+ And it'll say, oh, by the way, you
+ know that sleep command that you were running in parallel
+ with everything else?
+ Well, it finally finished.
+ One way of thinking about it is if you
+ follow a command with an ampersand,
+ the command is running in the background.
+ And you can keep going and do whatever you want.
+ And typically, people don't write the shell command
+ this way, they'll write it this way
+ to make it more clear as to what's going on.
+ This means run this command in the background.
+ And while it's running, start doing this other stuff.
+ You can put as much stuff as you like here,
+ and it will be running in parallel with the command
+ that you ran in the background.
+ Questions?
+ If you want to run four command, can you do abc and bdf and?
+ Yeah.
+ And would there be a space in between the c and?
+ You don't need spaces in front of the and or after the and.
+ The and is sort of--
+ Would it get mad at you if you put spaces here?
+ If you do put spaces here?
+ Yeah.
+ No, it's fine.
+ It doesn't matter.
+ A semicolon's the same way.
+ You can put spaces before and after a semicolon.
+ It's all right.
+ Now, this is a little bit tricky,
+ because you may want to know when you spun off
+ three things here.
+ You'd kind of like to know when they finish.
+ Now, interactively, you can sort of
+ wait for the funny error messages from the shell.
+ But maybe you'd like to write a shell script that
+ will run this stuff and then wait for some of these
+ to finish.
+ There's a way of doing that with this special notation.
+ Dollar sign, question mark.
+ And I'm introducing a whole new class of notations here
+ as well.
+ Dollar sign to the shell says, please give me
+ the value of this variable.
+ In this case, the variable's name is question mark.
+ Oops, I think that's not question mark.
+ Exclamation point.
+ And dollar sign, exclamation point always has as its value
+ the process ID of the last thing that you
+ started in the background.
+ So we can do something like this.
+ Sleep 5.
+ And then we can say echo dollar sign, exclamation point.
+ And it will say 2771096, because that's
+ the process ID of the command that we just started.
+ In this particular case-- well, you already
+ saw it on the screen, so it's no big deal.
+ But once you're writing shell scripts,
+ you're doing something complicated,
+ it's helpful to know what that process ID is.
+ Because what you can do is something like this.
+ Sleep 10 in the background and say x equals this.
+ And then you can do echo bar.
+ And then you can say wait x.
+ I didn't type fast enough.
+ But anyhow, the wait command will wait for the process
+ to finish whose process ID gave to you.
+ And so what wait will do here is it
+ will wait for that sleep 10 to finish.
+ Question.
+ What is that exclamation mark variable?
+ It's built into the shell.
+ And in fact, you can think that the shell has a built-in
+ variable called dollar sign, exclamation point.
+ And the value of that variable is always
+ the process ID of the most recent command
+ that it spun off in the background.
+ Normally, when the shell runs a command,
+ it waits for the command to finish.
+ That's the normal operation.
+ But when you follow the command with ampersand,
+ you're telling the shell, I don't want to wait.
+ I want to do some other stuff while this command is running.
+ And the wait command is built into the shell
+ that will let you actually go wait for that process
+ that you spun off in the background.
+ Normally, waiting is automatic.
+ But if you use ampersand, sometimes you've
+ got to wait for the process by depth.
+ So the most recent one would be GHI.
+ Here, yes.
+ And if you wanted to save these other guys,
+ you'll have to save them in other variables.
+ You can use a command like this to save
+ the value of this string into the shell variable
+ S. And then later on, dollar sign S will tell you
+ what the status was of that particular example.
+ Question.
+ What's the difference between ampersand and semicolon?
+ Semicolon basically says-- it's the same as newline.
+ So if I put semicolons here, it's
+ as if the semicolons aren't here.
+ Normally, what the shell does is it
+ waits for this command to finish before it starts this command.
+ So execution is purely sequential.
+ But if you put ampersand, then all of a sudden,
+ execution is not sequential.
+ You'll have multiple commands running in parallel.
+ Other questions?
+ Yes.
+ How does the shell distinguish, I guess,
+ like all the commands are defined [INAUDIBLE]
+ Well, by convention, the first word in the command
+ is the command name.
+ And all the other words are operands.
+ And the shell basically doesn't care what the operands mean.
+ That's totally up to the command itself as to what it will do.
+ All the shell does is it creates basically an array of strings
+ and passes that array to your program.
+ When you see something like this in your C++ program,
+ or C program, it doesn't matter.
+ This is an array of strings.
+ And these strings are these things, right?
+ In effect, this char star star looks like this.
+ This guy points to this string.
+ This guy points to this string.
+ This guy points to this string.
+ These are very short strings.
+ And then there's a null pointer here
+ to say I'm the end of the array.
+ All the shell does is it ranges for your program
+ to start up with those strings.
+ It doesn't know what the strings mean.
+ And then after that, what your program does with the strings
+ is totally up to the program.
+ They don't have to be filing.
+ They don't have to be flags.
+ You can do whatever you want.
+ Question?
+ [INAUDIBLE]
+ Oh.
+ Well, let's try one super-duper command
+ to see how well that works.
+ So here is a command called seek, S-E-Q.
+ Seek has the following properties.
+ If you give it a number, it just outputs the numbers
+ from 1 to n, right?
+ If you say seek 10, then it does 10 things.
+ So we can do some interesting things like this.
+ $ in front of parentheses means the following to the shell.
+ Run the command inside the parentheses, take its output,
+ and treat the output as if you typed it here.
+ So this is equivalent to saying cat 1 space, 2 space,
+ 3 space, all the way up to 10.
+ And so what cat is going to do now
+ is it's going to give us 10 error messages, right?
+ Because we don't have 10 files numbered 1 through 10.
+ All right, let's try something more complicated.
+ This is a for loop.
+ The shell gives us the greater than prompt
+ when our command hasn't been finished yet.
+ The seek 10 expands to the first 10 integers.
+ We're going to have a loop for i from 1 to 10.
+ Each time through the loop, we're going to say cat i.
+ And we'll still get 10 messages, but this is different.
+ Here, we run 10 different cat programs.
+ And each one of them was told to output one file.
+ And each one of them said, I can't do it.
+ So now you can probably guess what we're going to do next.
+ For i in seek 10, the cat i ampersand.
+ What did it do?
+ It ran 10 instances of cat in parallel.
+ And the output got intermingled.
+ And each one of the cats failed.
+ All right, so now let's create a small file.
+ Well, in fact, we'll just use tux.
+ So small is a very small file.
+ It's empty.
+ And we'll do something like this.
+ Here, we are spinning off 1,000 cats.
+ They'll all be running in parallel.
+ They'll each be outputting the contents of an empty file,
+ so they won't do anything.
+ And if this works, I will be totally amazed.
+ They work.
+ They give faculty more processes than they get students.
+ I think if you tried it, it would probably fail.
+ But you can try it at home, see how well it works.
+ One more question.
+ Control C means interrupt what we're currently doing.
+ And when I type it twice, that means, oh, the first one didn't
+ seem to work.
+ And I try it again.
+ All right, I'll talk to you later.
+ [BLANK_AUDIO]

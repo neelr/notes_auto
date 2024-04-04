@@ -1,0 +1,1231 @@
+ - Welcome to CS33, my name is Glen Ryman, I've been here as faculty at UCLA since 2001,
+ before many of you were born, which is kind of scary for me.
+ My main area of research is microprocessor design.
+ I take that approach in my classes in some ways, but this class really doesn't get that
+ down deep into microprocessor design.
+ This class is more about an introduction to systems.
+ Let me just be clear, when I say my research area is computer architecture, I'm not talking
+ about the architecture of buildings.
+ I had a class one year where I taught the class for a full lecture and a student came
+ up after me saying, "I really want to learn architecture, but I'm just not understanding
+ your lecture, what am I doing wrong?"
+ And it turned out that they were here for building architecture.
+ So I don't know what's worse, that they couldn't get that my lecture was on microprocessor
+ design from the first lecture, maybe I'm not that great, or that they just completely lost
+ it.
+ But either way, this is computer design, just in case you're in the wrong class.
+ This year, I want to talk a little bit, or this quarter, I want to talk a little bit
+ about abstraction.
+ So this class is about going deeper in terms of the computer science abstraction than many
+ of you have gone before.
+ At the top level of this sort of rainbow of abstraction, I've got application and algorithm.
+ In 31 and 32, that's what it was all about.
+ What is the right algorithm for a particular application, do you use merge sort or bubble
+ sort, right?
+ So in this class, we go deeper into the system stack.
+ There's a software system side and a hardware system side.
+ This class is kind of a sampler to introduce you to these issues, but in no way is it designed
+ to be exclusive coverage of these topics.
+ You'll later get into compilers, into microprocessor design, into networking.
+ All these other issues will kind of build on what this class tries to give as a foundation.
+ In terms of the software stack, if you look at the middle, there's a green one called
+ instruction set architecture.
+ The instruction set architecture is the interface between the hardware and the software.
+ It's a set of what this hardware can do.
+ And we'll learn in this class what we're going to cover is a set of instructions that the
+ machine understands as its native tongue.
+ The actual assembly language of the machine, what the machine was implemented to do.
+ Under that is the actual physical implementation of the hardware that builds a machine to create
+ that.
+ So the microarchitecture is how you build a machine to implement an instruction set
+ architecture and that's built with gates and registers and has to obey the laws of physics.
+ So if you're dealing with making wires thinner and thinner, eventually you get to a point
+ where you have to worry about electromigration, actual physical transport of material.
+ That's all on the bottom layer of the stack.
+ Above that, we get into all the software layers that have to exist between your application
+ and the physical hardware, the bare silicon.
+ This is an example, I know it's hard to read but this is, I'm not going to quiz you on
+ any of the content of this part.
+ This is the software stack just looking at the Android operating system.
+ You start at the top with kind of system apps that are written in fluffy high level languages
+ like Java and then you start to get down to native implementation of libraries in C and
+ C++.
+ And then below that, if you keep drilling down, you'll get to the Linux kernel which
+ is primarily written in C with some assembly language.
+ This massive layer, if you've ever done a, I had a project one time where I had to drill
+ from top to bottom and tracing the invocation stack.
+ It's a ton of messy software code in between of just invocation after invocation.
+ So really diving down into these layers is kind of what this class is all about.
+ We're not going to cover exhaustively everything but we're going to start from the bottom.
+ We're going to be at the hardware layer learning assembly language.
+ The reason that I mentioned, for those who read the email, that this class moves very
+ fast at the beginning is because we have to get assembly language ramped up so we can
+ do some of the labs for the class.
+ But I want you to think about the idea that we are drilling down to the lower levels of
+ the system beneath all these layers and veneers of usability and getting to some of the lower
+ level components of the processor.
+ We are going to use C in this class.
+ Now many of you say, yeah, thank you, thank you.
+ You get an A. Many of you are going to say, why not something higher level that's actually
+ useful?
+ Well, C is used in a variety of contexts including operating system development and the Android
+ stack itself.
+ My goal here is to try and expose you to this low level assembly language programming and
+ C is the best language to translate down to assembly.
+ So that's why we're taking that.
+ If you haven't used C before and give you C++, it's not going to be a hard learn.
+ There are some real nastiness which come with pointers and I'll try to introduce that when
+ appropriate but my point is don't be afraid to kind of dive in and get started with C.
+ So talking about the class, the lectures are not required.
+ I would love to have all of you here and have this room this full but I'm not that naive
+ that I know that half of you are going to be gone for the next lecture but it will be
+ BruinCast.
+ Hopefully, it's being recorded now.
+ I don't control that getting uploaded so it will be uploaded whenever they finish processing
+ the video but it should be on the BruinLearn page.
+ I would love for all of you to be here but if you can't, at least watch the lectures.
+ What I don't recommend is that you say this guy is boring.
+ I'm going to just watch videos on YouTube, on the class, and learn from that.
+ I think that's a bad idea not because I'm going to be better than those videos but because
+ I make the test, not the videos.
+ And so when it comes to what I emphasize in class, when it comes to what I'm trying to
+ show you, I'm going to emphasize what I think I'm going to be covering on the test.
+ Discussion sections are mandatory.
+ We have learning assistance.
+ It's a great program that UCLA has.
+ I recommend all of you consider that as you move on becoming learning assistants but it's
+ your peers who are going to be helping with the instruction of those discussion sections.
+ They're going to have worksheets for you and they're going to run tutorials to try to help
+ you with the labs.
+ So I strongly encourage you to take advantage of the discussion sections.
+ It's required but it's only 5% of your grades so it's not going to kill you but I strongly
+ encourage you to do it.
+ I will ask them not to teach new material.
+ What I cover in lecture should be what I cover in lecture and should be what you're responsible
+ for but they may show you the use of tool chain or do better illustrative examples and
+ that sort of thing.
+ Labs.
+ I can't emphasize this enough.
+ Start the labs early.
+ There's going to be at least one or two people who come to me and say, "Oh my God, I wish
+ I listened to you."
+ And I love to say, "I told you so," so don't give me the satisfaction.
+ Start the labs early.
+ This is not like 31 and 32.
+ A lot of this material is going to be unfamiliar to you and you're going to benefit from the
+ time starting early.
+ I give two weeks for each lab, three weeks for the last lab.
+ That's more than enough time in theory.
+ I know you have other things going on.
+ Even considering that, it's more than enough time.
+ But the deadlines are fixed and so the reason for that is we start the next lab.
+ There's some infrastructure on our end so there's no wiggle room.
+ So make sure you start the labs early.
+ Make sure you read the lab.
+ I know it's going to be one of those things where, "Oh yeah, I got this," and you start
+ it off.
+ Please read the lab first.
+ One of the labs, for example, the data lab, is using an ANSI standard form of C. It means
+ that you cannot do something like this where you declare a variable into X, then you make
+ some assignment to X, and then declare an into Y.
+ This will not pass the check for coding standards on our ANSI standard.
+ You have to do all your declarations first.
+ Every year someone makes this mistake, I would love for this to be the year where no one
+ does it.
+ Please.
+ Let's try it.
+ But please read the labs ahead of time.
+ The second lab, which is my personal favorite, is the BOM lab.
+ The BOM lab, we give you a binary that's precompiled and there are six phases you have to pass.
+ Each of them requires a password or passphrase to be entered.
+ It could be a numerical sequence, could be a bunch of team names, whatever.
+ It could be a quote from a movie.
+ Those passphrases you have to figure out by reverse engineering the binary.
+ You're going to have to dump the object source of the binary, look at the instructions in
+ x86 assembly, and try to figure out what it's asking for, step by step by going through
+ a debugger.
+ It's a great example of using reverse engineering and learning how to debug something.
+ The first two phases you'll do quickly, the last phase gets really hard.
+ So again, plan your time ahead of time.
+ Third lab is stack smashing and return-oriented programming.
+ We're going to teach you how if somebody uses poor programming practice to break in and
+ smash the stack of the machine to be able to exploit the code and make it do something
+ that it wasn't intended for.
+ Fourth lab will be on parallel programming.
+ So I'm biased, I teach this class, but I like these labs.
+ Originally when I first started teaching this class, they were doing MIPS assembly language
+ where they were doing a cafeteria simulation in MIPS.
+ And it was just a painful owner's slag for no reason.
+ This class, I'm basing it on a textbook from CMU where the labs come from, most of the
+ labs.
+ The idea is what do you have to know about systems, either software or hardware systems,
+ to be a better programmer.
+ I think the labs are fun, as fun as you could expect for a computer science class.
+ I think they're fun, so give them a shot.
+ The one thing I want to recommend is, yes, you may think of other ways around the lab.
+ You're all getting the same lab, so you might try and do it in other ways.
+ I strongly encourage you to do the lab the right way.
+ It's going to prepare you for the test.
+ I'm going to try to ask questions that are similar in spirit to the lab.
+ Obviously it's different because it's not interactive, but just approaching the labs
+ by trial and error is not the right way to do this.
+ Any questions so far?
+ Yeah.
+ We're going to be doing x86-64, and unfortunately, as much as I would like to do ARM as a RISC
+ language, we're going to be doing MIPS because that's what's used in later classes.
+ If we ever get all on the same page and everybody makes the switch to ARM, we'll just do ARM
+ in this class instead.
+ I'm going to have one lecture on MIPS.
+ The rest of the class will be x86-64.
+ All right.
+ Brew and Learn will still have all the content.
+ I'll make the class announcements on Brew and Learn.
+ We also will have a forum with Piazza.
+ I'm going to ask the TAs not to make the announcements on Piazza because not everybody participates
+ in Piazza, but I will make announcements on Brew and Learn, so please stay posted on that.
+ Lectures, assignments, solutions, previous exams, when I post them, they'll all be on
+ Brew and Learn.
+ The textbook is the third edition of Computer Systems, a Programmer's Perspective, or the
+ CS App book.
+ The book is way more than we're going to cover in this class, so I think reading the book
+ and expecting to do well is probably overkill, but it's a great backing store, so I like
+ to view it as the lectures I try to emphasize certain material.
+ If you can't understand, come to office hours, come to discussion, look at the textbook.
+ There's only going to be about two weeks' worth of material that is not in the textbook,
+ so for the most part, it is not required that you buy the textbook.
+ I don't get a kickback, so I'm not requiring it, just kidding, but I'm going to assign
+ some homework from the textbook, so I can't post those particular problems, but someone
+ else might.
+ I can't control that, so at least you need some way of getting access to the book to
+ get your homework problems, or someone who will post it.
+ This is the breakdown of grading.
+ The midterm and final are a big chunk of your grade.
+ It's intimidating, and the way I try to deal with that is that the final is comprehensive.
+ If you bomb the midterm, I am happy to adjust the way to the midterm if you do better on
+ the final.
+ It doesn't work the other way, so if you do great on the midterm and then slack off, sorry.
+ The exams are open book, open notes.
+ No electronic devices, no electronic textbooks, I'm sorry, I wish I could do that for the
+ environment, but I can't stop all of you from communicating electronically, so it's going
+ to have to be either physical textbook, physical notes are allowed, but nothing electronic.
+ The labs are 8% each for the four main labs.
+ There's one warm-up lab that is due this Friday.
+ Before you get scared, I'm going to give you the answer to the warm-up lab in next class.
+ It is one question that's going to be one of the questions that would be kind of like
+ the first lab on the warm-up lab, and all you have to do is make sure you have your
+ account working, you do all the compilation steps we ask, and you submit it, so it shouldn't
+ take that long once you have your account, but I just want the warm-up lab to make sure
+ that we get over any logistical hiccups in the first week.
+ So for today, make sure you have an account.
+ That's going to be the big thing, because I can't control, and that might take a long
+ time to get through C-Net or whatever, so make sure that you have your account started
+ now.
+ I have this that you must work alone in all labs.
+ Let me clarify that.
+ I'm okay with you discussing.
+ I'm okay with you talking about ideas, brainstorming, that sort of thing, but what I don't want
+ is for you to say, hey, can you do the lab for me, hey, what's the answer to the lab?
+ So that is the thing.
+ I want you to do your own work, your own pain on that lab so that you can do well on the
+ test.
+ Do I curve the class?
+ I do have an intention to curve, but many times people do so well that there is no curve.
+ I'm just warning you.
+ So yeah, if I make the test too hard and everyone bombs, I will definitely curve.
+ I don't curve the other way.
+ I've dealt with two faculty who do that, and I don't understand why.
+ So if all of you get an A in this class, I would go home very happy.
+ If all of you don't get an A, I even go home happier, no.
+ So it would be great to all of you to get an A and earn an A, but in terms of the curve,
+ it will be dependent on how people do, and so if everyone does well and the average is
+ in the high 70s or high 80s, maybe the curve will not be that significant.
+ I can't control that.
+ Discussion will be 10% of your grade, so attendance is important, and homework will only be 5%.
+ So it doesn't mean blow it off.
+ It means that you're not a big punishment for doing it wrong.
+ This is a calendar.
+ I have this in the syllabus.
+ I'm not going to go through each date.
+ What I just want to point out a couple of things.
+ I tried to include in parenthesis for each topic where it's covered in the chapters for
+ your textbook.
+ Fridays are when the labs are due, and homeworks usually.
+ The final exam is set up.
+ I think we're going to do it in Ackermann, so we have the grand ballroom.
+ I don't know what we're going to do about the midterm yet.
+ This is not doable to have all of you in this one room.
+ That would really suck.
+ So I'm hoping to get another big room, at least one more that we can kind of spread
+ out in.
+ I will let you know how that goes.
+ They won't give me Ackermann, but at least we have it for the final.
+ Okay, cheating.
+ I hate to have to bring this up, but unfortunately it happens many quarters where I have to report
+ something to the dean.
+ My job is very simple.
+ If I see cheating, I have to report it, and then it gets evaluated by the dean's office.
+ So cheating is if you are sharing code, copying, retyping, looking at, or supplying a copy
+ of the file.
+ I had a student once who had submitted homework that was identical to the solution manual.
+ They came to my office, and I put the solution manual and the homework in front of them.
+ And they said, "Oh, I didn't cheat.
+ I didn't cheat."
+ I said, "I'm not accusing you of cheating.
+ How are they the same?"
+ I got it off the web.
+ What was the website?
+ It was something that had cheat.com in the name.
+ Pretty clear sign that it was cheating.
+ But not all websites are that clear.
+ So if you're just copying the homework, yeah, that's cheating.
+ On an exam, you should keep your eyes on your own exam.
+ You all know this, acceptance rate at UCLA computer science is 3%.
+ This is the best of the best here.
+ So I don't have to tell you what cheating is and isn't.
+ What is not cheating and what I do like is working together is fine.
+ Collaborative -- I just went with my son to visit Harvey Mudd, and they have a phenomenal
+ honor code.
+ They encourage cooperation.
+ I think they're doing some things better than we are.
+ Not that I want any of you to leave and go there.
+ But I really think that working together is not necessarily a bad thing as long as everyone's
+ cooperating and learning from it.
+ Chegg, GitHub, Course Hero, I consider those cheating.
+ Please don't use them.
+ Don't come to me as one student did one year and say, "I got this off of Course Hero.
+ It's one of your old exams.
+ Can you tell me what the answer is?"
+ For the systems that we will use in this class, there are C's net administered Linux machines.
+ If you log in to cs33.cs.ucla.edu, it should load balance you to one of the machines.
+ It is important to log in via this approach because there are C's net machines that are
+ not set up for this class.
+ In some cases, we have to deprecate some of Linux protections so that we can run some
+ of the things like the stack smashing lab.
+ Or the libraries that are required for compiling on ANSI standard C are only required on certain
+ machines.
+ So make sure you log in with that access.
+ If you decide you want to try to run stuff on your own machine, first off, some of the
+ labs won't work.
+ But if you decide you want to try coding on your machine, it is your responsibility to
+ upload it and make sure it runs on our machines.
+ Unless you're giving me your laptop, which I'm all for, and letting me run it on that
+ laptop, I need to be able to make sure it works on the machines on Linux server.
+ So it is not acceptable to just code on your own machine and expect it to work on ours.
+ Verify.
+ Alright, any questions about logistics before I jump into the content for this class?
+ Like I said, it's going to be a very front heavy, front loaded class.
+ And it's going to slow down as we get closer to finals because the content will be a lot
+ more high level.
+ But these first few weeks are going to be a lot of material.
+ This course theme is about abstraction is great.
+ What you learned in 31 and 32 is really important for modular code and being able to have code
+ that is provable and well documented and scalable.
+ That's great.
+ All that's great.
+ This class is not about that.
+ This class is going deeper into the machine stack and peeking out every amount of performance
+ that we can.
+ No one wants to program an assembly necessarily.
+ I mean, I do.
+ But most people don't want to program an assembly.
+ That's not the goal is to try to make that language somehow user friendly.
+ But there are times for performance when you really want it.
+ I've looked at some encryption code, for example, of securing keys and decrypting keys for digital
+ rights management that is written purely in assembly because of the speed.
+ So what we're going to look down is trying to figure out what do we need to know as programmers
+ about the system to make better choices and make things more performance efficient.
+ It's not necessarily going to make things more modular.
+ This is my cheesy example here of a starting point.
+ Instruction set architecture, we already talked about this.
+ This is the interface between the hardware and the software.
+ So on the lower part here I have what you should never do to your processor, peel back
+ that packaging.
+ I've got the processor on a motherboard that's going to be executing whatever code we provide.
+ And on the top I've got a high-level language, I call C high-level, a high-level language
+ that is implementing a portable function.
+ What I mean by portable is I could run this on many different architectures right now.
+ It is written in a language that many architectures understand.
+ But what happens is that this program on the upper left gets translated into an assembly
+ language that is specific for a particular machine.
+ The human readable form is what's in the middle and that's debatable, I know, but the human
+ readable form is in the middle and the right-hand side is the binary form.
+ This is the form that the machine will ultimately have, all zeros and ones.
+ As my wife likes to joke, we haven't invented two yet.
+ She sees me writing zeros and ones all the time.
+ It's like where's the two?
+ Okay.
+ Instruction set architecture is below and is the layer that provides the interface between
+ the hardware and software.
+ The software is running on this particular micro architectural design.
+ And so this physical implementation, this is a version of Nehalem, so Intel's Core i7
+ architecture, has four cores, one of which will be running this particular piece of software
+ using memory structures like the shared L3 cache and communicating using the bus interface
+ and other components.
+ These components will be built out of logic.
+ This is a particular stage in an adder chain.
+ This class is not going to delve too deeply into the design.
+ When you do 51a or what is the EE version, EE 116c, no, just 16c, you'll be covering
+ logic design of these sorts of things.
+ When you get into 151b, you'll be talking about how the hardware is built up.
+ In this class, we're going to look at it from a little higher level.
+ Compilation is that process by which we take the higher level language and we come up with
+ an assembly language program, something in the language of the machine.
+ It goes through a number of steps which you'll cover when you do compilers here at UCLA,
+ but the basic idea is you start with a source program that is human readable in a text form
+ and it goes through a preprocessor.
+ The preprocessor handles any of the #defines or preprocessor directives that are geared
+ for that particular stage of the compiler and it comes up with a modified source program.
+ When we cover OpenMP in our fourth lab, we'll see that OpenMP has a ton of preprocessor
+ directives that injects code for this second stage.
+ Once we have a modified source program, we compile it, the compiler has a parser that
+ understands the language, looks for certain syntax and it compiles it down to an intermediate
+ representation which is a sort of a universal language which is used to translate down.
+ It optimizes it and in this class, later on, we'll cover some of those optimizations that
+ the compiler can do and some things that it can't do, that we might want to do to make
+ our own code better.
+ Then it gets to an assembler that takes that intermediate representation and generates
+ actual code.
+ The assembly has to be specific to the machine, so an ARM machine versus a MIPS machine versus
+ an x86-664 machine like we're going to cover in this class.
+ Then we link different binaries together, different relocatable objects together.
+ The link here, we're going to spend a lecture, maybe half a lecture on at some point in this
+ class.
+ It is the stage where we place data and instructions in memory to come up with a final binary and
+ then we run that last binary.
+ This is just a high-level view of things we'll be talking about in this class, kind of looking
+ at the overall flow.
+ Today, I want to get into bits and bytes.
+ In this world that we're getting down into, this sort of deep dive into the processor
+ architecture, we deal with a binary system.
+ There have been implementations of ternary operating systems and ternary devices, but
+ for this class, we're going to just deal with binary.
+ We have zero and one, so high voltage, low voltage, you can think about it, on/off, whatever
+ you prefer, but in this case, it's hard for us to represent a stable signal with a lot
+ of discrete values.
+ We stick with a higher level and a lower level with a security band in between so that we
+ can make sure we have stable results for all of our electrical signals.
+ A way to think about how this can be used, if you look at number systems, this is an
+ example of what we're going to be getting at with the understanding of what bits are.
+ Bits are really just bits.
+ What they represent, it could be that this one in this location represents a particular
+ number.
+ It could be that it represents a character.
+ It could be that it represents the presence or absence of something in a discrete set.
+ We don't know until we understand the context.
+ Part of the class that we're going to be talking about over the first few lectures is the context
+ of understanding what these bits mean.
+ Let's get to number systems.
+ We have ten fingers, which represent our way that we've developed of counting, right, one
+ to ten.
+ Now if we look at this from a computer science standpoint, it's zero to nine because we start
+ with zero.
+ Our number system is based off of this decimal.
+ If I write the number 5142, you understand that each one of those digits has a meaning,
+ has a weight.
+ The five is weighted heavily.
+ It's the most significant digit.
+ It's going to be a thousand, right, ten to the three.
+ The one is going to be a hundred, the four is going to be forty, and the two is going
+ to be a two.
+ You understand that because of the place and the fact that base ten with ten fingers, right,
+ makes use of tens as the placeholder.
+ Hopefully we're good with this one, right, and this is how we build it up.
+ What if we only had two digits?
+ If we only had two digits, like the computer does, we could only do one and two, or since
+ we're in computer science, zero and one.
+ If we're stuck with zero and one and we want to encode the same kinds of numbers we've
+ been talking about, we can do things in binary, and in binary, instead of each bit, in this
+ case, the analog for a digit, being a value from zero to nine, it's either a zero or a
+ one, and that's it.
+ And our base is two.
+ So the number zero, one, one, zero, if I interpret it as an integer, okay, and there's other
+ things we can interpret as, and we'll talk about it, it would be that the zero on the
+ left side represents the eighth significant size, right, zero times eight, I'll just put
+ it out.
+ The one on the left side is one times four, plus one times two, plus zero times one.
+ So if I were to think about what this zero, one, one, zero means, interpret it as an integer,
+ it would be?
+ Six, okay, not bad, probably you said it, we'll work on getting everyone to say it together.
+ Alright, so binary is one thing that we deal with, but binary is cumbersome, nobody wants
+ to have a collection of zeros and ones like this.
+ So what we have is a number system that we're going to use heavily in this class that tries
+ to capture the accuracy of what binary is for the purposes of understanding what the
+ computer is, but a little less cumbersome for us to deal with.
+ My daughter said this was gross, but this is if we had eight fingers on each hand, okay,
+ this is base 16, I have the numbers one through 10, and then 11, 12, 13, 14, 15, and 16.
+ If we could have counted this way, what a world it would have been, gloves would be
+ really difficult, but we would have, starting from zero, zero to nine, and then 10 through
+ 15.
+ But we want single character digits, we don't want to have our hexets in this case, we don't
+ want to have things that are complex.
+ So what we do is we have zero to nine, and then characters A through F. A is 10, B is
+ 11, C is 12, D is 13, E is 14, F is 15.
+ And so with hexadecimal, if I have something like 3DA2, that could be interpreted as meaning
+ I have three in the 16 cubed, or 4196, D, which is 13, times 16 to the 2, and A, which
+ is 10, times 16 to the 1.
+ I could represent this as a numeric value, but it might not be.
+ It may just be that 3DA1 happens to be a collection of bits.
+ And for example, this 1 represents bit pattern 1, 0, 0, 0.
+ This A represents bit pattern 1, 1, 1, 0, 1, 0, because there's an 8 and a 2.
+ This D would represent 8, 1, yep.
+ And so this hex sequence could represent this binary sequence.
+ And this is the kind of thing that we'll be using when we look at dumping out memory,
+ because it's a lot easier to look at hex digits than it is to look at binary.
+ Put another way, here's a relationship between hex, decimal, and binary for four bits worth
+ of values.
+ You can see the correlation between different hex digits, decimal digits, and binary digits.
+ This can get very confusing, in and of itself it can get confusing, but it can get confusing
+ when we're putting different numbers up, because if I put 1, 2, 3, 4, I can tell you it's not
+ binary, but is it hex or is it decimal?
+ And so in this class, we will prefix hexadecimal with 0x, and binary usually, unless I forget,
+ with 0b.
+ And this is true for C programming as well, so we can specify numbers according to different
+ number representations.
+ So on a test, you should be able to tell if the number I'm giving you is hex or binary.
+ When converting binary to hex, and I did an example of that on the fly here on the board,
+ but I have another one here on the slide, one way we can approach it, if this is a binary
+ number here with the 0b in front, is you split it into 4-bit chunks, because remember, with
+ this decoder ring that I have here, I know the mapping from binary to hex.
+ F is all ones, A is 1010, and so one way to try to represent this set of bits in a way
+ that's more compact and potentially more readable is to take every 4 bits and convert it to
+ a hex digit.
+ Dealing with binary values is not always treating them as integers.
+ Sometimes we want to treat binary values as individual bits.
+ And so we're going to see that we have a set of bitwise operations, operations that are
+ performed on individual bits themselves, as opposed to operations like addition, that
+ are performed on bits representing them as a number, or character printouts that are
+ representing bits as a character.
+ In the case of binary applied operations, we're going to stem things from Boolean algebra.
+ When you get into 51A or 16C, depending on if you're CS or ECE, you'll be dealing with
+ building up circuits that develop based on Boolean algebra.
+ This class we don't get into that very much, but we do want to look at sort of Boolean
+ operations and their use to manipulate bits.
+ And so the four that we'll cover are AND, OR, NOT, and XOR, or exclusive OR.
+ So what's shown here are truth tables.
+ I'll do AND as an example.
+ So for the AND truth table, the idea would be that I have two values, A, ANDed with B.
+ And if A and B are bits, they'll be represented as a pattern.
+ This could be A, and this might be B.
+ And so what the AND operator does is it manipulates bits in a pairwise fashion.
+ And what these tables show is the results for each individual pairing.
+ So in this case, if I have B as either a zero or one, and A as either a zero or one, this
+ is a particular single bit of A or B, and I AND them together, the recipe for AND is
+ that I provide a one when both inputs are one.
+ So if A and B were both zero, the output would be zero.
+ If B and A were zero and one, the output would be zero.
+ But only if both B and A are one, would the output be one.
+ And so in a pairwise operation, what we have as a result of an AND is that we pair each
+ individual bit and get an outcome that is based solely on those individual comparisons.
+ The point of Lab 1 is to get you some exposure to these types of bit-level manipulations.
+ Now the use for something like this, the use for an AND, for example, could be masking.
+ It's very effective if I wanted to try to do a hash table, and I wanted to index into
+ a particular location in the hash table, and I only had 1,024 entries in my hash table,
+ I could use an AND to mask out the bits that were not from zero to 1,023, to only mask
+ out the bits that would give me a unique entry in the hash table.
+ OR is another binary operator, it takes two inputs, and it reports a one when either input
+ is one, or both.
+ Exclusive OR is a little different in that it only provides an output of a one when the
+ inputs are different.
+ XOR is used as a building block of adders in microprocessor design.
+ NOT just flips the bits.
+ So these are some examples of bit-wise operations on different binary values.
+ So the way I want you to think about this is, when we talk about this kind of operator,
+ this sequence of bits could be an integer, could be a pointer, could be a character,
+ could be a set representation.
+ We don't know.
+ What we do know is we have a pattern of bits that are stored in memory, and we are using
+ these operators to manipulate them.
+ And there are different uses for those that we could have, but the way that they work
+ is they take pairwise comparisons per bit and come up with an output.
+ So blue here shows the inputs, and red shows the outputs.
+ Any questions so far?
+ Yes.
+ >> [Inaudible]
+ >> Sorry.
+ One more time?
+ >> [Inaudible]
+ >> Ah, right.
+ So in this class, we're only going to be dealing with operations that are called binary expressions
+ and we're going to be dealing with operations that are done on binary operators on bits
+ of the same length.
+ Yes.
+ If I were to try to do something on a 4-bit value and an 8-bit value, I would need to
+ take the 4-bit value and expand it into 8-bits first, and we'll talk about that.
+ That's a process called sign extension, and we'll talk about that.
+ Yes.
+ Good question.
+ So we'll assume that the inputs are the same size.
+ Great.
+ Yeah?
+ >> [Inaudible]
+ >> Yeah.
+ So the order of operation here for the bit level operators would be -- let's see.
+ For c, i think it does not first, and the others are listed in their order from left
+ to right.
+ I think that's correct.
+ Okay.
+ Good questions.
+ The bit level operations we'll deal with in c are the four that I've just discussed.
+ The ampersand does and, the pipe does or, tilde does not, and then the carrot, I guess
+ we call it, does XOR.
+ You can apply these to any of the integral data types.
+ By integral data types, that means the data types that are defined as part of the c language,
+ and that includes long, int, short, and char, and unsigned.
+ It doesn't apply to a struct or a union that we'll cover when we cover more advanced data
+ types in this class.
+ It views the argument as a vector of bits, a collection of bits that it can apply arguments
+ to bit-wise, and I give you some examples here of more bit level operations.
+ If I were to do, let's just take one of these as an example, 6-9 and 5-5.
+ So with 6-9 and 5-5, the way to think about this hex value 6-9 is that each hex digit
+ represents how many bits?
+ Four.
+ Great.
+ So if I want 6, it's going to be 0110, and if I want 9, it's going to be 1001.
+ So this is a binary value that is represented in hex as 6-9, and I'm ending it with 5-5.
+ So 5-5 is 0101, and when I add these together, I'm going to follow the table that we built
+ up here for each pairwise comparison, and zero ended with zero will be one ended with
+ one, and so on, to provide this output.
+ So this ultimate value here is in binary.
+ If I wanted to put it in the hex, what would it be?
+ This would be four, this would be one, so the output of this ending would be four one
+ in hex.
+ What does that four one mean?
+ We don't know.
+ We need context.
+ But we do know that the bit manipulation that would be performed by this operator would
+ be to combine these bits by an AND operation.
+ In C, there are also logical operators.
+ You've probably seen these in C++, like, for example, a double ampersand.
+ These are not the same as the logical AND, excuse me, the bitwise AND.
+ This is the logical AND with two ampersands, and this is the bitwise AND with a single
+ ampersand.
+ A bitwise AND is performing a bitwise comparison to create a new binary value.
+ A logical AND is more of a true/false expression.
+ When you do a double ampersand, it is being evaluated down to a zero or a one, or anything
+ else actually could be considered a non-zero.
+ It also has early termination, and so if I took the same expression here, six nine and
+ five five, and I double ANDed them together, meaning I was performing a logical evaluation
+ here that is ANDing it, it would result in zero one because it's trying to represent
+ true.
+ It's making two non-zero values, true and true, and giving an output of true.
+ So we've got four binary operators so far, AND, OR, XOR, and NOT.
+ Another operator is shifting, and this is going to be one of the ones we're going to
+ use for lab zero.
+ Shifting takes a sequence of bits and changes their significant places.
+ So if I have this particular binary pattern, the significance currently is two to the zero,
+ two to the one, two to the two, two to the three, two to the four, when viewed as an
+ integer, for example.
+ If I shift this sequence of bits to the left or right, let's say I shift it to the left
+ by one, do you see how I've increased the significance of each bit?
+ Now instead of this bit representing the value two, it represents the value four.
+ Instead of this being four, it represents the value eight.
+ Things have increase in significance, so shifting is one way to increase the individual values
+ and significance as a multiplicative factor.
+ It could also be shifting just to change the bit position because the particular bit has
+ some other meaning.
+ And so in general, when we talk about shifting, we're talking about moving the bits from left
+ to right.
+ This is different than a rotation because the bits that come off the end and are removed
+ don't come back around.
+ So the fact that we have to deal with, when I shift this to the left by one, I'm taking
+ this bottom four, and I'm moving them here, and I'm left with a space.
+ Does everybody see that?
+ I've left a vacated location.
+ It's not that this one wraps around, but when I left shift, I always pad with zeros.
+ So left shifting pads with zeros.
+ If I left shifted an eight bit value by eight, what would my result be no matter what the
+ original value was?
+ All zeros, because I would be left shifting by eight, all the values would be gone, and
+ I would have only zeros left.
+ Right shifting, I have to make a choice.
+ If I'm right shifting this value by one, I'll have a space that has to be left.
+ And the question is, what do I put in that space, a zero or a one?
+ And it depends on the type of shift that's being performed.
+ If I do a logical shift, it's the same as a left shift, it just sticks a zero in no
+ matter what.
+ If I do an arithmetic shift, then it's going to treat this as a binary value and look at
+ the most significant bit and replicate it.
+ We're going to talk about that when we get into integers, why we have an arithmetic shift
+ to preserve a number's value.
+ But just keep in mind, with right shifting, it's a little more different than left shifting.
+ You have to know the type of right shift.
+ Are we clear on what shifting is?
+ Right now we're treating these as operators, things that we can do with bits.
+ We haven't talked about how we'd use them, what they're good for, or any of that.
+ But are we at least clear on how these things manipulate bits?
+ Yep?
+ You're saying this one, if I shift it to the left by one?
+ Oh, what if we had one instead?
+ Is that what you said?
+ Oh, for this one.
+ Got it, got it, got it.
+ If this was originally it, we would have the same left shifted form.
+ I see what you're saying.
+ You're saying this one didn't rotate around.
+ Yep, that's right.
+ It's gone.
+ It was shifted off.
+ Yep?
+ Yeah, what a shift does is it's kind of like you can imagine the bits being pushed and
+ anything that goes beyond the finite amount of space of storage we have will be gone.
+ It is not a rotation where we're taking a dial and turning it and everything comes back
+ around.
+ Think of it as I have a finite amount of space for bit storage and if I shift, let's say
+ I only have four bits for storage, if I shift to the left by two, these two bits are gone.
+ And what I'll have as a result will be 0100.
+ So the significance of whatever I had in this position is gone with the shift.
+ Yep?
+ [inaudible]
+ It is also a binary string that is represented as a base integer.
+ That's fair.
+ Yep?
+ Yep?
+ [inaudible]
+ That's an excellent observation.
+ The observation was, when I left shift, if I'm treating it as an integer, if the value
+ that I'm shifting is treated as a numeric value, it seems to be increasing as I go to
+ the left.
+ But if I go to the right, it seems to be decreasing in significance.
+ So that means that shifting may be a good analog for multiplication and division.
+ But there is some subtlety to that and that's the point of the warm-up lab.
+ So that's a great observation.
+ And we're going to cover the difficulty with making that choice there in the next lecture.
+ Excellent.
+ Yep?
+ [inaudible]
+ So, oh, you're saying, what's the syntax when you want to do a logical or arithmetic?
+ [inaudible]
+ Yeah, so when you're dealing with logical or arithmetic shifts, there's a way that you
+ define it as a C programmer and a way you define it in assembly.
+ In assembly, it would be a different instruction.
+ So you wouldn't have to say log shift, you would just provide the logical shift x86 instruction.
+ But if you're dealing with C, you don't have to specify it either because it will be based
+ on the type of the integer.
+ So if it's an int versus unsigned, it will do logical versus arithmetic.
+ And we'll cover that next time.
+ So you won't have to do, this is just supposed to be a label, but it won't be the actual
+ syntax.
+ Yep?
+ [inaudible]
+ Yeah, what is so bad about that?
+ Okay, so if I have a shift to the right or is equal to the overall word size, and let's
+ say I had 100 and the word size was four, and I want to shift to the right, do I make
+ that all ones arithmetically or all zeros because I shifted out all the significant
+ values?
+ So there will be an answer.
+ If you do this in C, there will be an answer.
+ But the point is it's usually undefined with respect to the standard because by shifting
+ away everything, you've lost all content.
+ So that's the issue.
+ It's not that it's a bad thing, it's just that it's undefined by the standard.
+ And I didn't do that.
+ We have to ask Egrit about that.
+ Yep?
+ Good point.
+ So when we deal with binary values, we're going to see that in this class in general,
+ finite amount of space is a constraint for us.
+ We have a certain amount of bits that we're going to play with.
+ So if the word size were four, I would have only four bits to play with.
+ If I shift this by two, I'm still only going to have four, I don't get six bits.
+ Shifting doesn't create more.
+ So the word size is how big are the values that we're dealing with in a nominal sense.
+ This is confusing for a variety of reasons, but I think the big thing is many are taught
+ that a byte is eight bits and a word is 32 bits, right?
+ That's sometimes the common wisdom.
+ The problem with that is that x86 has its own version of what a word is, as we're going
+ to learn.
+ So the word size we can think of as a flexible notion of the nominal arithmetic size of a
+ processor architecture.
+ So we'll talk a little bit more about that.
+ But for right now, the word size is how much space we have to store the binary value.
+ Yeah?
+ What was the last part?
+ Okay so I'm going to answer your question in two ways.
+ Hopefully one of them is how you intended.
+ The question was is there any time where you wouldn't want to shift, right?
+ And so in terms of could we shift, the answer is any binary value we could definitely shift.
+ And any piece of data we could shift, even if it doesn't make sense.
+ Like if you're shifting a character or a string, why would you do that?
+ So bits are bits.
+ We could always shift things left to right.
+ In terms of would you not want to do it, yes.
+ There are cases where making a shift, a shift is a conscious decision that you're using
+ for some reason.
+ So two examples of when you might use a shift, let's say that I'm trying to build a system
+ that tracks the number of zeros or ones in a binary value, because I want to know maybe
+ if it's even or odd or whatever it is I want to know, I want to know the number of ones
+ in a binary value.
+ And so shifting and then evaluating the least significant bit, shifting is a way of moving
+ where I'm putting focus on for the value.
+ Another thing could be that I'm using shifting as a means of doing multiplication, in which
+ case by shifting by a certain number of bits, I'm changing the value to something that,
+ so there's an intention behind it.
+ So yes, there are cases where you definitely don't want to shift, just like there are cases
+ where you wouldn't want to multiply or you wouldn't want to add.
+ It's another operation that you have available to you.
+ Yeah.
+ Okay.
+ Yeah.
+ [inaudible]
+ It's not quite.
+ Shifting by three would be the same as multiplying by eight.
+ Oh, you're saying, could I break it into two steps?
+ I got you.
+ Yes.
+ So you could shift by two and then shift by one.
+ It would be the same thing.
+ Now I got you.
+ I thought where you were going was, could I shift multiplying by three by breaking it
+ into something else?
+ And that would be different.
+ I'll do that one next time.
+ Yeah.
+ Okay.
+ I went somewhere else.
+ Yeah.
+ [inaudible]
+ What's that?
+ [inaudible]
+ Yeah.
+ So the question is, is there a way to undo the shift?
+ And I'm going to say yes and no to that.
+ So on the one hand, if you've shifted and you've lost some bits because you shifted
+ to the left, remember these are finite values.
+ And next time what we're going to talk about is if you go beyond and you create a number
+ by multiplying that's bigger and bigger and bigger, that exceeds the space that we have,
+ you will lose precision and you will lose some of those bits.
+ Those are not recoverable.
+ So assuming we don't do that, I shift and the number is still representable and I haven't
+ lost any bits of precision, then shifting to the right will undo what I did.
+ That's true.
+ But there are cases and we're going to talk about that next time called overflow when
+ we'll lose precision on the bits.
+ Excellent question.
+ Yeah.
+ [inaudible]
+ Yeah.
+ For right now the word size you can think about is being determined by the type declaration.
+ So a char would only have eight bits.
+ A short would have 16 or an int would have 32, for example.
+ Long would be 64, that sort of thing.
+ Cool.
+ We'll talk about that next time too.
+ Okay, great.
+ This is, I'm really happy to see these questions.
+ So this is some of that being played out.
+ You can look through those.
+ I want to go through an example of an actual interaction with a machine.
+ So what I want to encourage you to do in this particular class, and you know what, this
+ is a good time to take a five minute break.
+ So let's take five and then we'll come back.
+ All right, what I want to do now, and I'm going to have, I'm going to do these throughout
+ the class.
+ What I'm going to try to do after each class, after I cover the sort of lecture note content
+ is do walkthroughs with actual code.
+ The reason I want to do this is number one, the way I come up with questions for the class
+ is by doing stuff like this, okay?
+ I will come up with a C program, I'll compile it down, I'll interface with it with GDB,
+ and I'll come up with some memory dumps to quiz you with, okay?
+ That's really my, that's my creative artistic process for artisanally crafted exams.
+ So what I want to show you is my walkthrough with this sort of primitive tool chain that
+ you're going to be using for this class, okay?
+ This is me logging into one of the C's net machines, and once I connected, you're going
+ to have to use a primitive, I call it primitive but it's hurtful, a primitive editor, okay?
+ These editors you could, if you want to download it using cyberduck or whatever it is that
+ you want to use to transfer things across, fine.
+ You could edit it in your own editor of your own choice, but I recommend getting to use
+ one of these online editors.
+ It's very useful in cases where you are maybe reverse engineering a system or doing some
+ kind of lower level implementation on a device that is quite simple.
+ So what I use in this class will be Emacs, I know many of you are going to say Vim is
+ better, okay, I'm not going to have a holy war with you, but I use Emacs mainly because
+ when I was an undergrad 100 years ago, I built a bunch of macros into it that are great for
+ programming in Lisp, so that's what I use, okay.
+ So this is an Emacs session where I'm editing a particular file, and in this case the file
+ is going to be called bits-demo.c.
+ It is a C program that I built up just for the purposes of kind of demoing some of the
+ stuff we talked about today.
+ This is the C code, let me talk through it a little bit, I don't know how visible it
+ is in the back, but I definitely have these uploaded so you can take a look.
+ I've declared a char called stringy that is an array.
+ So stringy has eight characters that it's comprising, we'll talk about arrays and how
+ they're laid out, but it's basically eight neighboring memory locations.
+ So eight, a chunk of memory where each char is a single byte, eight bits.
+ So how many total bits of storage did I allocate with stringy here?
+ Yeah, 64 bits, eight bytes, that's the total amount.
+ By contrast, char_bq is a char that I created that is only a single byte.
+ So it holds only eight bits worth of content.
+ Integer is an integer that is 32 bits, so four bytes of content.
+ byte_me and bit_array are both chars of a single byte size.
+ So those are the declarations that I've made here as far as variables.
+ If I were to look at what the compiler does with that, some of these might be laid out
+ in memory, some of them might be in what we're gonna call registers, which are small, fast
+ pieces of memory that are part of the architecture itself.
+ So in this class, we're gonna get into the difference between something that's stored
+ in main memory versus stored in registers.
+ So that's giving you a preview.
+ Then what I do in the code is I make an assignment, initial assignment for all these different
+ components.
+ I put an initial value into char_bq, I put an initial string by copying it into stringy,
+ and I give integer a decimal value, I give byte_me and bit_array both bit values.
+ Notice that I use the prefix 0b to indicate that these are bit values.
+ Then I use the printf statement, for those who are not familiar with C, this just dumps
+ out a formatted string, so the F stands for formatted.
+ And what this does in terms of a printf is it gives me this string, but will you see
+ the percent S?
+ It replaces the percent S with the string interpretation of stringing.
+ This is where the context matters.
+ I said bits were just bits, but because I put percent S, it's interpreting the stringy,
+ which is that 64-bit quantity we talked about, as a collection of characters.
+ And what it does is it will keep going one character at a time until it gets to the character
+ terminator, right, \n or a \o, whenever it gets to the string terminator, it stops.
+ The next line prints a character, percent C means just print one character, don't go
+ for a full string, percent S is a string, percent C is a character.
+ And then for integer, I have percent D, which is interpreted as a signed integer.
+ We're going to talk about signed versus unsigned integers next time, but for right now, it's
+ interpreting integer as a numeric value.
+ So again, let me just stress this.
+ Integer is a four-byte quantity, stringy is an eight-byte quantity.
+ The way that printf knows what those bits mean, they're just patterns of bits.
+ The way that printf has any clue what they are is because we put in a command to interpret
+ it as an integer versus interpret it as a string.
+ Then I had to make a function called binary dump because C doesn't have a very convenient
+ way of dumping out a binary value.
+ So my binary dump function is over here, it just prints out one bit at a time.
+ And I won't go through the semantics of what I did here, but you can see I used shifting
+ and an and in order to implement binary dump.
+ So I'll leave that as an exercise for you to examine.
+ But I created a for loop that iterates through bit by bit and dumps out one piece of binary
+ dump at a time.
+ So what I do here is I print out the value of byteme in binary, the value of bitarray
+ in binary, and then I print out anding, oring, xoring, and noting these different components,
+ demoing the use of these bit level manipulation operators.
+ This is the result.
+ And let me speak to a little bit of what I did here on the command line.
+ So the first thing I did was I used the GNU compiler to compile bitsdemo.c.
+ Now I didn't specify an output, I didn't specify an optimization level, I just compiled it
+ with the defaults.
+ But what it creates is an executable called a.out by default.
+ So if you don't specify and you just run the compiler, it goes through all the stages we
+ talked about.
+ It preprocesses it, compiles it, puts it through the assembler, and creates a binary that is
+ pure assembly language that is going to be a.out, and it's runnable.
+ In the next line here, so this red area is a prompt, it's asking me for what my next
+ command is, right?
+ And I didn't have to type, just to be clear, I didn't type tilde slash code dollar sign,
+ I just typed the stuff in white.
+ And then when I do object dump, what that does is it dumps the memory from an object
+ file.
+ A.out is an object file or executable, and this is dumping a particular part of the memory.
+ So with my -s -j ro data, I am dumping out what is called the data segment, the read-only
+ data segment of the binary.
+ Binaries really have two things at a high level.
+ A binary is comprised of data, all of the strings that I use with my printf, the formatting
+ strings, any initial global variables, any values that I wanted to pass on will be in
+ the data.
+ So what data seg, which is a file I created with that greater than sign is a redirect
+ in Linux, it creates a file, data seg will hold the data segment from this executable.
+ Text is the other part of an executable.
+ Text is an old-fashioned way of talking about instructions, instructions of the language
+ of the machine.
+ So these are the instructions, what we're going to actually perform, the ands, the call
+ to the printf function, all of that, and this is the data.
+ So by doing object dump d, it's doing what's called a disassembly and it's taking all the
+ instructions out of this A.out and putting them into a file.
+ So what I effectively did was create a file called text seg, which holds the instructions,
+ and data seg, which holds the data.
+ A.out is after linkage, I didn't do any dynamic linking, so actually no, there is dynamic
+ linking still, it is post the linker but not before it does dynamic linkages like for print
+ apps and stuff like that.
+ So if that makes sense, it is after linking, at least the initial pass.
+ Yeah?
+ >> Does data seg have seg here, like specific names or like some kind of >> I created those
+ names just because I wanted them.
+ I could have called them, you know, red and blue.
+ I could have done whatever I wanted.
+ What's that?
+ In this case, .rodata is the particular segment I wanted to dump out and that's the read only
+ data segment.
+ Yeah?
+ >> Does data seg and text seg, are they useful when we want A.out?
+ >> The data seg and text seg are human readable forms of what's in A.out.
+ So by doing the object dump command, I took the two main parts of an A.out file and I
+ put them into more human readable form and I'll show you them in a second.
+ Yeah?
+ So -d is disassembling.
+ So it's explicitly designed to provide the instructions.
+ The -s and -j along with the .rodata is saying provide me a particular segment and dump out
+ the data from the read only data.
+ So let me show you -- I guess we should walk through the code first and then I want to
+ show you what these things actually contain so you get a feel for what you'll be manipulating
+ over the course of this quarter.
+ This is the result of my run.
+ So string e got printed out with abcdefg.
+ The pattern of bits that represented those were interpreted correctly.
+ Char bq, the value that I had was what, 74 in hex and that was represented as the character
+ lower case t.
+ We'll talk about how in a second.
+ integer, we originally assigned that the value 42 and that's exactly what it is in decimal.
+ And then for byte me, I printed it as a char and as a value in hex.
+ And so it happens to be char 0 -- or sorry, char o, lower case o.
+ But it also is interpreted as a hex value which is 6f.
+ So 6f represents the pattern of bits.
+ The lower case o represents its interpretation under the lens of a char.
+ I really want to push home that subtlety that everything we deal with is going to be a pattern
+ of bits.
+ It depends on the lens of interpretation.
+ This is like a philosophy class.
+ Byte me and bit array were the two bit patterns that we were going to look at and here are
+ the and, or, xor and nots of those.
+ So I leave it to you to examine those and see that they work.
+ What I want to show you is a deeper dive here.
+ So this is an eye exam.
+ This is me running Emacs with four different windows open and I have one on the upper left
+ that is my terminal shell.
+ This is where I did all the commands that you just saw previously.
+ So all the stuff in the upper left we've already seen.
+ Those are the object dumps and the compilation.
+ And then I opened up on the lower left, upper right and lower right the three different
+ files of interest.
+ One of them was the original file that I used to create, that the compiler used to create
+ all this code and on the right hand side I've got on the top the text segment and on the
+ bottom the data segment.
+ So I wish I had flipped these but it's flipped.
+ I've got the instructions on the top.
+ This is text seg and then data seg on the bottom.
+ So I'm going to zoom in on each to sort of talk through it.
+ We already looked at this one but what I want to point out is that this code doesn't do
+ a lot of extra arithmetic operations or it's not doing any looping.
+ It's really just doing initial assignments and then calling functions.
+ So for those who have not been doing a lot of function invocations, the idea behind a
+ function invocation just at a high level and we're going to do this in more depth is I'm
+ running along doing my code, running a single thread of execution and I make a call to this
+ printf function.
+ So you'll see a call where the printf is invoked.
+ It's going to do its thing and dump the particular string to the console and then when it returns
+ it goes back to my regular scheduling program here and continues executing.
+ If I have another invocation of printf it'll come back.
+ So this code is reused multiple times and we'll talk about why it's useful to have function
+ invocations and the mechanism behind it in this class.
+ But just be aware that the instruction that makes this is called a call queue and we'll
+ see why it has the queue at the end, it stands for quad.
+ But this is an instruction that says hey, go do this code and then come back.
+ The coming back will be what's called a return queue.
+ We'll get to that later.
+ We'll do that later.
+ I'm going too far.
+ This is my code.
+ A couple of things I want to point out.
+ I know it's intimidating at first.
+ Don't drop the class.
+ It's intimidating at first.
+ I'm telling you the more we look at this it's going to make more and more sense.
+ But I like to kind of throw you into the deep end first and then pull you out.
+ So maybe.
+ This is how I have two kids and they both survive.
+ So this is a function called main and it starts at a particular address.
+ This value 4005B6 is a particular address in memory.
+ You'll notice on the left hand side these numbers here are all going to be in hex.
+ I didn't write this.
+ I have a tool that dumped this out so it didn't put the 0x in front.
+ I didn't write the tool.
+ Don't blame me.
+ But those numbers on the left are hex.
+ You can tell also because it has letters in it.
+ But still this is a particular location in memory.
+ The content at that location is shown here in this middle column.
+ This is also in hex.
+ So if I'm a computer all I know is I have these addresses, these spaces in memory.
+ Think of it as this massive array.
+ And at the location that starts with 4005B6 I have eight bytes that are just 55.
+ So 01010101.
+ That's what I have in memory.
+ That 55, which is one byte, is translated for us into human terms as a push of a particular
+ register.
+ We don't know what registers are yet.
+ We don't know what a push is.
+ But it is an instruction.
+ It is telling the processor to do something.
+ We're going to talk all about what these mean.
+ But what I want to show you here is this breakdown of instructions is three columns.
+ The location first in memory.
+ The contents at that location which will be for the most part unusable to us.
+ It'll come in handy when we do return oriented programming when we decide to hack and make
+ the system do something it's not intending to do.
+ But for right now it's not meaningful to us.
+ And then the human translation on the right.
+ So if you want to skip the stuff in the middle for now, great.
+ But we're going to come back to it.
+ So this tells us the set of instructions.
+ You can think of it as the steps in the recipe.
+ This is what we're telling the processor to do.
+ Notice that there are some call queues.
+ One of them is to memcpy.
+ This is so I can do the string copy and create the string.
+ And then a number of other ones are printf.
+ These are the ones that are actually calling the dumping out of text.
+ This is not the full program, this is just part of it.
+ So a few things I want you to take away from this.
+ Number one, assembly is ugly.
+ It is a dense mess of really small primitive operations that you're going to have to get
+ used to.
+ We're going to spend the next couple weeks going over these different instructions and
+ talking about what they do and what they accomplish.
+ The other big thing is that memory is laid out in such that different instructions take
+ different sizes.
+ This can get really confusing.
+ If you look at the values here of the locations, you'll notice that the difference between
+ the value address 5B6 and 5B7 is one.
+ It's one away because there's only one thing in that memory, a single byte.
+ But if I go to this next one, 7, 8, 9, and then A, that's three apart, because there
+ are three things in the location.
+ This is 1, 2, 3 things.
+ Here's BA.
+ It's not adding as we would expect because we're dealing with hex, it's a little more
+ complicated.
+ So this 4, 8 is in BA, BB, BC, BD, and then BE again.
+ We're going to go over this more.
+ We're going to look at more dumps, but I just want to put this into your head right now
+ as a starting point to kind of let it stew because this, I think, is one of the more
+ difficult concepts to get around is how this memory is laid out.
+ You'll notice that these values have a lot of symbols in front of them.
+ We'll talk about what they mean.
+ The dollar signs are for literal values.
+ The percentages are for registers.
+ These symbols have meaning, and we will get to them over the course of this class.
+ Again, this first lecture, I'm not trying to scare you, but I do want to impress on
+ you the importance of this is going to be a lot of material for us to get through and
+ understand.
+ All right.
+ So that's a text segment, and I left some of it on top.
+ The data segment is shown here on the bottom, and the layout is similar, but it's a little
+ bit more cryptic, so let's just talk about it.
+ This is the read-only data.
+ This is the way object dump would dump it out.
+ This first column is the set of addresses, addresses in memory where this data would
+ be laid out.
+ So 400818 is the first address, and then 400828 is the next address.
+ It's hex, so it's not increasing by 10.
+ It's increasing by 16, awesome, that's great.
+ So there are 16 data locations on that first line.
+ Those 16 data locations are represented as pairs of hex digits.
+ So 01 is the first hex dump location, 00 is the next, 0200.
+ So this first grouping is how many locations?
+ Four, great, I saw it, all right, it's four locations.
+ I've got four here, four here, four here, and four here.
+ This first line is not very interesting because they're all zeros.
+ But I mean this one, wow, lots of things happening here.
+ So in ASCII, 61 represents lowercase a, 62 is b, 63 is c, 64 is d, and so on.
+ So what we have here in memory is the declaration of Stringy's contents.
+ This is where the value that Stringy holds is contained.
+ All the way up to 67, and then 00 is the string terminator.
+ So the data on the internal part, so the first column is just the addresses.
+ The next four bigger, wider columns is the data, the actual contents of the memory.
+ And then on the right-hand side is the ASCII interpretation of that data.
+ This is not always what you want.
+ ASCII interpretation is only helpful when it's viewed as a string or a chart.
+ If this data was an integer, it would be unhelpful.
+ So that's instructions and data for the bomb lab where I give you a custom binary and you have to figure out your passwords.
+ You're going to be spending time looking at dumps of data and dumps of text segments to walk through and kind of march through the operation of what the code does.
+ Oh, it's glorious.
+ The debugger. This is going to be your friend for the class.
+ The debugger lets you step through code like you've maybe done in visual studio or other types of coding tools, but in this case in a textual way.
+ So here I ran the GNU debugger on a.out.
+ It gave me all kinds of useless information, and then I set a breakpoint.
+ I said a breakpoint and we'll talk about why you have to put an asterisk. It's dereferencing a pointer in this context, but I picked 400605.
+ 400605 is the invocation of printf, the first printf.
+ That was where string is printed out.
+ So I set a breakpoint there and I ran it started the program up got to the breakpoint, which tells me it is at that instruction.
+ It's at the instruction that's about to call printf to print out the value of stringing.
+ And if I take that point in time for the program.
+ And I do some manipulation in GDP.
+ I can print out for example here. I did inspect all registers and this gives me the current values of the registers for the x86 architecture.
+ These registers were going to talk about what their meanings are when they're used, but the one I just want to point to you right now is RSI.
+ RSI has a particular value that is an address. It's a bunch of F's.
+ And then 810 D810.
+ If I look for that address in memory here, I dumped out the contents of memory starting at RSI here is that exact address 7 a bunch of F's 810.
+ You'll notice that that memory hold 6162 6364 656 667 and then a 0.
+ That is.
+ ABCDE right so this is the string that I wanted to print out so this particular register is holding a pointer.
+ To memory to the string that I want to print out and that's how the print F is going to know what to do.
+ And the way I would know what those values mean is here's my handy hex chart notice that this is a red or all of the ASCII characters.
+ And then I have decimal hexadecimal and octal octal is base 8.
+ We probably won't use octal ever in this class but in hexadecimal 61 is here whoops there's even better picture 61 is here and that's lowercase a 62 is lowercase B63 is lowercase C.
+ So this is telling me by me cutting through the code.
+ And and going on this this dig into the silicon I can see what's in that string so imagine on a test.
+ I give you a print F statement like the code that I showed you but I don't tell you what's in string I don't tell you what that value of the string was and I ask you what is printed out by this print statement.
+ And I give you this dump of memory you would have to use your understanding of the code of what registers it uses of what values are in memory to tell me it prints out ABCDEFG.
+ Yeah.
+ No unless you want to you don't have to memorize the ASCII table because it's open book open note.
+ Yep.
+ Well always use ASCII.
+ Alright, let's talk a little bit about lab zero.
+ Because I want to make sure that.
+ That you all are able to finish this without complication. I know it's first week of classes. I don't want to make things worse for you. That's why I'm telling you. I'm giving you the answers in class on Wednesday.
+ So the idea behind lab zero is this is how the data lab is going to look. We give you a spec.
+ Which is what the function should implement we give you restrictions on what the functions can use in terms of operations because some of these would be trivial if we allowed you to use any operation.
+ So we are kind of constraining you in this one. For example, this is trying to multiply something by 3/4. If I just let you use multiply and divide that would be pretty easy.
+ You just say OK multiply by 3/4 great, but this case we're saying don't use multiply and divide use.
+ Either the compliment logical and or sorry logic logical not.
+ Bitwise and bitwise XOR bitwise or addition and then left and right shifting.
+ So just using those operators. Can you come up with a way to multiply by 3/4 and correctly round towards zero.
+ We already talked today about the fact that shifting can increase if we go to the left can increase the significance of a value so that seems like a good proxy for multiplication.
+ Shifting to the right.
+ Would decrease by a certain magnitude so it looks like a good proxy for division.
+ So looking at this you might think well what if I just maybe did something like.
+ Here's my value X I can add it to itself.
+ Right that would be like 3X because I can use addition.
+ And if I take this whole thing and I right shift it by two.
+ That would be the same as dividing by four maybe you think that right.
+ This works in some cases but not all and so the trick to these kinds of problems that you'll get on the data lab as our first lab will be these corner cases where it works and where it doesn't work.
+ Try a clean solution first with what you have.
+ Test it for a different range of values and you might see that this will work well for maybe positive numbers but not negative numbers.
+ And so now the question is why? What goes wrong for negative values where this doesn't work?
+ And the hint here is that you have to be doing the way division works normally on the machine which is by rounding towards zero.
+ And so as we'll talk about next time when we do shifts it doesn't divide the same way that normal division does in terms of the rounding.
+ This is an example of a data lab problem so again. We're going to go. I'm going to give you the answer on Wednesday. You can think about it now. That's great, but we'll talk about more on these components on Wednesday, but this will be a good example of the data lab, which is due.
+ Three weeks from this Friday, so let me ask see if there are questions now, yeah.
+ So the question was with this being easier hard question this one there rated from 1 to 4 so this would be a level 3.
+ It's a it would be harder than your average question.
+ It says were the question was we're not allowed to use loops here, but you in this case you were dividing by 4.
+ Right if you want to find out power to you might have to use something that was a little bit more if you were dividing by 5. I may ask you that you might have to shift and then do something else to like subtract X. The original X one time so it doesn't necessarily mean it would be a loop. It would be more instructions for sure.
+ Other questions, yeah.
+ You go for. Yeah, for submissions. All you have to do is submit your bits dot C file because will have the other surrounding context as well. So you don't have to submit all the materials that we give you.
+ Again.
+ Read the lab. Make sure you carefully read and follow the steps of the lab.
+ Other questions.
+ Yep.
+ Oh, that's that would be cruel. The question was will you be? Will I test you on usage of emacs? I won't. I'm not going to force you to use emacs versus vi versus something else, but what I do want you to understand is on a test. It's a great question on a test.
+ I think this is a pretty good representation of the kind of thing I might ask you. I might dump out memory using a command much like this. This let me just break down this command a little bit. This is examine and then the slash kind of formats in terms of what it's examining and how it's going to be printed out 64 bytes worth of memory.
+ In hex that's the ex part in bite size chunks. If I do something like that, it's going to print out just like this where each bite gets its own column.
+ Eight bytes per row memory addresses on the left.
+ I would expect you to know this convention for a test. I'm going to be using this as examples in class. You could do this when you do the bomb lab. You could do this on your own when you're exploring it. So I would expect you to understand this convention.
+ If it's emacs I wouldn't expect you to understand what the control pattern is to save a file. You don't worry about that.
+ If I give you on a test print F statement and I tell you that it's printing F with the percent S format. I would expect you to know on a test that's for a string.
+ I would expect you to know percent C is for a chart.
+ So for the most part you know I'm not going to try to do corner cases and see I'm not trying to make trip you up what I want to do is make you go through this kind of process and show me that you understand how the machine is working by being able to trace through memory like this.
+ Other questions.
+ Yeah.
+ What is dcc right so.
+ Gcc is the new.
+ C compiler.
+ And it has the stages that we talked about where it does a preprocessor that's cpp it does what is it cxx I think is the compiler and then gas is the assembler. It does all these different steps.
+ To form the actual output so it's a compilation face.
+ Other questions.
+ How did I print this one so this this is me interacting with gdb so I ran gdb from the units Linux command prompt on my executable file. It loaded everything up and then I said a breakpoint so that my next.
+ Interaction here this this gdb part with the parentheses of the prompt so you don't have to type that so I type gdb to get into gdb and then it's interactive so I did a breakpoint.
+ And then I started to run the program as soon as you type gdb it loads the object file but it doesn't run it so you can set your breakpoints and do whatever else you need to do before you start running.
+ Then once you run it and it reached my breakpoint it was in the middle of an execution and so now I'm looking at a program that is in execution.
+ And I look at the register contents and memory contents to understand what it's doing.
+ So this will be important when you do the bomb lab because if you get the bomb wrong.
+ And you put in the wrong passphrase it explodes.
+ And when it explodes it deducts 1/4 of a point from your score on the lab.
+ So the stakes here are high so.
+ You don't want to just run it and just guess until you get the right number the right combination you want to run it carefully in gdb stepping one step at a time putting your breakpoints in smart places to make sure that you don't have the bomb explode on.
+ What was your next question.
+ So I typed in I space are.
+ At the prompt and it gave me all the register contents at that point so all of that came from that one command then when I typed in x64 xp rsi it dumped out all of the contents of memory as I directed.
+ So the prompts where you see parentheses gdb is the gdb asking me what do you want to do next.
+ It's very polite.
+ Other questions.
+ Okay all right so we're doing for today. I will see you all on wednesday and we'll continue our discussion with integers.
