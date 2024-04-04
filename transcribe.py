@@ -20,58 +20,45 @@ def read_file(file_path):
 
 
 def send_to_chatgpt(content):
-    """Sends content to ChatGPT in chunks and returns the LaTeX conversion of the combined notes."""
+    """Sends content to ChatGPT and returns the LaTeX conversion."""
     try:
-        # Split the content into chunks of approximately 2000 words
-        words = content.split()
-        chunk_size = 2000
-        chunks = [words[i:i+chunk_size]
-                  for i in range(0, len(words), chunk_size)]
-
-        combined_notes = ""
-        print(
-            f"Generating lecture notes in chunks, {len(chunks)} chunks total.")
-
-        for chunk in chunks:
-            print(f"Generating notes for chunk {chunks.index(chunk)+1}...")
-            non_latex = client.chat.completions.create(
-                model="gpt-4-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a technical note assistant."},
-                    {
-                        "role": "user",
-                        "content": f"""
-                        here are 2000 words of a lecture transcript:
-                        {chunk}
-
-                        - turn this into lecture notes—_USE PARAGRAPHS of text while using bullet points sparingly and for organization_.
-                        - use bolding, italics, and other formatting to make it look nice.
-                        - include all code blocks and math equations in latex.
-                        - make it extremely technical and lengthy
-                        - examples
-                            - ex. if positive feedback loops are mentioned, give an example of ripe fruit ripening faster in a bowl.
-                            - ex. if grep is mentioned, write out `grep -r "search term" .` and explain what it does.
-                            - ex. if row echelon form is mentioned, write out a latex matrix (\begin matrix 1 & 0 & 0 \\ \end) and show the steps to get to row echelon form."""
-                    }
-                ]
-            )
-
-            non_latex_content = non_latex.choices[0].message.content.strip()
-            combined_notes += "\n" + non_latex_content
-
-        print("Converting combined notes to LaTeX...")
-        # Convert the combined notes to LaTeX
-        latex_conversion_response = client.chat.completions.create(
-            model="gpt-4-turbo",
+        print("Generating lecture notes...")
+        non_latex = client.chat.completions.create(
+            model="gpt-4-turbo-preview",
             messages=[
-                {"role": "system", "content": "You are a technical converter assistant."},
+                {"role": "system", "content": "You are a helpful assistant."},
                 {
                     "role": "user",
                     "content": f"""
-                    {combined_notes}
 
-                    remove extremely redundant lists, but do so extremely sparingly (ie. make it readable)
-                    convert the above to latex lecture note paper—make it aesthethically pleasing. only output the latex (do conversions from markdown to latex bolding, url, italics, etc.), no code block or extra text and it should compile standalone (use hyperref table of contents though).\n\n"""}
+                    actual transcript to convert to notes:
+                    {content}
+
+                    - *INCLUDE ALL LECTURE EXAMPLES* OR create your own. make sure it is clear and easy & formatted well
+                        - ex. if positive feedback loops are mentioned, give an example of ripe fruit ripening faster in a bowl.
+                        - ex. if grep is mentioned, explain how to use it and give an example of how to search for a string in a file + what the output looks like.
+                        - ex. if row echelon form is mentioned, give an example of converting a matrix to row echelon form.
+                    - EXPAND AND INCLUDE ON DEFINITIONS, EXAMPLES, AND DETAILS IN YOUR NOTES—especially for uncommon terms or concepts (assume no prior knowledge).
+                       - the length of the note should be proportional to how long the topic was discussed in the lecture.
+                    - 3000 words long—longer is better than shorter, should be proportional to the length of the lecture.
+                    - bold key terms & use bullet points with paragraphs between chunks.
+
+                    write out a good professor full lecture notes for a student 2nd person include all details (feel free to include steps, ie. fill in steps/explain algorithms like A* or Existentialism or Gaussian methods if mentioned + details from your own knowledge) and include minute tips that might help people studying. Feel free to include paragraphs and annotate (bold/italics) accordingly. Structure it well with subsections, bullets, and content. \n\n.\n\n"""}
+            ]
+        )
+
+        non_latex_content = non_latex.choices[0].message.content.strip()
+
+        print("Converting to LaTeX...")
+        # Continue the conversation with LaTeX conversion, without including the original lecture transcript
+        latex_conversion_response = client.chat.completions.create(
+            model="gpt-4-turbo-preview",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {
+                    "role": "user",
+                    "content": f"""now convert it to a full latex document with a table of contents. only output the latex (do conversions from markdown to latex bolding, url, italics, etc.), no code block or extra text and it should compile standalone (use hyperref though).\n\n{
+                        non_latex_content}"""}
             ]
         )
 
