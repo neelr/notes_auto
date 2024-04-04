@@ -1,3 +1,4 @@
 .env
 history.py
 **/*.m4a
+**/.DS_Store
