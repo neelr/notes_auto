@@ -1,0 +1,936 @@
+ out of a metal blade attached to a limited tool.
+ Similarly, an argument can be thought of as a tool
+ that's used to provide reasons
+ in support of a particular view.
+ And it is made out of sentences, statements,
+ or propositions called premises that support a conclusion.
+ So we'll adopt the following definition.
+ An argument is a connected series of sentences
+ called premises that are intended to provide reasons
+ for evidence in support of the truth
+ of another sentence called a conclusion.
+ Here's an example.
+ In this example, we have two premises
+ which are intended to provide support for the conclusion.
+ Notice that I've denoted the difference
+ between the premises and the conclusion
+ using this adaptation.
+ So, sorry, I lost track of your line.
+ The houses, the creation.
+ The non-exec, technical difficulties, quip clause.
+ Try this.
+ Yeah.
+ Cool.
+ Okay.
+ Yes.
+ So P1 and P2 here are denoted premises one and two.
+ C denotes the conclusion.
+ For completeness here,
+ I've just added the justification for the conclusion.
+ So the conclusion C follows from premises one and two.
+ Okay.
+ So, what about this?
+ What about the following?
+ Is this an argument?
+ So person A says cheese is the best food
+ and person B says cheese is disgusting.
+ What do you think?
+ Argument?
+ I'm seeing some head shakes, boos.
+ No, right?
+ Not an argument.
+ This is just a disagreement.
+ So, right, an argument in the sense of the word
+ that we're applying in a class
+ is a series of sentences, right?
+ And they're connected and they're intended
+ to perform the truth of the other sentence
+ which is the conclusion.
+ So, today we'll focus exclusively on deductive arguments.
+ In a deductive argument,
+ the conclusion should be guaranteed by the premises.
+ In the reason for the first day of class,
+ we encounter inductive arguments, right?
+ So recall that for an inductive argument,
+ the conclusion is just paid likely by the premises.
+ It's not guaranteed as it is for a deductive argument.
+ You might remember this example
+ from the Godfrey Smith reading from Tuesday.
+ This is an example of a good inductive argument.
+ So it says, I will one observe that time T one is green.
+ I will two observe that time T two is green.
+ I will three observe that time T three is green and so on.
+ Right, and so you make that inductive step
+ and you conclude that all emeralds are green
+ on the basis that within everything you've seen,
+ it's more than likely or this conclusion seems very likely,
+ namely that all emeralds are green.
+ Note that double line under the premises.
+ So this is just one way to signal
+ that the argument being made
+ is an inductive one and not deductive.
+ So while we're on the topic of notation,
+ just note that we're saying the same argument in this way.
+ So all the emeralds that we observed in other circumstances
+ at almost different times that we were mentioning earlier
+ and maybe different places prior to,
+ let's say, April 4th, 2024 have been green
+ and therefore all emeralds are green.
+ So we just sort of compile
+ all of those different observations
+ into like one more general statement of which
+ we're gonna go into today.
+ So that's just a minor point on notation.
+ But our topic for today is not inductive arguments,
+ it's deductively valid arguments.
+ So we'll set inductive arguments aside
+ and we'll want to hammer home the concepts
+ of deductive validity and counter examples
+ to deductively invalid arguments.
+ So we consider the following example.
+ All women are mortal, Alex is a woman,
+ therefore, Alex is mortal.
+ This is an example of a deductive argument.
+ So the conclusion is guaranteed by the premises.
+ That is, if the premises are true,
+ then the conclusion must be true.
+ I want to point out something else, right?
+ So notice that we don't need to really know anything else
+ about the world in order to conclude that Alex is mortal.
+ Just given, right, if we grant premises one and two,
+ C just sort of falls out deductively.
+ So this can be seen more clearly
+ if you put the argument in generic form.
+ So, right, all women are mortal, Alex is a woman,
+ therefore, Alex is mortal.
+ This sort of way of putting things might help you
+ if you're ever sort of stumbling
+ with the more complicated bits of content.
+ So we say that an argument is deductively valid, right,
+ when it's not possible for all the premises to be true
+ and for the conclusion to be false, okay?
+ So are we following along so far?
+ More or less?
+ Cool.
+ Okay, so in everyday speech, right,
+ people use the word valid to evaluate things
+ like your opinions, so you might say you're a friend,
+ that her opinion is valid.
+ This is fine, you know, your daily life,
+ but it's not how we're gonna use the term in this class,
+ and, you know, it's not typically the way
+ that you use the term in really any philosophy class.
+ So I wanna emphasize that validity does not apply
+ to single sentences, statements, or claims.
+ This is a common mistake that people make,
+ so let's just make sure we get clear on this early on.
+ Validity is a notion that applies to arguments,
+ so, right, those series of statements
+ that are put together in this way
+ that's suggestive of we're giving reason
+ to support of a conclusion.
+ Okay, so in this context, validity is a technical notion.
+ It applies to arguments.
+ An argument is valid if and only if, right?
+ It's not possible that all the premises are true,
+ and the conclusion is false.
+ Alternatively, we can say that if the premises are true,
+ the just sort of granting that these premises are true,
+ the conclusion must be true,
+ so let's go through a few examples.
+ So this argument says P1, every UCLA student is a student.
+ Pick out a UCLA student, so I've picked out Jane.
+ She's a UCLA student, and we can conclude,
+ just from those two things, that Jane is a student, right?
+ So is it valid or invalid?
+ - Valid. - Valid, right?
+ It's not possible that these two things are true,
+ and the conclusion is false.
+ All right, what about this one?
+ Some students love to read.
+ Everybody who loves to read is cool.
+ Therefore, some students are cool, valid or invalid?
+ - Valid. - Valid.
+ - What?
+ (audience laughs)
+ I'll put my eyes.
+ Is it valid or invalid?
+ - Valid. - Valid.
+ - Valid. - Valid, good.
+ So it's valid, right?
+ If all the premises are true,
+ then the conclusion must be true, valid.
+ You might have thought to yourself,
+ look, I know some people who love to read,
+ and they're most definitely not cool.
+ Right, what's going on here?
+ Notice, right, that validity is only one way
+ of evaluating an argument.
+ So to assess validity, we suppose
+ that all the premises are true, and we ask,
+ is the conclusion guaranteed by these premises?
+ Another way to evaluate arguments is to ask
+ whether those premises are, in fact, true.
+ So assessing the truth value of an individual premise
+ is a different kind of assessment.
+ So here we have the same argument before,
+ but now it's in the generic form.
+ But before, P1 says some students are reading lovers.
+ I just kind of changed it up so that I could more easily
+ put it in the generic form, but it has the same meaning.
+ So some students are reading lovers.
+ All reading lovers are cool, so some students are cool.
+ Well, you can tell from this argument,
+ you can tell from this argument's form alone
+ that it's valid.
+ We don't need to know anything about students
+ or about people who love reading or about people, right,
+ to know that this argument is valid.
+ We just have placeholders here
+ for these different variables that might go in.
+ We don't need to know anything about that world.
+ What's important for validity is just the argument's form.
+ Now, unlike with validity, assessing the truth value
+ of a particular premise involves actually knowing stuff
+ about the world, right?
+ So let's try it.
+ P1 says all women are mortal, true or false?
+ True, right?
+ I mean, it would be pretty cool if we found
+ what that was in, but so far, we're gonna go with true.
+ Let's suppose that the Alex in question here is me.
+ So I'm a woman, so Alex is a woman, true or false?
+ True. True.
+ And now we've seen this argument before
+ and we know that it's deductively valid.
+ We saw it in the generic form.
+ So again, with validity, we say that if the premises
+ are true, then the conclusion must be true.
+ So now we can actually check that box
+ and the premises are in fact true.
+ And so, oops, oops.
+ If the conclusion, sorry, is guaranteed by its four,
+ then we know that the conclusion is in fact true.
+ Or we can just put it this way, right?
+ Since the argument's valid, the truth is guaranteed.
+ Okay, notice though, that on another reading
+ of this same argument, premise two might come out false.
+ So if we're talking about a different Alex
+ who isn't a woman, like for example, Alex Holland,
+ the insane free- climber guy who soloed El Cap, right?
+ Not a woman.
+ Or maybe we're talking about Alex Trebek,
+ the voice of jeopardy, also not a woman.
+ Or maybe we're talking about good old Alex the Great,
+ the king of ancient Greece, you know, ancient Greece,
+ the king of Macedonia or Macedon who, right, fun fact,
+ was a student of the ancient Greek philosopher Aristotle.
+ Of course, Alex the Great, also not a woman.
+ So Trebek and the Great are both dead now, RIP.
+ Connell, well, the whole reason that this photo
+ makes us so nervous is precisely the fact
+ that he's mortal, right?
+ He can fall and die, it's crazy.
+ So the sentence or the claim, Alex is mortal, is true, right?
+ But notice it's not true for the reasons
+ that are given by this argument.
+ The Alex who's mortality we're discussing is not a woman.
+ So, though the argument is valid,
+ so long as we're talking about an Alex who is a man,
+ the argument is not sound.
+ At least one of the premises is false.
+ So, now we have more than one way of evaluating arguments.
+ When we're assessing validity,
+ we don't care whether the premises are actually true.
+ Remember, when we're assessing validity,
+ we're just asking, if the premises were true,
+ would it be possible for the conclusion to be false, right?
+ So this argument is valid because if Alex Honnold
+ actually was a woman,
+ then the conclusion would be guaranteed by the premises.
+ It's valid by virtue of its form.
+ Yet, even though it's valid,
+ this version of the argument includes a false premise.
+ Premise two.
+ So we say that the argument is valid given its form,
+ but it's unsound because at least
+ one of the premises is false.
+ So, just to sort of reiterate that,
+ an argument is sexically good when it is valid
+ and when its premises are true.
+ When an argument satisfies both these conditions,
+ we say that it's sound.
+ So, the argument which takes me as the Alex is valid
+ and all of the premises are true, so is sound.
+ The argument which takes Honnold as the Alex
+ is valid, but not all the premises are true,
+ so it's not sound.
+ All right, that was kind of a lot of information.
+ But since our topic for today
+ is really just deductive validity,
+ it's not necessarily truth or soundness,
+ I just thought, you know, I'm not too familiarized,
+ those of us who maybe haven't taken the first logic courses
+ or maybe are new to philosophy,
+ with these other ways of evaluating arguments.
+ But since our topic for today
+ is really just deductive validity,
+ let's turn our focus back to evaluating arguments
+ on just those grounds.
+ So, let's set truth and soundness aside.
+ So, just remember that when we're assessing validity,
+ don't care about the actual truth.
+ We're just assessing whether if it were true,
+ if it were true that both of these premises were true,
+ then is it possible for the conclusion to be false?
+ If the argument's valid, then the answer should be no, right?
+ Do we see that?
+ Do we like getting a hang of things?
+ More or less, yeah?
+ - Are deductive validity valid arguments
+ in sort of self-contained systems?
+ - Good, so yeah, so you wanna sort of think of,
+ again, like when I said earlier,
+ you don't wanna import other knowledge
+ that you know about the world, right?
+ So, for instance, if we go back a bit,
+ to this argument.
+ So, actually, I'm gonna introduce a caveat
+ to what would have been my answer.
+ So, when you're, I think your question applies better
+ to evaluating soundness rather than validity,
+ and here's why.
+ So, when we're asking about whether an argument is valid,
+ all we're looking at is does the conclusion follow
+ from the supposed true of these two premises
+ and nothing else, right?
+ So, in that way, even when we're assessing validity,
+ we're restricting our knowledge of the world
+ to just these two premises.
+ But furthermore, when we're assessing soundness, right?
+ So, when we're assessing, look,
+ are these premises actually true?
+ We don't want to import a sentence that says,
+ Alex is a woman, P3.
+ Alex is, the Alex that we're talking about
+ is Alex Villayas or something like this.
+ It's Alex that's my TA.
+ Or introducing my last name or something into P2.
+ We don't wanna sort of,
+ we might do that mentally,
+ but that's sort of something that you want to avoid.
+ Just restrict yourself, just as you said,
+ to those, your knowledge of the world's now confined
+ to those two premises.
+ Thank you.
+ Are there more questions?
+ Cool.
+ Okay, so let's fast forward a bit.
+ Where are we?
+ Oh, whoops.
+ So, remember, when we're assessing validity,
+ we don't care about actual truth,
+ we're just assessing whether, if the premises are true,
+ then would it be possible for the conclusion to be false?
+ If it's not possible, the argument's valid.
+ Okay.
+ So, now, okay.
+ Maybe I'm biased, but I'm finding it fun
+ to talk about arguments featuring Alex's.
+ So, you know, what about Alexander Skarsgård,
+ who plays Lucas Madison on Succession?
+ Anyone seen that?
+ Fantastic show, yeah, right, come on.
+ Okay, well, he's also the son of the famous actor
+ Stellan Skarsgård, I don't know,
+ more fun facts, very talented family.
+ Who plays Baron Harkon in the new Doom movies, all right?
+ No?
+ Okay.
+ Those are all so fantastic.
+ And so, this is something that you might give an argument
+ for, right, these Doom movies rock.
+ So, let's have a look.
+ All movies that Alex likes are fantastic.
+ You might not think that's true,
+ but remember, ignoring the truth.
+ Alex likes June Part Two,
+ therefore, June Part Two is fantastic.
+ Is it valid or invalid?
+ Valid.
+ Sorry, what?
+ Valid.
+ Valid, awesome, valid.
+ Proud of you, guys.
+ Okay, suppose every philosopher liked the new Doom movies,
+ and suppose Alex likes the new Doom movies,
+ if both of these were true,
+ would it be possible for the conclusion to be false?
+ Nope.
+ Yes.
+ Yes, right?
+ Invalid.
+ Okay, notice that, if Alex is me,
+ then the conclusion is true.
+ Nevertheless, the conclusion does not follow
+ from one and two, so the argument's invalid.
+ This is maybe easier to see if you put it
+ in a generic form.
+ So, again, the question...
+ Oh, sorry, I don't know how to control that.
+ Was that it?
+ It happens sometimes.
+ Oh!
+ Are you sure everything's...
+ That's a good signal.
+ Can we just adopt that convention,
+ where it's like, not up?
+ Okay, cool.
+ Thank you.
+ If the board doesn't wanna cooperate,
+ what are we gonna do with them?
+ So...
+ What's that?
+ (muffled speaking)
+ (muffled speaking)
+ It happened several times.
+ (muffled speaking)
+ He unplugged it and replugged it.
+ (muffled speaking)
+ (muffled speaking)
+ (muffled speaking)
+ (muffled speaking)
+ (muffled speaking)
+ Okay, we're back.
+ We're back.
+ Okay, so the question here,
+ which Alex we're talking about,
+ it only matters for soundness, not validity, remember?
+ We're looking at the argument's form.
+ We're talking about validity, like writing this up.
+ If you do, if all you knew were one and two,
+ you wouldn't be able to conclude
+ that Alex is a philosopher.
+ All the knowledge that you have in the world
+ comes from the premises.
+ Remember that.
+ Okay, so having more fun with Dune.
+ I don't know if any of you guys saw it,
+ but it's a great thing, so.
+ In Dune, I don't know if you're familiar with this,
+ but SPICE is this valuable resource
+ and it's got all these benefits,
+ so you get enhanced cognitive abilities
+ and space navigation and stuff like that,
+ extended lifespan, so.
+ But at the same time, it causes a lot of problems,
+ so the extraction of it has all these really unfavorable
+ social and political effects,
+ and it also disturbs the planet of Arrakis since psychology,
+ so it's the both harms and good that come with it.
+ This argument says if SPICE production
+ brings about more harm than good,
+ so that would be more of Arrakis, also called the famine,
+ then it's wrong.
+ SPICE production brings about more harm than good.
+ Therefore, SPICE production is wrong.
+ What do we think?
+ Nice.
+ It's crowded.
+ Good job.
+ So it's not possible for P1 and P2 to be true
+ and the conclusion to be false.
+ What about this one?
+ It's similar to the previous, but there's a key difference,
+ so P1 stays the same.
+ If SPICE production brings about more harm than good
+ to the famine, then it's wrong.
+ P2 states that SPICE production does not bring about
+ more harm than good to the famine.
+ Okay, then we conclude that C,
+ SPICE production is not wrong.
+ Valid or invalid?
+ - Invalid. - Invalid.
+ - Invalid, right?
+ Okay, so this argument is invalid
+ because the conclusion does not follow logically
+ from the premises, right?
+ So even if these premises were true,
+ the conclusion isn't guaranteed.
+ Why not?
+ Okay, bear with me.
+ Notice that P1 is establishing this kind of conditional
+ if-then relationship.
+ So there's a conditional relationship
+ between harm and wrongness.
+ But notice that in P2, that relationship isn't addressed.
+ So P2 just says that SPICE production
+ does not bring about more harm than good.
+ But all this argument tells us about
+ is what happens when it does bring about
+ more harm than good, right?
+ It doesn't tell us about what happens when it doesn't.
+ So it's a kind of gap rule, right?
+ So in other words, even if both these premises were true,
+ we can't just jump to the conclusion, sorry,
+ we can't just jump to the conclusion
+ that SPICE production is not wrong,
+ 'cause we don't read another conclusion.
+ So, oop, sorry, it's invalid.
+ You guys got that right.
+ So there might be some other reason
+ why SPICE production is wrong that just isn't mentioned here.
+ Yeah?
+ - So if the conclusion didn't make the generalization
+ and all of the different conditions would be valid,
+ like you mentioned the term, I don't know.
+ So if the conclusion was SPICE production
+ is not wrong and then it mentioned the impact conclusion
+ instead of just generalizing it would be valid?
+ 'Cause you're saying the conclusion is a generalization.
+ - So we just haven't gotten enough evidence, right?
+ So we're restricting our knowledge of the world
+ to just P1 and two, and sorry.
+ We're restricting our knowledge of the world
+ to just P1 and two, and given those two premises,
+ we just don't have enough information
+ to be able to then conclude
+ that SPICE production is not wrong.
+ So it's like, we sort of need to hear more,
+ like P2 is maybe some kind of consideration
+ that could play a role in a larger argument
+ for like, SPICE production isn't wrong,
+ and both of these premises are making a clear role.
+ But we wanna hear about something
+ that actually brings up,
+ if we're restricting ourself to just P1 and two,
+ we're gonna wanna hear about what would make it wrong.
+ We don't really know yet.
+ Or we, sorry, not what would make it wrong,
+ 'cause P1 does sort of touch on that.
+ But we would need a premise that says like,
+ such and such actually,
+ well, given the way that P1,
+ we just need to add more premises.
+ Okay, so if P1 said, then that is the only way
+ it could be wrong, would that be valid then?
+ Oh, so if it was an if and only if.
+ Yeah.
+ Yeah, yeah.
+ Okay.
+ Oh, sorry, more questions?
+ Yeah.
+ Okay.
+ So,
+ counterexamples can sometimes be a more intuitive way.
+ So I've been like putting the examples in the generic form,
+ and sometimes that can help, right?
+ So just sort of notice what the form of the argument is
+ in its basic outline.
+ But counterexamples are often an intuitive way
+ of demonstrating invalidity.
+ So in an invalid argument,
+ there are gonna be possible situations
+ where all of the premises could be true,
+ and yet the conclusion is just not guaranteed.
+ And then you call those possibilities,
+ like the things that might make it the case
+ that the conclusion is false,
+ we call those counterexamples.
+ So here's an example of a counterexample.
+ Okay.
+ Interesting.
+ So suppose that there was some other reason, right?
+ This goes back to the question.
+ Like, suppose that there's some other reason
+ why spice production was wrong.
+ So suppose, does it really interact with it?
+ Suppose, for example,
+ that spice production hurts the wildlife of Arbacus,
+ and so there's the desert mouse and the sand worms.
+ Then it could still be true
+ that spice production does not bring about
+ more harm than good to the prey.
+ And it could still be true
+ that spice production brought about more harm.
+ If it did, then it would be wrong.
+ But it would be false that using, sorry,
+ spice production is not wrong.
+ Okay, so a good counterexample is gonna explain
+ how it could be possible
+ that all the premises of the argument could be true,
+ and the conclusion could still be false.
+ So in other words, it's gonna do these three things.
+ It'll affirm the premises, it'll deny the conclusion,
+ and the way that it does that is by saying like,
+ look, here's this possibility or possible scenario
+ where all the premises are true,
+ and the conclusion is still false.
+ So when coming up with a counterexample,
+ to an invalid argument,
+ it could be good or useful to follow this schema.
+ And this is from adult reading as well,
+ so you might have seen this already.
+ I'm not gonna read through this
+ 'cause it's just basically what I said just a minute ago.
+ But this will be available to you
+ in the PDF version that's on RuinLearn,
+ and so feel free to follow this schema
+ if you ever need to.
+ Again, I'm just ripping that directly from adult,
+ 'cause that would probably be helpful.
+ Okay, so now we're gonna break for a group activity.
+ We're gonna get into like groups of roughly three-ish.
+ So please, please don't sit there alone.
+ Just talk to someone.
+ If you wanna talk to a TA,
+ just like hear the TAs at the front of the room.
+ Here, oh, and raise your hand, not two.
+ One, raise two hands.
+ So you can ask them if they've helped with something,
+ but really, just try to do this on your own.
+ We'll go over all of the examples together.
+ Okay, so, and just briefly, before we do this,
+ I'm gonna, we'll be passing these out,
+ and they're also available on RuinLearn,
+ so one person, excuse me, sorry,
+ one person will have the card copy for group,
+ and it'd be good if you could all write your name
+ and your section letter/number or vote combination
+ up at the top, 'cause we're gonna send them
+ to the front at the end.
+ And if you need something to look at,
+ it's gonna be hard for everyone
+ to look at a lot of physical copy,
+ but I've uploaded everything to the Ruin site,
+ RuinLearn site, so for the stuff for today,
+ it's labeled worksheet, so just click on that,
+ and you're gonna be looking at it on your own.
+ Okay, so here's the assignment.
+ For each of the following arguments,
+ they'll say whether the argument is valid or invalid,
+ no explanation needed if it's valid.
+ If it's invalid, then they'll provide a counter example.
+ Now, you know, try to write that out
+ like as completely as, you know, makes sense.
+ So again, just sort of going back,
+ it might look something like this,
+ but you needn't do something like this
+ if that's gonna sort of take too much time.
+ You know, you might just say like the blue card.
+ Suppose that, and you just give your counter example,
+ and it should sort of be intuitive,
+ like, oh yeah, that would make in the case
+ that the counter example is true and it would be false.
+ So again, just sort of the blue card.
+ Suppose that, or counter example, colon,
+ like here's what the counter example is.
+ That would be sufficient.
+ Okay, so say whether it's valid or invalid,
+ provide a counter example, and please include your name
+ and section number at the top of your name.
+ So, we'll go ahead and hand those out.
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ Does this work?
+ I also have, but this might not work.
+ (audience chattering)
+ That works, right?
+ (audience chattering)
+ You have to hand it back.
+ Okay.
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ Okay.
+ (audience chattering)
+ I don't know what I said, Sean.
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ No proteins, not mice, all the different ones.
+ No proteins or electrons, that's all it is.
+ (audience chattering)
+ (audience chattering)
+ All the electrons are from us.
+ (audience chattering)
+ Which one is valid?
+ (audience chattering)
+ Those type of bottles.
+ (audience chattering)
+ All that has mass, has charge.
+ (audience chattering)
+ This one's freaker.
+ (audience chattering)
+ Oh, we should forget about the other one, right?
+ (audience chattering)
+ That's valid?
+ (audience chattering)
+ All right, let's do it valid.
+ (audience chattering)
+ You gotta mess it down with people who are lacking.
+ If you've got like an abundance of worksheets,
+ there should be enough for the class, you know?
+ So, print it out and put it right down.
+ (audience chattering)
+ (audience chattering)
+ This one?
+ (audience chattering)
+ Most scientists performed one to the day of diagnosis.
+ (audience chattering)
+ Kim is a scientist.
+ (audience chattering)
+ Kim performs one to the table, I think so.
+ I think it's valid.
+ (audience chattering)
+ Okay, if it's a valid, you're about to say why
+ it's a valid, right?
+ (audience chattering)
+ (audience chattering)
+ Okay, let's go with that.
+ I'll trust you.
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ All right.
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ Sounds valid.
+ (audience chattering)
+ Just based on this, if we can, I don't say anything,
+ then we can explain it.
+ (audience chattering)
+ (audience chattering)
+ Are we done?
+ (audience chattering)
+ I think that this is either or, right?
+ Isn't it?
+ (audience chattering)
+ (audience chattering)
+ (audience chattering)
+ Yeah.
+ (audience chattering)
+ I feel like this is a...
+ (audience chattering)
+ Yeah, it was like one of the examples.
+ Oh, it was?
+ Yeah, I thought it was wrong.
+ (audience chattering)
+ I think it's invalid.
+ No.
+ If there isn't enough information to--
+ (audience chattering)
+ To arrive at the conclusion to.
+ (audience chattering)
+ (audience chattering)
+ Yeah, this is creative.
+ (audience chattering)
+ I can't go over it right now.
+ (audience chattering)
+ (audience chattering)
+ So, all the grading is?
+ Quizzes.
+ Quizzes?
+ Yeah.
+ Quickly quizzes?
+ You'll get one this week?
+ It's due Monday.
+ Oh, it's online?
+ Yeah.
+ On the website?
+ And it's on time, so you have as much time as you want.
+ Oh, okay.
+ (audience chattering)
+ Yeah, I love this class.
+ Last quarter I had a class where we had weekly assignments
+ and we got redo it until we got a name.
+ Yeah, so everyone could get a name.
+ Oh my God, wait, so is that the only assignment?
+ What is there like with that?
+ No, it's just weekly assignments.
+ It's just a lot, I think you can take it.
+ I think it's just like a new timer,
+ but you guys don't tell you that it's not.
+ Yeah.
+ (audience chattering)
+ What's your major?
+ Uh, I'm in psychology and politics.
+ Political science, yeah.
+ What year are you?
+ Uh, senior, I'm almost out of here.
+ Oh, that's so nice, yeah.
+ I took philosophy of psychology last quarter.
+ What number are you at?
+ Uh, one, let me check.
+ (audience chattering)
+ What number is it going to be like?
+ All exceptions are neither simple nor are neither simple
+ and are not simple.
+ I guess.
+ I think it's 129.
+ Yeah, 129.
+ What number is that?
+ It's about perception.
+ Yeah, whole perception.
+ It was really interesting.
+ Yeah, I've never seen that one, not really.
+ You've seen the first one?
+ Uh-huh.
+ Okay, yeah, that one is upper division, so it's,
+ it's a difficult one, yeah.
+ Uh, so I'm doing political theory,
+ so I do a lot of philosophy, political theory.
+ That's why I've been taking philosophy classes all the time.
+ (audience chattering)
+ I'm applying to law school, so they want to see
+ that you're taking philosophy.
+ I was taking logic, the first course.
+ Oh, yeah, I shouldn't get that word.
+ They weren't all great.
+ (audience chattering)
+ How long have you been taking this course?
+ (audience chattering)
+ Philosophy 31.
+ (audience chattering)
+ I guess you have a few years, okay?
+ (audience chattering)
+ Eventually.
+ Yeah, it's basically this, like the whole course
+ is about this, and about the, yeah, prisoner.
+ And then our homework is on a, it's a program
+ that was created in UCLA, so we do our homework there.
+ I see how I'm doing my first homework, it's due on Tuesday.
+ (audience chattering)
+ If you add a comment to the thing,
+ like, you didn't take an object in your class.
+ Sometimes, like, it's very difficult.
+ I'm taking that one, too.
+ Oh, then that's, oh, you're taking all of them.
+ Which is the best--
+ I, well, this one, I'm gonna wait
+ for you to release, so I don't know if I can take this one.
+ (audience chattering)
+ But I'm enrolled in skepticism and rationality,
+ and in logic.
+ 'Cause I need 14 units to graduate,
+ but I only wanted to take three classes,
+ so I picked two lower divisions,
+ 'cause it's 10, which is the only colored part.
+ (audience chattering)
+ All of them, okay, we'll move on.
+ Okay, so premise one, to observe something
+ is to be able to explain it.
+ We cannot observe anything, therefore,
+ we cannot explain it.
+ Dialing, so, but this was a tricky one, right?
+ So one thing is, like I said, I'm taking these examples
+ directly from the note, and this sort of way
+ of doing things, where it's like too blank is too blank,
+ doesn't really make it clear
+ that there is a biconditional meaning.
+ Yeah, so that way it sort of gets past you.
+ The other way to think about it is like,
+ well, it's giving a definition.
+ What it is to observe something
+ is just to be able to explain it.
+ So if you can't observe anything,
+ if there's nothing that you can observe,
+ then there's nothing that you can explain.
+ I think you've sort of seen that first tricky premise
+ is giving that biconditional, or you could think of it
+ as an identity, like observing equals explaining,
+ for example, if that was the only conditions,
+ or as a definition.
+ What it is to observe something is to be able to explain.
+ Right, so this was a bit of a tricky one,
+ it's kind of put there to stop you,
+ but, so, I'm sorry, but, sorry.
+ Okay.
+ I'm good at it.
+ So now, wait, it's a totally different question to ask,
+ whether these premises are that true, right?
+ Like, another reason why this one might have tripped you up
+ is because you're like, what the heck is going on here?
+ Like, you can definitely observe stuff and, you know,
+ that doesn't mean that we can explain stuff, right?
+ So, there's so much around me that I can't explain,
+ but that I can observe, right?
+ Like, I can observe that the sky's blue,
+ and, you know, I know a bit about the science,
+ but honestly, if you were to ask me to just, like,
+ explain it now, I'm sure that I'd come up short.
+ And so, right, P1 and 2 aren't looking very good,
+ so what does this mean for the argument, right?
+ If it's valid, as we said,
+ but it's got at least one false premise,
+ this is a review, right?
+ It's gonna be on the map.
+ Almost through, exercise six,
+ premise one says some explanations are simple,
+ some explanations are elegant,
+ therefore, some explanations are simple and elegant.
+ Invalid, sorry, I always, like, nod my head,
+ and I'm just having a guess, but no, invalid, right?
+ So, suppose that all simple explanations are inelegant,
+ and suppose that all elegant explanations are not simple,
+ then it would still be the case that some are simple
+ and some are elegant, but none are rude.
+ Okay.
+ Last one.
+ DNA contains a code of life, life is sacred,
+ therefore, it's wrong to manipulate DNA.
+ Invalid.
+ Does anyone wanna give their counter example?
+ - Yeah, it's because, isn't it that you never outlined that
+ in your premises, where you can't, like,
+ get at least one of the bases on what I would give
+ these numbers and outline them versus this?
+ - Yes, but then when you're giving a counter example,
+ you wanna specify, like, one of the possible scenarios
+ that would make, is it a case that both the premises
+ are true, and the conclusion is false,
+ so that's the rationale behind why your physics
+ are, for example, but it's not a counter example.
+ So, I just said, you know, we build sacred altars, right,
+ and if they're broken, we might repair them,
+ and so in that sort of case, it's not,
+ it's built by and to manipulate things that are sacred.
+ Alternatively, you could say that, you know,
+ manipulating DNA contains the code of life,
+ and the code of life itself is sacred thing,
+ which means that our ability to do that
+ means that we should, right, because it's so sacred.
+ This argument doesn't rule out what is possible.
+ Okay, so this is a recap.
+ We start a fixed event today, and yeah, thank you.
+ See you next week.
+ (audience applauds)
