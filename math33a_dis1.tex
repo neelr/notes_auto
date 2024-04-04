@@ -1,0 +1,113 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\title{Lecture Notes on Introduction to Linear Algebra and Systems of Linear Equations}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+In today’s session, we embarked on an exploration of \textbf{linear algebra}, starting from our intuition about sines and extending into more complex realms. Linear algebra originates from the study of \textbf{linear equations}, expanding its reach far beyond what we first encounter in high school mathematics. Today, we delve into the essence of linear equations, aiming to systematically understand all possibilities they encase.
+
+\section{Linear Equations: A Fundamental Overview}
+
+\begin{itemize}
+    \item \textbf{Linear equations} are foundational in mathematics, represented in forms we have likely encountered in high school, such as \(s + 2y = 1\) and \(3s + 4y = 2\).
+    \item Solving these equations often involves techniques like \textbf{substitution} or \textbf{elimination}, aimed at isolating one variable to find the solution(s).
+\end{itemize}
+
+\subsection{Example 1: Solving a 2x2 Linear System}
+
+\begin{itemize}
+    \item Consider the system: 
+    \begin{itemize}
+        \item \(s + 2y = 1\)
+        \item \(3s + 4y = 2\)
+    \end{itemize}
+    To solve, we can eliminate one variable (e.g., \(s\)) by multiplying the first equation by 3 and then subtracting the second equation, leading to \(6y - 4y = 3 - 2\), simplifying to \(1 = 1\). Substituting back into one of the original equations gives the solution \textbf{s = 0, y = 1/2}, illustrating a \textbf{unique solution}. This demonstrates the power of systematic approaches in solving linear equations, affirming that our solution is correct by verification.
+\end{itemize}
+
+\subsection{Example 2: Infinitely Many Solutions}
+
+\begin{itemize}
+    \item Adjusting the system slightly:
+    \begin{itemize}
+        \item \(s + 2y = 1\)
+        \item \(3s + 6y = 3\)
+    \end{itemize}
+    Attempting elimination here leaves us with \(0 = 0\) after subtraction, a condition that always holds true, indicating \textbf{infinitely many solutions}. This occurs because the second equation is essentially the first multiplied by 3, implying only one unique constraint is present. Thus, solutions form a \textbf{one-parameter family}, expressed using a parameter \(t\), leading to a solution set defined by \(s = 1 - 2t, y = t\), showcasing how flexibility in one variable allows infinite possibilities.
+\end{itemize}
+
+\subsection{Example 3: No Solutions}
+
+\begin{itemize}
+    \item Altering to another variant where it appears similar but has no solution due to a contradiction:
+    \begin{itemize}
+        \item Transforming and attempting elimination results in an equation like \(0 = -1\), a contradiction, implying \textbf{no viable solution} exists for the system. This illustrates how slight modifications can alter feasibility, showcasing the spectrum of outcomes in linear systems.
+    \end{itemize}
+\end{itemize}
+
+\section{The Essence of Systematic Approaches}
+
+\begin{itemize}
+    \item The above examples illustrate the three potential scenarios in solving 2x2 linear systems: \textbf{a unique solution, infinitely many solutions, or no solution}. 
+    \item As we extend the complexity to systems with more variables and equations, the necessity for \textbf{systematic approaches} like the \textbf{Gaussian elimination method} becomes evident. This method enables solving linear equations of any size, ensuring we can determine the existence of solutions and their nature if they do.
+\end{itemize}
+
+\section{Gaussian Elimination: A Systematic Method}
+
+\begin{itemize}
+    \item \textbf{Gaussian elimination} helps eliminate variables systematically to reduce a system to its \textbf{row echelon form}, from which solutions can be readily derived or the nature of the solution space understood.
+    \item For example, transforming a matrix to \textbf{row echelon form} involves using elementary row operations to create zeroes below the diagonal, simplifying solving or analysis.
+\end{itemize}
+
+\section{Higher Dimensional Cases and Geometric Interpretations}
+
+\begin{itemize}
+    \item Moving to higher dimensions, such as systems with three or more variables, introduces greater complexity and varied phenomena, including:
+    \begin{itemize}
+        \item \textbf{No intersection} in hyperplanes, leading to no solutions.
+        \item A \textbf{unique point of intersection}, yielding a unique solution.
+        \item \textbf{Lines or planes} of intersection, indicating infinitely many solutions that could vary in dimensionality.
+    \end{itemize}
+
+    \item The geometric interpretations in 2D and 3D spaces help visualize solutions as intersections of lines or planes, providing intuitive understanding but becoming challenging as dimensions increase beyond our capacity to visualize.
+\end{itemize}
+
+\section{Conclusion and Importance}
+
+This lecture served as an initial foray into the rich field of linear algebra, highlighting the importance of systematic approaches like Gaussian elimination for understanding and solving linear systems. We've touched upon the geometric and theoretical nuances that underscore the versatility and complexity of linear equations, setting the stage for deeper exploration into linear algebra's applications and methodologies.
+
+\section{Tips for Studying}
+
+\begin{itemize}
+    \item Practice solving linear systems of varying sizes by hand to solidify your understanding of techniques like substitution and elimination.
+    \item Visualize smaller systems geometrically to build intuition about the nature of solutions.
+    \item Familiarize yourself with the process of Gaussian elimination, practicing on matrices of different dimensions to become comfortable with the algorithm.
+    \item Remember, the goal is not only to find solutions but to understand the structure and nature of the solution space, particularly in higher dimensions where geometric intuition might fail.
+\end{itemize}
+
+\section{Annotations}
+
+\begin{itemize}
+    \item \textbf{Bold key terms} and equations to emphasize their importance and ensure they stand out in your notes.
+    \item Utilize bullet points for clear presentation of examples and steps within algorithms, ensuring each step is comprehensible and follows logically from the previous.
+    \item Annotations, like tips for studying or elaborations on geometric interpretations, help contextualize the material, making it more accessible and manageable.
+\end{itemize}
+
+\end{document}
