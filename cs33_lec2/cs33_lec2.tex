@@ -1,0 +1,100 @@
+```latex
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\begin{document}
+
+\tableofcontents
+\newpage
+
+\section{Lecture Notes on Computer Programming and Integer Representation}
+
+\subsection{Announcements and Preliminaries}
+
+Before we delve into the technical aspects of today's lecture, there are a couple of important announcements to address:
+
+\begin{enumerate}
+    \item \textbf{Correction on Server Login}: Please note that there was an error in one of the starting documents regarding the server login details. Ignore the instruction that mentions logging into \texttt{linux serve.C.U.C.A.E.E.D.U}. Instead, use \texttt{cs33.C.C.U.C.A.E.D.U} as shown in the lecture slides. This will ensure that you're directed to the correct server equipped with the necessary library files.
+    
+    \item \textbf{Lab Zero Solutions}: The solution for Lab Zero will be discussed today. There might be a need to skip some content to cover this adequately. If anything gets left out, particularly examples involving integer operations, additional resources or a short video will be provided for further clarification.
+\end{enumerate}
+
+\subsection{Lecture Structure and Content Overview}
+
+The lecture aims to blend theoretical concepts from the book and practical examples pertinent to programming. This dual approach not only lays a solid theoretical foundation but also enhances understanding through real-world applications, which will be crucial for exams.
+
+\subsubsection{Main Topics for Today and the Coming Week:}
+
+\begin{itemize}
+    \item \textbf{Today}: Focus on integers, their properties, and computational aspects.
+    \item \textbf{Next Week}: Introduction to x86-64 architecture, diving into instructions and building on the overview provided in the previous lecture.
+\end{itemize}
+
+\subsection{Understanding Integers}
+
+Integers in computing can be categorized into two main types: \textbf{signed} and \textbf{unsigned}. The distinction lies in the interpretation of the most significant bit (MSB). Before diving into these categories, it's essential to understand that:
+
+\begin{itemize}
+    \item \textbf{Bits and Bytes}: A bit is the most basic unit of data in computing, represented by a \texttt{1} or a \texttt{0}. A byte consists of 8 bits.
+    \item \textbf{Constrained Space}: The number of bits used to represent an integer determines the range of values it can encapsulate. This has implications for upper and lower bounds and behavior when these bounds are exceeded.
+\end{itemize}
+
+\subsubsection{Signed vs. Unsigned Integers}
+
+\begin{itemize}
+    \item \textbf{Unsigned Integers}: All bits contribute positively to the number's value. The value is calculated as a weighted sum of each bit's contribution based on its position.
+    
+    \item \textbf{Signed Integers (Two's Complement Representation)}: The MSB has a negative weight, altering the range of representable numbers. This representation allows for both positive and negative numbers, but introduces an asymmetry in the range of values.
+\end{itemize}
+
+\subsubsection{Key Observations:}
+
+\begin{itemize}
+    \item \textbf{Constrained Representation}: Due to the limited number of bits, there's a maximum positive and negative number that can be represented. Exceeding this range leads to overflow.
+    
+    \item \textbf{Asymmetry}: The range of negative numbers is not symmetric to the range of positive numbers due to the negative weighting of the MSB in signed integers.
+\end{itemize}
+
+\subsubsection{Practical Application in C}
+
+In the C programming language, integers are signed by default. You can specify the size (and thereby the range) of an integer using qualifiers like \texttt{short}, \texttt{long}, etc. Understanding the implications of signed vs. unsigned and the size of the integers is crucial for correct program behavior, especially in conditions involving arithmetic operations, comparisons, or handling overflow.
+
+\subsection{Examples and Integer Operations}
+
+\subsubsection{Overflow and Underflow}
+
+\begin{itemize}
+    \item \textbf{Overflow}: Occurs when an operation attempts to create a numeric value that exceeds the maximum representable value for the given number of bits.
+    
+    \item \textbf{Underflow}: In the context of signed integers, it refers to when operations result in a number smaller than the minimum representable value, often leading to a wraparound to positive numbers.
+\end{itemize}
+
+\subsubsection{Bitwise Operations and Shifts}
+
+\begin{itemize}
+    \item \textbf{Shift Operations}: Used to efficiently perform multiplication or division by powers of two. However, care must be taken with negative numbers due to the behavior of right shifts in signed integers.
+\end{itemize}
+
+\subsubsection{Practical Exercise: Lab Zero}
+
+Lab Zero revolves around manipulating integers using bitwise operations. The core objective is to implement mathematical operations without direct multiplication or division to deepen the understanding of bitwise operations and their implications.
+
+\subsection{Summary and Recap}
+
+Today's lecture covered foundational aspects of integer representation in computing, focusing on signed and unsigned integers and their implications in programming, especially within the C language. Real-world applications and exercises like Lab Zero are designed to reinforce these concepts, preparing you for practical programming challenges and highlighting the importance of understanding the underlying computational models for effective problem-solving.
+
+\subsection{Additional Tips for Mastery:}
+
+\begin{itemize}
+    \item \textbf{Explore Different Integer Sizes}: Experiment with \texttt{short}, \texttt{int}, \texttt{long}, and their unsigned counterparts in C to see how the range and behavior change.
+    
+    \item \textbf{Practice Bitwise Operations}: Get comfortable with \texttt{AND}, \texttt{OR}, \texttt{XOR}, \texttt{NOT}, and shifts through exercises, as these are powerful tools in low-level programming.
+    
+    \item \textbf{Understand Endianness}: Knowing whether your system uses little endian or big endian format is crucial when dealing with serialization/deserialization or low-level memory manipulation.
+\end{itemize}
+
+Remember, mastering these concepts forms the backbone of efficient and error-free programming, especially in systems or applications where direct hardware interaction or optimization is required.
+
+\end{document}
+```

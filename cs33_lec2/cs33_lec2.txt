@@ -1,0 +1,1329 @@
+ Let's get started. So today.
+ We're going to jump it out. Let me make a couple of
+ Announcements first. Number one, there's a mistake
+ Not on the slides. The slides are right. But on one of the
+ Support documents or getting started documents, it says that
+ You should log into linux serve.C.U.C.A.E.E.D.U.
+ There are a bunch of linux serve machines now.
+ So it can't just be one. You have to log into the ones
+ That actually are set up for the right library files.
+ So make sure that when you log in, i'm going to update the
+ Document tonight. But when you log in, make sure
+ You use cs33.C.C.U.C.A.E.D.U. Like i did in the lecture slides.
+ So that way it load balance you across different linux servers.
+ I know the ones that work are linux serve 6 and 7.
+ There may be some others mixed in there. But if you find that it's
+ Saying library is not found or something like that, it's
+ Probably on the wrong linux machine. So that was a mistake for our
+ Start-up docs. And the other thing is for lab
+ Zero, like i said, i'm going to give you the solution today.
+ I might skip over some of the content in the later slides to
+ Get to that to make sure we cover it today. If i do and i don't get
+ Through everything i wanted to do as far as examples for
+ Integers, i'll post a short video going through the example.
+ I basically want to have two parts to the lectures that i'm
+ Going to be giving. So one part is going to be
+ Going through the book, material, lecture slides,
+ Theoretical stuff that i think is important as a foundation.
+ And then going through examples of how it actually plays in for
+ Real programming, which i think is helpful for the exams.
+ So i'd like to do both. If i can at least get through
+ This lecture slide content, i might just post you an
+ Interactive video of me going through and showing you stuff on linux.
+ But we'll see how it goes. So the plan as far as lectures
+ Is today we're going to cover integers. And then we're going to
+ Start next week on x86-64. So we're going to get into the
+ Instructions and other content that i briefly jumped into
+ Yesterday and kind of gave you a tease of where we're going.
+ I know a lot of people were concerned with the last half of
+ The last lecture, like what should i really take away from
+ That? that was just showing you where we're going. So we're
+ Going to spend the next few weeks actually getting there.
+ So it's a journey. All right. We talked about bits last time.
+ We talked about the idea that bits are just a pattern of ones
+ And zeros. They don't really have a meaning until you apply
+ A lens or a context to them. And so today's lens, today's
+ Context is integers. One thing i want you to keep in mind is
+ We have constrained space. There's going to be a certain
+ Number of bits that we're going to play with that represent
+ Integers. And so the things i want to be thinking about as we
+ Go through the theoretical part of this is what's the bound on
+ How many integers it can represent? what happens when we
+ Run out of space to represent a larger or smaller integer, so
+ Much more positive, much more negative? and what happens when
+ We talk about the asymmetry that might exist and weirdness that
+ Comes up in the types of operations that can happen? so
+ To lay the groundwork, we're going to talk about two types of
+ Integers, signed and unsigned. And the difference between the
+ Two is just in how they handle the most significant bit. So
+ Both of them can be expressed as a summation. Last time when we
+ Talked about number systems, i said if you see something like
+ This, 0, 1, 1, 0, you would know that this is the 2 to the 0
+ Place. 2 to the 1 place, 2 to the 2. So whether it's signed or
+ Unsigned, the treatment of everything but the most
+ Significant bit does not change. It is a weighted sum of the
+ Individual elements. So this would be 0 times 2 to the 0, 1
+ Times 2 to the 1, plus 1 times 2 to the 2. Signed or unsigned,
+ It doesn't matter. What matters is this last and most
+ Significant bit. In an unsigned interpretation, it's just 2 to
+ The 3, or 8, for a 4-bit wide number. But in a signed
+ Interpretation, we put a negative bias on that 2 to the
+ Minus 3. And so this changes how many values we can represent in
+ Signed versus unsigned. And it creates a little bit of
+ Asymmetry as well. But this is the crux of it. So represented
+ Mathematically, what they show you for an unsigned
+ Representation is it's a summation of just each
+ Individual bit weighted by an overarching positive bias. For
+ Two's complement, the key difference is that leftmost bit
+ Has a negative bias. So in C, we can specify int in a signed
+ integer with the int command. You can make different sized
+ Ints. This one would be 32 bits. And so it's that leftmost
+ That would be bias negative. I could make a short int. And
+ That would be only 16 bits. And you could use char if you
+ Cast it to look like an integer as well. And that would only
+ Be 8 bits. Long would be 64 bits. So the width will depend
+ On the type that you're declaring it as. But the use of
+ Int as a whole without unsigned in front would mean that
+ You're dealing with a two's complement form or a signed
+ Implementation. You'll notice that just looking at this bit
+ Alone should tell you whether it's positive or negative. In
+ A signed implementation. In terms -- we're good so far?
+ All right. This chalk is dead. In terms of our signed
+ Implementation, there's a few constants that we use that are
+ Labels that are invariant depending on the width. So if
+ We're talking about a signed implementation, t max will
+ Always be the largest representable value. And t min
+ Will always be the most negative representable value with
+ Zero in between. If it's unsigned -- so this is for
+ Signed or for two's complement form. If it's unsigned, our
+ Maximum value will be u max. And the minimum value will be
+ Zero. So u max is not the same as t max. They differ. Let's
+ Just look at the actual bigger representation first but just
+ Looking at a small representation. What do you
+ Think in a four-bit binary implementation? So i only have
+ Four bits. What would be the largest value signed that i
+ Could represent? >> 15.
+ >> Not 15. This is signed. So signed versus unsigned.
+ >> Seven. >> Seven. Good. It would be a
+ Pattern of a zero followed by three ones. Because in the
+ Signed implementation, the left-most zero is negative. So
+ I would not want to have a negative displacement, but i
+ Want to have all the other contributing components that are
+ Positive. What would be the most negative value?
+ >> Negative eight. >> All ones, right? i ask in a way
+ That it's not right. So it's not all ones. What would it be?
+ >> One. >> One followed by all zeros.
+ A strong negative bias followed by no positive biases should
+ Give me the biggest negative value. So this value in decimal
+ In our world would be what? negative eight. And this would
+ Be seven. And just as an extra number, what would negative one
+ Be? all ones. And zero would be all zeros.
+ Okay. So thinking about that in terms of this representation,
+ Negative one would be a negative eight plus six -- why?
+ Plus four plus two plus one. Right? Which would be negative
+ Eight plus seven or negative one. Everybody with me so far?
+ Okay. So extrapolating that past
+ This four-bit representation, let's go with w equals 16.
+ So this is a short int. We would have the largest -- i
+ Haven't talked about u max. Let's do u max first.
+ U max treats everything as a positive bias.
+ Somebody said 15 before. So that's right.
+ One, one, one, one in u max as a u max interpreted value is
+ Corresponding to 15 because it's eight plus four plus two
+ Plus one. And then zero is zero. So if i had negative one
+ In a signed implementation, that would be u max in an
+ Unsigned implementation. So this is an example of that lens
+ Mattering. A pattern of bits doesn't really give you enough.
+ You have to know how it's interpreted. Okay? All right.
+ So in terms of actual values for w equals 16, u max would
+ Be 6, 5, 5, 3, 5. In hex, it would be all ones.
+ Okay? Kind of what i expect to see from our midterm.
+ Just kidding. And then this in binary would just be all
+ Ones, right? so if i wanted to do this as t max, what would
+ It look like in terms of hex? my binary for this leftmost f
+ Instead of being all ones would just be zero followed by
+ Ones, which is seven. So seven f f f would be t max.
+ Yeah? you don't have to apologize. That's really nice of
+ You, though. Go ahead. Okay. So you'll notice there's an
+ Asymmetry here, right? if i were to add two to the two
+ Plus two to the one plus two to the zero, i would get one
+ Less than two to the three. So you have a pretty big
+ Negative bias, and then you're trying to make up for it with
+ A bias that is one less. So that's why you don't take out
+ The one on the end. There's an asymmetry between the negative
+ And the positive that you can represent. And that's also why
+ For t max, it's not just the absolute value of t min, it's
+ Actually one more than the absolute value. So that's why
+ You don't take out that one. Is that your question? all right.
+ Cool. Other questions? yeah?
+ You're doing a summation, right? so by a negative bias, i mean
+ That you're starting out with a large negative value instead of
+ A large positive value. You're biasing the summation in
+ A negative direction. So the leftmost bit will either
+ Be biasing it negatively or positively depending on the
+ Implementation. Whether it's unsigned or
+ Sung. Yeah?
+ Yeah. So what you're pointing out is the asymmetry that exists
+ Where if i really wanted to take the absolute value of t
+ Min and it is unrepresentable, it does, in fact, cause a
+ Problem. And we'll get to that. Absolutely. So thinking ahead,
+ We have a problem here because of our constrained space and
+ We have a problem because of the asymmetry that exists here.
+ Excellent. Okay. If we crank up the word size or bring it
+ Down, what we're doing is we're changing the absolute values
+ Involved, but we are not changing the asymmetry that
+ Exists, we're not changing the fact that it's different
+ Between u max and t min. We've already made the
+ Observations here that t min, the absolute value of t min
+ Is one more than t max. So there is an asymmetric range.
+ But in terms of u max, u max is actually bigger. The larger
+ Value that you can have is much bigger than t max. It's double
+ T max plus one. So in terms of the positive representable
+ Range, unsigned values do give you that bigger range. The
+ Overall range in terms of the absolute number of numbers is
+ The same. It's just that we're not saddled with negative
+ Numbers for u max. Yeah.
+ >> So you're talking about using the sort of a one's
+ Compliment or sign bit where we just use this as a positive or
+ Negative and then we use the rest as the payload. In that
+ Example, the asymmetry does not exist, right? and you can
+ Represent everything freely. That is not the i triple e
+ Standard, but that is a viable alternative in other
+ Implementations. That's fair. Yeah. But it does lack the
+ Absolute range, but it also lacks the asymmetric problem.
+ So that would be an interesting counterpoint.
+ All right. When we're moving between signed
+ And unsigned, and we're casting or trying to look at a value as
+ One or the other, you keep the same pattern of bits, but you
+ Change your interpretation. And this could lead to errors
+ In code. Sometimes, you know, you
+ Intentionally want to view a signed value as unsigned to make
+ A comparison, but the problem is that it keeps the bit pattern
+ The same. And so if we think about this range of values that
+ I represented here, let's just go back to four bits for a
+ Second. If i were to represent u max down to zero as one,
+ 1, 1, 0, 1, 1, 0, 1, all the way down to 0, 0, 0, 1, 0, 0, 0,
+ If i look at this range, and i now try and let's actually put
+ One more value in the midst here. 1, 0, 0, 0. What happens
+ When this goes and is interpreted from unsigned to
+ Two's complement is that the upper portion where i have
+ These negative values that are going to be in the signed
+ Representation get priority inverted, right? they come down
+ To here where this is now negative 1, negative 2, all the
+ Way down to t min, and this part stays in the same position
+ Representing the same values. Where this is now 0, 0, oops
+ I didn't put the top of this, but the top would have been
+ 0, 0, 1, 1, 1, so the top is 0, 1, 1, 1, all the way down
+ So this inversion that happens is the biggest values in
+ Unsigned become negative in signed. This tries to sum it
+ Up mathematically, in other words the large negative
+ Displacement becomes a large positive displacement when
+ You're going from two's complement to unsigned or the
+ Large positive displacement becomes negative when you're
+ Going the other way. Okay. In c, what we'll be dealing
+ With is if you have a constant, by default it's supposed
+ To be considered a signed integer. If you put u as a
+ Suffix, so we already talked before about the fact that
+ For some values we put 0x in front if it's hex or 0b if
+ It's binary, but for signed and unsigned if you have a
+ Constant it's going to be putting a u at the end if it's
+ Going to be unsigned. Now if you're declaring a variable
+ You can declare it as unsigned, but if you're creating a
+ Constant, a u at the end means it's treated as unsigned.
+ Explicitly you can cast signed as int or unsigned as
+ Unsigned or you can cast it as shown in this expression
+ Here where tx is equal to the signed version of an unsigned.
+ So in that particular instance, in that third line, what
+ Tx gets assigned is the exact same bit pattern as ux, but
+ It's interpreted in a signed length. So if ux was u max,
+ What would tx equal when viewed from a signed lens?
+ What? Negative one. Excellent. Because u max is all ones
+ And when viewed in a signed lens, that is negative one.
+ Here's an example of what kind of fun questions your book
+ Likes to do. And in this one, i guess i put all the answers
+ On there, but let's just talk through them and see. These
+ Are called casting surprises, and the idea here is if you
+ Have two constants, constant one and constant two, so
+ Constant one is the column on the left, constant two is the
+ Next column over by the right, and i ask you what is their
+ Relation, meaning are they equal, are they greater or
+ Less, one greater than the other, one less than the other,
+ And then what kind of evaluation is being done? Is it
+ Signed or unsigned? what makes this tricky, in part, is that
+ If you have a mix of signed and unsigned, c and many other
+ Languages like it will implicitly cast the signed value
+ As unsigned. And so this may be happening behind the scenes
+ When you don't even know it. I'll show you some examples of
+ Bugs that come from this in a second. Yeah?
+ I couldn't have said it better myself. The implicit casting
+ Means the bits are left unchanged, but we interpret it
+ Differently. So we're interpreting it with an unsigned
+ Lens. So in that particular case, if i were to have negative
+ One in an unsigned, sorry, in a signed representation, i
+ Wouldn't have negative one unsigned, if i had negative one
+ In a signed representation being compared to an unsigned
+ Value, negative one would not be negative one. It would be?
+ We'll work on the coordination. Umax, yeah, umax, all right,
+ Cool. Yeah?
+ I mean, i think in this particular case there probably is
+ A historical reason. I don't know what it is. It's a good
+ Question. But i think you could have gone either way, and
+ In fact, i would argue that, you know, what do you think would
+ Be the right answer in this instance, right? it seems odd.
+ It seems maybe the best thing would have been had they made a
+ Larger integer that was still equivalent to the unsigned,
+ Right? but this is what they had to do. They chose this
+ Particular route. I'm not sure why. I can never tell you why
+ Software people do what software people do. I only understand
+ Harper people. Anyway, okay. So let's look at the first one
+ Constant zero. Is zero signed or unsigned by itself without
+ The evaluation? it's signed because it doesn't have a u at
+ The end. So it's not being declared as an unsigned. It
+ Would be declared as a signed value. If i compare that to
+ Zero with a u, the evaluation is going to be unsigned. But
+ In this particular case, zero is one of these values that
+ Stays the same whether interpreted as signed or
+ Unsigned. So it's equivalent. Nothing surprising here. But
+ Negative one compared to zero signed would give us that
+ Negative one is less than zero. That is a signed comparison.
+ That's what we would expect. Negative one compared to zero
+ Unsigned gives us a surprise. Maybe not a surprise because
+ I've already told you. But it's not what we expected.
+ Negative one in this case is viewed under the lens of an
+ Unsigned value because we're dealing with an unsigned
+ Constant two. And therefore i have u max being compared to
+ Zero. U max is greater than zero. And so the comparison is
+ Different. We're all clear on that one? Because of the fact
+ That i have mixed signed and unsigned, everything gets
+ Viewed under the lens of unsigned.
+ The next one, 2147483647. If i were to look at negative
+ 214783647 minus one, the question is what would the
+ Comparison lead us to? So we would expect that this value
+ Is greater than that large negative value. And that's
+ Exactly what we have because it's a signed comparison.
+ But if that large value 214 is unsigned and we have to view
+ That large negative value, large cardinality wise, as a
+ Signed value, what would it be? what would that large
+ Negative value correspond to? it's something that would be
+ Relatively low here, right? and it's being redirected to
+ Now become a large -- oh, i'm going the wrong way. Sorry.
+ It's starting out as a small negative value and it's being
+ Redirected to be a mid-level unsigned value. Fair?
+ If 2147483647u is tmax, where does that fall in relation to
+ Tmin in unsigned? this is effectively what tmin would
+ Become, right? this is where tmax is. In an unsigned lens.
+ So tmin is one more than tmax. Everybody see that?
+ So in this case, what we would see is that the unsigned tmax
+ Would be less than the unsigned tmin.
+ Negative one and negative two. Negative one is normally
+ Greater than negative two. But if you put an unsigned cast
+ On negative one, it looks like umax and umax minus one
+ Would correspond to negative two. So in this context, umax
+ Would be greater than umax minus one.
+ All right. The last two. If i tell you that the left one
+ Is tmax. The 2147483647. What would be one plus that?
+ Is that representable in signed form? no. But in
+ Unsigned form, that is representable. In unsigned form,
+ That's actually what we think about as tmin. So if i'm
+ Comparing unsigned tmax to tmin, that we can do. And we
+ Know that tmax is less than tmin in an unsigned
+ Representation. But the last most thing on this row, last
+ Row, if i'm comparing tmax to an integer representation, so
+ I'm casting it signed, of the unsigned value of tmin, what
+ Would i get? i would look at that pattern of bits here.
+ And view it as tmin. As the biggest negative value. And
+ Therefore tmax should be greater than tmin with a signed
+ Comparison. So those last two i think are probably the
+ Trickiest of the bunch. But it's really just taking tmax
+ And tmin and either viewing it through an unsigned or
+ Assigned lens and exploiting this difference in priority
+ That exists among the negative and positive values.
+ Yeah, you're right. So the way the casting works is it
+ Creates a value that is unsigned and then with an int
+ Cast in front of it, it converts that to a signed value.
+ Would anyone write code like this? probably not. But it's
+ Just showing you what the casting rules actually would do.
+ Sign extension. We talked last time about
+ Shifting and what happens when we try and write shift
+ Either arithmetically versus logically. Before we return to
+ That, let's just talk about sign extension irrespective of
+ This kind of shift. So let's say that i have my 4-bit
+ Value. Because that's easy for me to deal with mathematically.
+ I don't have to go to 16 bits. If i have a 4-bit value that
+ Is 0, 1, 1, 1, this value in a signed interpretation is?
+ 7. Tmax. I'll take that too. Cool. If i wanted to put this
+ Into 5 bits, right, what would i do? i have this extra bit of
+ Space, 0, 1, 1. Everything pretty much stays the same
+ Except for this particular bit. Instead of this being negative
+ 2 to the 3, this now is just 2 to the 3 and this is now
+ Negative 2 to the 4. That make sense? by extending one more
+ Bit to the left, this bit representation is no longer
+ Negative, but the one to the left is. So if i want the same
+ Value, i want to extend the sign, what should i put here?
+ A 0. So positive, not so bad. And now what i have is a 5-bit
+ Value with the same value. It's not tmax anymore. It's 7.
+ Which is why i said 7 initially. But it preserves the value.
+ Right? What if i had negative 1? Or any negative value for
+ That matter. And i want to extend it into 5 bits of
+ Significance. So this was negative 2 to the 3, now it's
+ Positive 2 to the 3. And what this went from was negative
+ 8 plus 7 to now something plus 15. Excellent. Everybody with
+ Me? okay. So this is negative 2 to the 4. That's negative 16.
+ So what i would like to do is bias this by negative 16 and i
+ Would be able to get negative 1 again. So i'll make this a 1.
+ So the general rule when you're doing sign extension is you take
+ Whatever the most significant bit is for your original number
+ And you replicate it the number of times that you're going to be
+ Adding in additional bits. So if i went from a 4-bit value
+ To a 32-bit value, i would be padding it with a whole bunch of
+ Ones to make the equivalent value. And one way to think
+ About it is that at each step, what you're basically doing is
+ You have for some 2 to the i, which is my leftmost bit that's
+ Going to be negative, you've got a 2 to the i minus 1, which
+ Is exactly twice or half this original value here, which is
+ Going to be positive. And so no matter what, you're eventually
+ Going to have that same negative 2 to the i minus 1 displacement
+ That you had originally. So every time you add another bit,
+ As long as you keep adding in ones for a negative value,
+ You'll still arrive at the same negative bias that you had
+ Originally. Yeah?
+ [inaudible]
+ So let me put that a little different. So the question was
+ The most significant bit is always the first bit. I like to
+ Think of it as the leftmost bit when you look at bit positions.
+ The problem with -- i know in english at least we read left to
+ Right, but the problem is going to come into play when we have
+ Multi-bite quantities, it's going to be stored in weird orders.
+ So i want to avoid saying first, but i know leftmost doesn't
+ Really make it much different. But for right now, when viewed
+ Properly, it should be the leftmost or bit with the highest
+ Numerical significance. I'll talk more about what i mean by
+ The ordering in a second. Sorry to be cryptic.
+ [inaudible]
+ It matters -- you're saying if i went from 4 to 32, it doesn't
+ Just matter for the new 32nd bit, the most significant, it
+ Matters for all the bits that you add. They should be equal to
+ The original most significant bit. That's the only way you can
+ Maintain the same numeric value.
+ The bits that -- so in this example here, the bit in blue is
+ The most significant bit. The bits to the right don't change.
+ But the new bits that i add all should be the same as the most
+ Significant bit. All right. Cool.
+ All right. Your book has some fun graphs. At some point we'll
+ Get to the graph on the front page of your textbook, the
+ Library mountain, which everyone loves. But until then, we'll
+ Deal with these 3d graphs which talk about integer addition,
+ What it looks like in theory, and what it looks like in the
+ Reality that we have to deal with. So let me give you the key
+ To looking at this graph is we are adding together integers u
+ And v. U and v are the bottom x and y. If you think of x and y
+ As the 2d plane on the bottom, they are those coordinates on
+ The bottom. U goes from 0 to 15. If u goes from 0 to 15 and
+ It's unsigned, let's assume for right now, then how many bits
+ Would you represent? I think it says it here already.
+ 4. Okay. Yeah. And v also goes from 0 to 15. And what they're
+ Showing in the z axis of the vertical dimension here is the
+ True sum, what we would really expect from adding these
+ Together. It would form this nice planar surface, but one
+ Thing i want to point out initially here is what is the
+ Maximal value that you can see for the z direction? What would
+ Be the biggest sum we could expect? 30. Can that be
+ Represented in four bits? No. So this is the crux of our
+ Problem. In terms of representation, it looks nice as a
+ Planar surface, but in terms of reality, we have a finite
+ Amount of space. So what it really looks like is we constrain
+ The z dimension instead of it being able to go up to 30, it
+ Only goes up to 15, because that is our maximal value. That
+ Is u max for a four-bit value. And so what you'll notice is
+ That as u and v get larger, the sum as it's getting bigger
+ Will get to a saturation point at 15 where it can't go any
+ Further. If i were to add 15 and 1 in binary, the proper sum
+ In an unsigned integer would be 1+1=0, carry the 1, 1+1+1=1,
+ Carry the 1, 1, carry the 1, 0, carry the 1. And that 1
+ Coming down would give me the actual proper sum here, right?
+ But i don't have enough bits to represent all of this. And so
+ What happens is i truncate, and i lose that most significant
+ Bit, and what i'm left with is 6. And 15+7 should be 22. If
+ I had been able to add 6 and 16, i would have had 22. But
+ I can't. And so this is an example of the wrap around or
+ What is called overflow. I overflow from a large positive
+ Value to a small positive value with unsigned arithmetic
+ Because i go back to zero. This is like a modulo sum.
+ Something like u+v modulo 15. Where when i overflow, it's
+ Still going to represent a value between zero and 15.
+ In this case, you are correct, because i would have to divide
+ By 16, and that would get me -- yeah, sorry. Thank you.
+ I met max of 15, and i screwed up the math. Excellent.
+ Should be modulo 16. Okay.
+ To this complement is even worse, because not only can you
+ Overflow and get a large positive value that wraps
+ Around, but it actually becomes negative. And so in this case,
+ If i were to -- let me do -- why can't i keep my eraser with
+ Me? If i were to do negative 1
+ Plus t min. This should be a
+ Representable value of t min minus 1. What numeric value
+ Should this be? It should be negative 9.
+ This is negative 8 plus a negative 1 should be negative 9.
+ So what will happen when i add these together is that i'll
+ Have 1 plus 1 is 1, 1, 1, 0, 1, carried across.
+ Now, if i had all of my bits, this would actually work.
+ I would have negative 16 plus 7 equals negative 9. Great.
+ But because we have to constrain to just four bits, i
+ End up with 7 is my answer. A positive value. It has
+ Overflowed in the negative direction or underflow to the
+ Negative direction, and it has gone to a large positive
+ Value. The same thing can happen if the value gets too
+ Positive. It becomes negative. If you add 1 to 7, it becomes
+ Negative 8 in a four-bit representation.
+ So this plane is representing the values that are in the
+ Sort of middle section are correct representations of
+ Arithmetic ads. The values on the left and right have gone
+ Into overflow. Yeah?
+ [inaudible]
+ So it would -- if it's undefined according to the c
+ Standard, that means that it's implementation dependent.
+ So there is an implementation, and you could rely on how
+ They handle it, but i wouldn't say you could rely across
+ Compilers. So this is a representation of
+ What the math looks like. Once they detect overflow, what
+ They decide to do with it is a separate story.
+ So right now what we're talking about is the problem that
+ Arises from overflow. You're right. How you handle it is
+ Another question, because you obviously would not want your
+ Calculation of rocket coordinates to say, okay, we'll
+ Go all the way to the negative. That's okay.
+ This is not a good outcome, but this is the math behind the
+ Outcome. Yeah?
+ You can't overflow twice. So it wouldn't be possible to
+ Take two, in this case, four-bit integer values, add
+ Them together, and wrap all the way around to the negative
+ And then back up to the positive. They wouldn't be large
+ Enough in magnitude to do that. So you're going to have
+ Either two positive values becoming negative with an
+ Incorrect overflow, but not two positive values staying
+ Positive with an incorrect overflow.
+ >> [Inaudible]
+ >> Yeah, so two's complement is what we've covered in this
+ Class where you have a most significant bit that is a large
+ Negative bias. One's complement would be -- we're not going
+ To talk about it today because we don't -- i don't want to
+ Confuse it with this, but in principle, it is instead of
+ Having this be a large negative bias, it is more of a signed
+ Bit. But don't worry about it. We'll stick with two's
+ Complement because that's what's covered by the standard.
+ Okay.
+ I don't think we've talked about this yet. Let me just do
+ This real quick just to make sure we got this. Since you
+ Didn't mention two's complement. So what if i wanted to
+ Implement negation for a two's complement number?
+ I want to take some integer x and negate it.
+ So the observation here is that x and the complement of x, what
+ Does this tilde mean again? okay. And what do i do when i
+ Take -- that's supposed to be a tilde. When i take the knot of
+ Something, what do i do? i flip all the bits, right? so if i
+ Were to put the integer x and add its complement, just flip
+ All the bits and add it, what would i get? yeah, i would get
+ All ones or negative one. Does that make sense? because
+ Whatever value you come at me with, if i take that value and
+ I just flip all the bits, i'm only going to be adding zeros
+ And ones. I won't be adding one and one. I won't be adding
+ Zero and zero. It will be all adding zeros and ones. And the
+ Entire sum will be all ones. So x plus its complement is
+ Always negative one. Right? and so if i wanted to get -- if
+ I do a little algebra here and i bring the x on the other
+ Side, i break negative x, right? would be equal to the
+ Complement of x plus one. So the way that you negate a
+ Value is you flip its bits and you add one. Yeah?
+ [inaudible]
+ If i add to its negated version, that would be different.
+ This is adding it to its complemented version. So this is
+ Not negated because all i've done is flip the bits. If i
+ Flip the bits on u max, what would i have? zero. And zero
+ Plus u max would be negative one. So the way that you take
+ The negative of a two's complement number is to flip the
+ Bits and add one. All right.
+ Multiplication using shift. Yes? question in the back.
+ Is it more efficient to what? sorry. I can't make out what
+ You're saying. One more time. [inaudible]
+ To use an or. Yes. Okay. So the question is, if we're not
+ Going to have any two bits go together, wouldn't have been
+ More efficient to use an or, but then i couldn't have done
+ The algebra trick to bring the negative x to the other side.
+ But, yes, that observation is exactly right. I'm sorry.
+ Is exactly right. I like that. Okay. Power of two multiply
+ Using shifts. So we hinted at this already. If i shift a two's
+ Complement value by a certain number, do i get behavior that
+ Looks like multiplication? right? and so using -- i'll use
+ The example that they have here. So here, if i were to do
+ Some u left shifted by three, what that basically means is
+ For each number, if i have something in the two to the ones
+ Column, for example, that's a one, and i left shift it so
+ That it goes over by three places, that's like going from
+ This being a two to this being a 16. Right? Multiplying by
+ Eight. If there was a one here, and that moved to here, it
+ Would be moving three places, so instead of a four, it would
+ Now be a 32. Multiplying by eight. So the number of places
+ You shift by would be similar to multiplying by two to that
+ Number of places. Right? Do we have an overflow problem?
+ Yes. You could certainly get to the point where you overflow
+ Beyond, but so does multiply in general. If i do integer
+ Multiply without increasing the width of bits, i would have
+ A comparable problem. If i wanted to multiply by something
+ That is not a power of two, like i want to multiply instead
+ Of eight, i want to multiply by nine, i could just shift that
+ Number by three and add the same number. So u left shifted
+ By three plus u would be u times nine.
+ Taking a collection of -- taking a multiply and replacing
+ It with a collection of shifts and adds is known as something
+ Called strength reduction. We're going to talk more about
+ This later in the class, but the idea in principle is if i'm
+ Playing the compiler and i'm looking at your code and trying
+ To figure out how i can make it as efficient as possible,
+ Multiplication can be an expensive operation. If i can
+ Reduce it to a series of shifts and adds, i can do it a lot
+ Faster. So if the compiler can determine that there is a
+ Constant value that you're multiplying by, it will reduce
+ This to a series of shifts and adds. Strength reduction,
+ Meaning taking the strength of the operation and making it
+ Latency-wise simpler. It can't do that if your code says x
+ Times y because it doesn't know the values of x and y. It can
+ Only do it when a constant's in play. We'll do more of that
+ Stuff later, but this is just giving you a sense of where
+ We're going to go eventually with the class. But for now,
+ Left shifting looks a lot like multiplication.
+ Dividing. And this is the crux for lab zero that we're going
+ To be getting into in the problems that we're going to
+ Learn is when you divide and you right shift to perform a
+ Division, it looks kind of like division, except that it has
+ The floor function. So with this floor function, and it's
+ Showed on the slide as well, what it means is that it's
+ Going to be rounding downwards. When you do division normally
+ For integer division, where does it round towards? It rounds
+ Towards zero. So there's a caveat here when you're doing
+ Shifting for division. If you're doing division of
+ Positive values, and it's flooring to go down, it's
+ Flooring towards zero. It works fine. If you're doing
+ Division of negative values, instead of rounding up towards
+ Zero, it rounds down. So it's rounding in the opposite
+ Direction. Does that make sense? but the principle behind
+ It is the same. I'm taking a bit, and i'm right shifting it
+ To diminish the amount of magnitude, diminish the size of
+ The bias that's being applied to it. That yawn tells me
+ Everything i need to know. Questions? yes. Go for it.
+ Are you talking about lab zero? when you say manually add,
+ What do you mean? oh, adding the brackets? no.
+ So the brackets kind of show you what shifting it left will
+ Inherently do. So think about it this way. Sorry, shifting
+ It right. If i'm shifting to the right, and these values are
+ Dropping off, i'm losing the significance of these ones.
+ So there is a rounding going on. I'm losing bits as i go to
+ The right. And with normal division, that rounding that
+ Occurs when you do integer division would be round to
+ Zero. But with this, it's always doing a floor function.
+ And so that's the problem, is the kind of division that's
+ Being performed here, if it doesn't come out cleanly to a
+ Single integer, it's going to have a rounding that goes
+ Differently when it's negative. I'll show you examples when we
+ Get to lab zero. I have some good examples.
+ Yeah. So for regular integer division, let me just put a --
+ This will be helpful when we get to lab zero. Oh, my god.
+ I forgot to bring markers again.
+ Let's say that i want to divide by four. This will come in
+ Handy later. So if this is my number line, and i have four,
+ Eight, and so on.
+ If i'm dealing with a value that is -- let's just say i'm
+ Dealing with four. What should my division by four lead me to?
+ An integer level is one, right? Okay. If i had the number
+ Five, what should it lead me to? What's that? Still be one,
+ Right? cool. If it were six, seven, all
+ The way up to eight, which is going to lead me down to two.
+ If i have negative values, so if i'm dealing with four divided
+ By four, it should take me to negative one. That shouldn't
+ Change. But what if i have negative
+ Five? what should that take me to?
+ It should also be negative one. So in this case, we're rounding
+ Towards zero. Let's look at the same thing, but with shifting.
+ So this is the value four, right? And if i right shift it,
+ By how much should i right shift it to divide by four?
+ Two. This would give me one, which is correct.
+ Whether i'm dividing or not dividing. What if i had the
+ Value of five, and i right shift it by two? What would that
+ Give me? Also one. Okay. It works so well so far, right?
+ Let's go negative. So negative four, i'll flip the bits.
+ One, zero, one, one, add one, so it should be one, one, zero,
+ One, one, zero, zero. Are you with me? What? So we're taking
+ Zero, one, zero, zero, flipping the bits would give me
+ One, zero, one, one, and then i add one, which gives me
+ Zero, zero, one, one, zero, zero, right? So that should be
+ Negative four. If i right shift this by two, what i get is
+ Negative one. This shift is preserving the sign as it shifts
+ Because a right shift done arithmetically is going to keep
+ That sign bit like we talked about on monday. So far nothing
+ Is wrong, right? Okay. What happens if i have five? So what
+ Would five be? I flip the bits again, one, zero, one, zero,
+ And i add one, so one, zero, one, one, correct? That's
+ Negative five. If i shift this to the right by two, i get
+ One, one, one, zero, which is negative two. So negative five
+ Divided by negative four gave me negative two because it was
+ A floor function. It rounded downward. Does that make sense
+ Why there's a difference? I don't know if that answers your
+ Original question. I went off on a tangent here. All right.
+ So we'll come back to how to fix this for the lab. But that
+ Is the crux of the problem. That we are dividing, but it's
+ Rounding the wrong way for negative values. >> [Inaudible]
+ >> Great. This slide says logical shift. And i said
+ Arithmetic shift. Who's right? You better say me. No. So in
+ This case, i was dealing with integer values. I was dealing
+ With positive and negative. You're right. This slide deals
+ With what? Unsigned. So the way you think about it is, if you
+ Have a right shift, if the integer value is unsigned, it's
+ Logical. You always put a zero in. Who cares what the most
+ Significant bit is? If it is a signed value and you're right
+ Shifting it, you have to lead with the most significant bit.
+ That's what you're replicating. Does that make sense? Good
+ Catch. Thank you for asking that. Excellent. Okay.
+ Let's take five. Yeah? the next thing that your book has
+ Us talk about as far as unsigned goes is when to use one over the
+ Other and some of the errors that can creep in. So this is a
+ Mistake that they are presenting here for a for loop trying to
+ Use unsigned. So let's see if we can spot it. I want to go
+ Through a loop and do a certain number of times based on a
+ Count. Maybe this is a string that i am checking a certain
+ Number of characters. Maybe it's an array reference here.
+ I guess in this case it is an array reference. So what we're
+ Doing here is taking the summation for an array of an
+ Element above the array and continuing to iterate through.
+ And i only want to do it a certain number of times for the
+ Bounds of the array. So what's the problem with this for loop?
+ Why is it bad? It will never stop. Infinite loop. Why?
+ Because if you were to have a comparison of i, which is
+ Unsigned, against 0, which is signed, the comparison goes
+ Towards unsigned. And if you're checking to see that i is
+ Greater than or equal to 0, it will always be greater than or
+ Equal to 0, even if it goes negative, because the negative
+ Value would be interpreted as an unsigned value. You can't
+ Decriment an unsigned and get a negative value. So this code
+ Would be bad. This next one is more subtle.
+ Because what you have is the size of operator, which returns
+ An unsigned value. And so if you don't know what value the
+ Function returns, what type it returns, it could also create a
+ Problem for a pound defined. By the way, the pound defined
+ Here, that's creating kind of a macro of wherever you see delta.
+ What part of the compilation would handle that and turn it
+ Into real code? preprocessor. Oh, my god.
+ It's music to my ears. Okay. Memory. In this class, we are
+ Going to refine and refine our understanding of memory. We're
+ Going to start by thinking of memory as a massive array.
+ For right now, for right now, i'm going to take an unrealistic
+ Stance about memory. And i'm going to retract this later as
+ We continue on in the class. For right now, we're going to
+ View memory. Here's my cpu. It's doing all its work. It's
+ Going to have a register file, which is going to be a separate
+ Set of physical locations that are not in memory, a separate
+ Set of physical locations that we're going to talk about in the
+ Coming weeks. But off the cpu, i will have data
+ And address bus, which leads me to my main memory. Now, for
+ Those who are already on top of this, you know that actual
+ Memory will be comprised of many layers. Whether it's disk,
+ Network attached storage, whatever. But for right now,
+ Let's just assume that i have an array of addresses, locations
+ To put things, that is as large as we need it to be.
+ Okay. Physically unreasonable, physically not buildable. I
+ Don't care. We're just making this assumption. Because this
+ Is what our programs assume. This array of locations is bite
+ Addressable. What that means is that every one of these
+ Locations is one bite. And a bite is how many bits? Eight.
+ Great. Each location holds a single bite, eight bits. These
+ Addresses that are coming in for the purposes of x86-64 will
+ Be 64-bit addresses. So a 64-bit address tells me a
+ Specific one bite location. This is key to understanding a
+ Lot of this class. So please try and ask questions if you
+ Have it now. I'd like to get these tackled ahead of time.
+ If i provide an address and i get out one bite, how many
+ Bytes is this, by the way? eight. Is this converting eight
+ Bytes into one bite? which one bite do i pick from the 64-bits?
+ No. This is not a conversion.
+ This is like saying this is an address for somebody's house,
+ And this is the stuff in the house. Right? it's a location
+ And you're pulling out or replacing the contents of that
+ Location. So don't think of it as how do
+ I turn 64-bits into eight bits? no. 64-bit address tells you
+ Where to look in memory and you're pulling out the contents.
+ Are you with me on that? okay. The biggest misconception i
+ See students have is how did you make eight bits from 64-bits?
+ No. It's a location. All right.
+ This memory can be viewed in other ways to be flexible and
+ What they're trying to show on this slide is a collection of
+ Addresses on the right and the corresponding bite locations on
+ The rightmost array. You could view them as words that are
+ Either 64-bit or 32-bit. Let's not go there yet because it
+ Gets confusing, but understand that if you were to dump out
+ Four at a time, you would be dumping out four bites.
+ Regardless of how big the structures are, it doesn't change
+ The underlying fact that this is an array of bites, so please
+ Keep that abstraction in mind. I think it makes things a lot
+ Easier. It's to always remember we're dealing with -- in this
+ Case, if i have 64-bit addresses and each address specifies a
+ Unique single bite, how much memory could i in theory have?
+ The operating system won't let you have this much right now,
+ How much could i in theory have? two to the 64 bits or bites?
+ Bites, that's right. In theory, i could have two to the 64
+ Bites worth of addressable memory. This is a massive array
+ Of memory. Not going to see that in any current generation
+ Machines. But you could have that much memory according to our
+ Programming model because you're providing a 64-bit address and
+ You're getting out a bite. >> Why are we getting bites?
+ >> In terms of the amortization of cost, the way the memory is
+ Organized in terms of dram might be eight capacitors that are
+ Holding the charge of those individual bits.
+ So the granularity of delivery is bites.
+ And that's just the physical nature of what we're going to be
+ Dealing with and what the program model supports.
+ All right. I think this is probably -- yeah.
+ >> How do words relate to bites? >> it depends on the context in
+ X86, typically people will say a word is 32 bits.
+ But in 64-bit architectures, people think that words can be
+ 64 bits. In intel, the term word will
+ Refer to 16 bits. So it really depends on the context of what
+ You're talking about. It can be very confusing.
+ For our purposes, we will try to give specific nomenclatures to
+ The instructions. So what we'll deal with next week -- you know
+ What, i'll save it for next week. I'm not going to go ahead.
+ I get in trouble every time i do that.
+ We'll talk more about it when we get into x86.
+ I think this is one of the more confusing topics on this
+ Lecture. And if you're sitting there
+ Thinking, oh, my god, it gets worse, well, maybe.
+ Let's see. So let's take a short integer.
+ How many bytes is a short integer?
+ Starts with t and ends with -- ooh.
+ That would work, but it's two. Okay.
+ So if i have a short int, it's a two-byte quantity.
+ That means how many memory addresses do i need to store a
+ Short int? two. Because each memory address
+ Holds one byte. So let's say that i give you this pointer
+ Into the memory. Or even worse, let's say i give you this pointer
+ Into the memory. And let's make it these two.
+ So i pull out two consecutive addresses.
+ One of them will be at address 800, and the other one will be
+ At address 801. And the two values i'm going to pull out
+ Will be ab and cd. Okay?
+ So is everybody clear on why this hex pair, a and b, is
+ A single byte quantity? Because this represents 1010,
+ And this represents 1011, and this is a full eight bits.
+ Right? Okay. So is the number that i just pulled out of
+ Memory, starting at address 800, is the number abcd?
+ Or is the number cdab?
+ All right? This, let me just tell you, it would never be
+ Dcba. That's not going to be an option. But it's either going
+ To be i do this one first, or this one first. Okay?
+ It'll be ab, then cd, or cd, then ab. Does it matter which
+ I choose, first of all? Obviously i have to be in concert
+ With the machine, otherwise i'm making up garbage numbers.
+ But let's say that i'm designing a system, and i choose
+ To do it abcd instead of cdab. And i tell the compiler
+ Writers, and i tell the programmers, and i tell the
+ Architects, and everyone's in agreement that we're going to
+ Do it that way. Is there any meaningful difference from
+ Doing it the other way? No. It's kind of arbitrary, right?
+ In the old days, it mattered a little bit, because you
+ Couldn't pull out as much memory as we can now. And so
+ Maybe you might want to start your computations with the
+ Rightmost bits, because that's probably what you're going to
+ End up using first. Although there is certain arithmetic
+ That goes to the leftmost bits first. But you might choose
+ That you'd want to pull out certain bytes before. But now,
+ When we have such wide memory bandwidth, it really doesn't
+ Matter. But this is the problem of endianness. Does these
+ Multi-byte quantities in memory that are integral types
+ Represent this or this? So there are two choices we're
+ Going to have. Are big endian or little endian? Thank you
+ Gulliver's Travels. So in this case, big endian means that
+ We'll go with the lower addresses are the bigger end, are
+ The more significant bits. Lower addresses, more significant
+ Bits, which of these is big and which of these is little endian?
+ So big endian would be the first one, abcd. It seems like
+ A more natural reading, that you go left to right and so i'll
+ Pull out the leftmost and then the rightmost. I go with the
+ Big end first. Little endian is, oh, this ab, that's actually
+ The smaller end, and then cd. I want to stress two things here,
+ The biggest mistakes i see students make. Number one, we
+ Never flip within a single byte. Little endian doesn't mean
+ Ba. So that doesn't ever change anything. It's always ab,
+ Whether it's big or little endian. That's one. Two, this
+ Only applies to integral types that are multi-byte. If i have
+ An array of char where it takes me ten locations in an array,
+ Endianness is not a factor. It doesn't apply any time it's a
+ Multi-byte structure. It only applies to integral types.
+ Ints, short ints, longs, floats, these are the things it applies
+ To. So for right now, if i deal with a short int, and we'll
+ Talk more about this when we get to arrays, but i just want
+ To lay the foundation. When we talk about a multi-byte
+ Quantity like a short int, it's the order of our evaluation.
+ Okay. I think i beat it to death. Question. Yeah.
+ Oh, how do we know which the memory would have, right?
+ Is that what you said? how would you know -- oh, how do
+ You know the memory address? got it. So the compiler is
+ Creating the program from your code. And when it allocates
+ Space for integer x, it's going to know in memory where that
+ integer x resides. The compiler and linker working together are
+ Going to have that layout for the address. If you're asking,
+ If i were to give you a sequence of code, how you would figure
+ It out from the code, you may have to sort of follow the flow
+ Through the compiler and do that. We'll do examples of that.
+ But, yeah, there would have to be a way to figure out that
+ Address. That's a good point. Okay. One last thing i want to
+ Say about byte ordering. We're going to talk about, in this
+ Class, we mainly deal with x86 64. That is little endian.
+ There are other systems that are big endian. I don't think
+ You'll probably encounter any of them in your lifetime. But
+ Most of the things you'll encounter will be little endian.
+ Is there a question here? okay.
+ I look forward to it. Let's do integer puzzles.
+ This is -- the answers are not here. So this will be more fun.
+ Okay. Cool. So let's assume the yellow box
+ Is what we have for initialization. I have an integer x
+ And an integer y, and who knows what value they have.
+ It can be any value within their dynamic range.
+ And then the unsigned ux and uy
+ Are unsigned versions of x and y. Meaning,
+ Bits stay the same, but their lens is now unsigned.
+ Okay. So the way these puzzles work is
+ You've got -- in some of these you have an implication, in some you don't.
+ But let's take the first one. It's saying, if we know that x is less than zero.
+ So that's given. Can we assume that
+ x times two is also less than zero? Which from a theoretical standpoint
+ Sounds pretty clear, right? We all know how multiplication works. If it's a negative number
+ And you multiply it by two, it stays negative. But, overflow.
+ Right? So this is false.
+ Because you can't make the assumption that x times two will be less than zero because the value
+ Can get so negative that it becomes positive.
+ Okay? Is ux always greater than
+ Or equal to zero? Yes. Ux is always
+ Greater than or equal to zero because you're doing an unsigned comparison
+ With a two's complement sign comparison of a zero
+ And ux would always be greater than or equal to that. So that second one is true. So false
+ Then true. Alright. This third one
+ Is the interesting kind of one your book likes to use. If I take x
+ And i and it with seven and that equals seven
+ And then it checks the implications. So let's talk about what that implication means.
+ If i and x with seven, the and operator
+ Is also thought of in some cases as a mask. And that means that i am
+ Masking out certain bits that i care about and leaving everything
+ Else behind. So whatever x is, if
+ I have some value x that i don't know what's in this bit pattern
+ Who knows if there's zeros or ones
+ And i and it with all zeros
+ And then one, one, one. This is seven
+ And the result is
+ All zeros and one, one, one
+ So seven. Does that mean that this original pattern was seven?
+ No. It could be that this original pattern
+ Was negative one. Right? It just means that i know
+ These three bits were one. I don't have a clue what the rest
+ Of these bits are. You with me? Okay.
+ So i know the three most, the right most bits are ones
+ And i left shift by 30.
+ That means that i am moving the bits
+ To the left. And what am i putting in the new spaces
+ To the right? Zero. Okay. If i were to move
+ And my lower three bits are one, i move 30 to the left
+ I'm going to have a one in my
+ Most significant bit, which means the value will be
+ In a sign comparison, negative or less than
+ Zero. So this one will be true. Isn't this fun?
+ Okay. Ux is greater than negative one.
+ Seems like it should be true because ux is always positive, right?
+ But what's wrong with this? We have to recast
+ Or reinterpret negative one as an unsigned int
+ And in that case it would be what?
+ Umax. Can an unsigned number be greater than umax?
+ No. So this is going to be false.
+ All right. That's the first four. Are we good so far?
+ All right. I might decide to go a little bit faster.
+ Just to make sure we can get to lab zero.
+ In fact, let's do lab zero first and then i'll come back to this one.
+ Just for fun. Okay. This is lab
+ Zero. We already talked about this on monday.
+ The general idea was we multiply by three,
+ Divide by four, and multiply by four.
+ So we divide by four without using multiplication or division.
+ It's magic. So how do we accomplish that?
+ Well, one approach would be to do what i've done here in this code.
+ I take addition to do
+ X plus x plus x, and then i shift
+ To the right by two to simulate or emulate
+ Dividing by four.
+ When i do this test, i tried it for a variety of values. Eight, negative eight, eleven,
+ Negative eleven, negative nine, and nine. And we already have talked about
+ How it's going to fail. It's going to fail because
+ Shifting does the floor instead of doing
+ Rounding to zero. So the idea behind
+ The solution, and this result here just illustrates that,
+ When i try any positive value, it works great.
+ As an example, eleven. I have the third line
+ Trying eleven. It does three times x is thirty-three
+ Because eleven plus eleven plus eleven is thirty-three. And then when i divide
+ By four, with regular division, i get eight. If i right
+ Shift it by two, i also get eight. So it's great. But doing that
+ Same thing for negative nine, just like we tried for negative five, is going to fail.
+ We're going to get negative six as the real value, but we end up with
+ Negative seven. So the intuition behind
+ How to fix this is to add a bias.
+ Aren't we supposed to get rid of biases?
+ Is to add a bias. And so in this case,
+ What we're going to do is, if the number is negative,
+ We only want to add this bias when numbers are negative.
+ If i could add
+ So here i'm at negative five. If i could add a displacement
+ That would bring me up to
+ Let's say negative two
+ Or even negative three would be okay.
+ And get me somewhere in the range of these values that would be
+ Correctly brought down to negative one, i would bias it in the right direction.
+ I want to bias it so that i'm moving ahead
+ By enough that when i do the shift
+ It actually will move me down to the correct value.
+ So put another way, this is my negative number line.
+ One and negative two
+ For five, i want to appear at negative one instead of
+ Negative two. And, oh i drew this way too big.
+ If i were to go to negative
+ Three, negative four. Negative four, negative three, negative two
+ Correctly work to get me to negative one. All of those work right.
+ But
+ At negative five, oh my god.
+ At negative five, i end up where? At negative two.
+ So i want somehow to get to a place where
+ When i divide by four, i end up at negative one with the floor function.
+ So what i'd like to do is go where? where would the bias work
+ That i could divide by four and correctly get to negative one?
+ If i were at four, if i were at three, if i were at two, all
+ These would be okay, right? so in this case, the bias we're
+ Going to add conditionally will be, i'll take
+ 31 and use that as my right shift
+ Of, well, let me
+ Just go through the solution instead of trying to break it that way. So i take
+ 3x, which is x plus x plus x, and then i right shift it
+ By 31. What should that give me if i right shift it by 31? There's two
+ Possible values. It's either going to be what?
+ Zero or negative one.
+ Because if i'm right shifting by 31, i'm taking the most significant bit
+ And i'm replicating it across. So if i have a negative value,
+ What would i get? negative one.
+ If i have a positive value for 3x, what would i get?
+ Zero. Okay. So if i end that with three,
+ Let's take the possibilities here for a second.
+ I've got
+ x plus x plus x
+ And then i right shift this by 31. Two possible
+ Outcomes. All zeros
+ Or all ones. Are we clear on that part?
+ Okay. If i end
+ With three, there's going to be still two possible outcomes.
+ All zeros or three?
+ Okay.
+ That would be my bias. If i have a positive number,
+ Because this would be if it was positive and this would be if it was negative,
+ I'll add all zeros. I don't need a bias. It works fine.
+ If it were negative, i want to add
+ The bias of three. Three because i'm dividing by four and i want to move
+ Far enough on my number line. Not so far that i contaminate
+ Negative four, which already works. If i added negative four to that,
+ I would end up incorrectly evaluating it with zero.
+ If i move it just enough by three, one less than what i'm dividing by,
+ I'll bias it enough that when i divide, it will do a floor
+ Function and get me to the right answer. But only for negative values.
+ So the answer for the lab should be that you add three plus the
+ Bias and then right shift by two. And then it will work properly for
+ Both positive and negative values. Yep?
+ The n3. This three is the bias that i want to use.
+ It's one less than the number i'm dividing by to create the
+ Situation where i am going from floor to round by zero.
+ Only for negative. So i look at whether it's negative or
+ Positive and i construct the bias to be zero in the cases where
+ It's positive and three in the cases where it's negative.
+ And then i add that variable, which will either be zero or three,
+ To the original three plus x. x plus x plus x.
+ All right.
+ For lab zero. This is the code to provide.
+ You need to make sure you have an account, be able to log in,
+ Test it on the systems there, make sure that you pass the dlc
+ Check and then submit it. Submit just your bits.C.
+ One thing, every year, i get at least one person who does this
+ Wrong from the lab one. So please don't. Notice that i have
+ Declared 3x bias and results all at the beginning.
+ I didn't declare any variables in the middle of my code.
+ If you do that, you should pass the dlc check i hope.
+ Yep. >> [Inaudible]
+ >> You could use sftp. You could use -- i think some
+ People like to use cyberdoc or something.
+ There are secure transfer protocols that you can use.
+ Okay. Let's finish the c puzzles
+ Because i hate to leave people on a cliffhanger.
+ All right. What were we on? the fourth one?
+ I think we got to the fifth one. All right.
+ If x is greater than y, then negative x should be less than
+ Negative y. That seems reasonable, right?
+ Yeah. So the problem here is the
+ Asymmetric range. The problem is that even
+ Though negation flips the bits and adds a one, what would
+ Happen if i had t max? so in the case of -- not t max.
+ T min. Sorry.
+ In the case of t min, let's go with a 4-bit implementation.
+ This is my t min. If i flip the bits and add
+ One, so this is complement, and then adding one, that should
+ Give me negative t min, right?
+ So the complement of -- the negation of t min is just
+ T min. So nothing happened when i negated t min.
+ Why? Because there's an asymmetric range.
+ We can't represent the same values on the positive side
+ That we can in terms of the cardinality on the negative
+ Side. So because of the asymmetric
+ Range, this will fail in the specific case where x or y is
+ T min. Does everybody see that?
+ X times x is greater than or equal to zero.
+ Again, we would normally think that when you multiply even a
+ Negative value, it would become positive, but we have the
+ Problem of overflow. Yeah. All right. Cool.
+ Okay. If x is greater than zero and, in this case, this is
+ Not the binary and, but a logical and, and y is greater
+ Than zero, so both of these are true, i have two sets of
+ Positive numbers, then x plus y is also greater than zero,
+ Again, with the overflow. All right?
+ So that's not true. If x is greater than or equal to
+ Zero, will negative x be less than or equal to zero?
+ There's an asymmetric range, right? So the answer must be
+ False. No. In this case, it's true.
+ Because all the positive values have negative corresponding
+ Values. It's the next one that's false.
+ If x is less than zero, then negative x is not necessarily
+ Greater than zero because of the specific case of t min.
+ All right. I'm down to the final four before i hit these.
+ Any other questions? Okay.
+ If i were to take x, yes? zero would be signed unless it's
+ Zero u, then it's unsigned. All right.
+ If i have x or'd with negative x and that right shifted by 31,
+ Will that always be equal to negative one?
+ So what they're trying to do here is trying to recreate this
+ Situation kind of like what we proved for complement of x
+ Plus x is equal to negative one. They're trying to do
+ Something weird like that. Is there an example that you can
+ Think of right now as a counter where this would not be true?
+ If x is zero, this would definitely not work because
+ Negative zero is still zero. You flip all the bits and add
+ One, you're still left with zero. And zero or'd with
+ Negative zero would not have any bits to make it a negative
+ One. So that wouldn't work. Cool.
+ Ux right shifted by three is the same as ux divided by eight.
+ We've talked about how for a positive value that works.
+ So for unsigned, that's fine. But x right shifted by three
+ Is not the same as x divided by eight because of the fact
+ That the rounding is different for negative values. Rounding
+ Towards zero versus the floor function. One is rounding up,
+ One is rounding down. Last one. If i and x with x minus one,
+ Can that never be equal to zero? What do we think about this one?
+ So the idea here, if we're looking at x anded with x minus
+ One, you try to think of the corner cases. And if it's not
+ Equal to zero, if zero were one of the operators to an and,
+ What would the only output of that and be? Zero. So is it
+ Possible that x or x minus one is zero? Yeah. If x were
+ Originally zero or if x were one, one of them would be zero
+ And therefore the statement would be false. So that would
+ Be the easiest way to disprove this. All right. I'm not
+ Asking you to like these types of puzzles. But do we have any
+ Questions on them? This is good exam fodder.
+ Yeah. So the x or negative x, the idea we were trying to go
+ For was if you flip the bits and add one from x and negative
+ X, you would think that the most significant bit would
+ Probably be one for either of those. And then right shifting
+ That by 31 would give you all ones, just like we did here
+ When we were trying to contemplate whether this was
+ Negative. But the case where it doesn't hold true is for
+ Zero, because zero negated is still zero and therefore there
+ Would not be any ones in the most significant bit that would
+ Give you a negative one as a result of right shifting by 31.
+ Yep. >> [Inaudible]
+ >> Did you say why are we shifting by 31? the only reason
+ We're shifting by 31 is because they told us to do that.
+ So the idea here -- you're saying for lab zero?
+ Or this question? okay. So the reason that we're
+ Motivated to shift by 31 here is that these are 32-bit integers.
+ If i were to shift by 31 bits, it means i'm taking the most
+ Significant bit if it's an arithmetic shift and replicating
+ It 31 times to make a value that is all based on that one bit.
+ It's either all ones or all zeros. >> [Inaudible]
+ >> Yeah. The last one says if i and x and x minus one, is
+ There ever a case where they don't have anything in common?
+ You can think about it that way. When you and two values,
+ You're basically saying are there any values that are the
+ Same? if they had any bit position that was the same, it
+ Would be non-zero. So they're saying is there any
+ Case where you could and two things and have them have no
+ Bits in common? and the answer is yes. With zero, nothing is
+ Set to one. So it can't have any bit in the one position.
+ So that would be the case. You could also imagine a case
+ Where you're dealing with one zero zero zero zero and zero
+ One one one one or something like that where it's a weird
+ Case like that. Yeah? >> [Inaudible]
+ >> Yeah. So with right shifts, remember, it's going to depend
+ On the type of the variable that you're shifting. So if my
+ Type of my variable is an int, i would expect the kind of right
+ Shift to be applied to be an arithmetic shift. Yes. Great.
+ If it were unsigned, i would expect it to be a logical shift.
+ So as we'll see in x86-64, there are different instructions to
+ Do arithmetic versus logical shifts, and the compiler keeps
+ Track of the types of the variables when it's doing a
+ Shift, and it will determine whether it should be using an
+ Arithmetic or a logical shift. All right. I don't think i'm
+ Going to have time to do this full example, so i would
+ Probably post a video, but let me see how far i get, and i'll
+ Still post a video regardless. But this is my attempt at
+ Giving you back some of the stuff that was covered here in
+ More coding form. So what i did was i created variables i
+ And j, i set them to different integer values, so 42 versus
+ Negative 25, and i'm just dumping them out in hex, just to
+ See what they look like when they're created as binary
+ Values. Notice these are all integers at this point. Unsigned
+ I have ui and uj as well. Then i play around with i and j
+ By taking one, left shifting it by 31, and then doing j equals
+ I minus that, i minus one. So what should one left shifted
+ By 31 be? what value was i going for with i?
+ Not negative one. What would i in the case where the
+ Cursor is actually on, what would i be in that case?
+ Tmin, because it's one left shifted by 31, on the left shift
+ I always pad with zeros. So if i have one followed by all
+ Zeros, that should be tmin. J as i minus one should give me
+ What? i mean, it would be tmin
+ Min minus one, which has to be a wrap around to tmax if this
+ Version of c does that. So we'll find out.
+ So let's try to go through those and then maybe i'll do more if
+ We have time. Yeah. I don't want to exit full screen.
+ I just want that to go away. Oh, my god.
+ Unfortunately, there's no keyboard here.
+ So maybe it will go away in a second.
+ So in terms of the values, i see 2a for 42, which makes sense
+ Because 2 times 16 is 32, plus 10 is 42.
+ And i see -- okay. All right.
+ I see how it's going to be. There we go.
+ Okay. Let's go to this one.
+ Let's go to -- you can see what i highlight, right?
+ Yeah. Let's go to the third line.
+ The third line, it shows 8 followed by all zeros.
+ That value is tmin, right? Because 8 in hex is 1, 0, 0, 0.
+ So that in binary would be a 1 followed by all zeros.
+ So that's tmin. j, which was 1 minus that, is 7, followed by
+ All f's. And that is interpreted as tmax.
+ So this is an example showing tmin minus one wrapping around
+ To tmax. Are you with me on that one?
+ Okay. All right.
+ Then in terms of the next line, what i have at the print f
+ Below the use there is i ended with j and i minus j.
+ So if i do i and j, it shows that there is no overlap
+ Because 1 is a 1 followed by all zeros.
+ The other is a zero followed by all ones. If you add those
+ Values together, tmin and tmax, you would get zero.
+ So i ended with j, as you would expect, is zero.
+ And if i subtract i minus j, i end up with 1.
+ Because the cardinality of difference between tmin and tmax
+ In this case is 1. Is that what happened?
+ Well, in this case, what was j? Was j negative?
+ J was positive. So i took a negative value and i subtracted
+ An even more negative value and it wrapped all the way around
+ Through the positive numbers to come back to 1.
+ Everybody see that?
+ All right. Then let's look at the unsigned representation here.
+ I looked to see if i was less than j.
+ i again is tmax, tmin, and j is tmax, so i is in fact less than j.
+ So it puts out a 1.
+ If i asked if ui was less than j, it represented that as zero
+ Because when i do it in an unsigned representation, tmax stays
+ The same value, but tmin becomes umax.
+ No, tmin becomes one more than tmax.
+ Okay. Let's look at the last two lines
+ Here where i have this call. Does anybody know what calic does?
+ It's a dynamic allocation of memory where it sets the value
+ Of the content of memory to zero.
+ So in this case, it's creating my pointer was declared as a
+ Pointer to an integer. So i have somewhere out there a
+ Section of memory where my pointer is stored, which points
+ To another section of memory. And that section of memory that
+ It's pointing to after the call of calic will be initialized to
+ Zero. Then i took my pointer and i
+ Assigned it the value dead beef. So if i were to think about this
+ Value being placed in memory, how many bytes would i need to
+ Store dead beef? four.
+ I need four bytes because it's a pointer to an integer.
+ By the way, how many bytes would i need to store the pointer?
+ Eight. Because it's a 64-bit
+ Architecture. Okay. So as far as dead beef goes,
+ If i learn that my dead beef is stored at address -- let's skip
+ To the bottom because the printing of the address didn't
+ Work very well. But at this bottom interaction here, i've
+ Got another screen where i interact with gdb. So let's zoom
+ In on that. For interaction with gdb here, i'm dumping out a
+ Number of locations, one of which is 602010. Everybody see
+ Where that is? That's the third line in this set of memory
+ Addresses. The first byte at 602010 is ef.
+ The byte at 602011 is be. Then it goes to da or ad.
+ And then it goes to de. What endian is this architecture?
+ Little because it took the value where de was the big end
+ And it put it at the highest address. What's stored at the
+ Lowest address is the little end. So this is a little endian
+ Architecture. Everybody see that?
+ >> What's the difference between calloc and malloc?
+ >> Malloc doesn't initialize the variables. So when you have
+ Calloc, it gives you initial zero. I could have used malloc in
+ This example because i initialized it right afterwards.
+ Wouldn't have made a difference.
+ Other questions? yep?
+ >> I'm allocating one integer, and the way i know it's an
+ integer is i provide size of to tell me how many bytes, but i'm
+ Only allocating one. If i wanted to make an array, i
+ Could have specified more than one. Good question.
+ >> Yeah. >> Can you explain again why
+ We know that, like, it's eight bytes?
+ >> So let's talk that through. That's good. So dead beef is
+ Not an eight-byte quantity. Dead beef is only four bytes.
+ So what i have is a pointer, which i creatively called ptr.
+ And the pointer is going to be 64 bits because we're dealing
+ With x86 64, which uses 64-bit addresses. So my pointer is 64
+ Bits to uniquely identify a location in memory. The value
+ Of pointer is 602010. And this is clearly not 64
+ Bits by itself. There would be a lot of leading
+ Zeros here. But this is the significant bits of it.
+ If i dereference that or look into memory at that particular
+ Location, i'll find the starting address of what it's
+ Pointing to, which contains dead beef.
+ But it's pointing to an integer. An integer is four bytes.
+ So i would only pull out the first four bytes in memory.
+ Do we have to free it? no.
+ There is a freeing that will occur at the end when it
+ Completes running. In this particular problem, it frees
+ In this particular way, i would have told you i am placing the
+ Value dead beef into memory at this pointer address.
+ So you know as a given for this problem that these are the
+ Four bytes that i'm placing and you know their order of
+ Significance, that de is the biggest significance, right?
+ So when i look at that memory address and i see that the
+ Lowest address contains the little end, i know it's little
+ Endian from that. Now, i also know that x86 64 happens to
+ Be little endian. That's what i compiled for. But if i didn't
+ Tell you and asked you is this machine little or big endian,
+ You could tell me based off of that.
+ Yep? >> [ off mic ]
+ >> Yeah, so this pointer might be in a register, which are 64
+ Bit, or it could be itself in memory, which would require 64
+ Bits worth of storage, so it would need eight bytes of
+ Storage. So if this pointer were stored
+ In memory in some location, i would need a full rose worth of
+ Memory in this printout to hold the value of that pointer.
+ And it would also be stored, by the way, in little endian
+ Form, where the smaller end of 10 would be stored before 20
+ Would be stored before 60. But then i would need a way of
+ Getting that address. Excellent question. All right.
+ Yeah? >> [ off mic ]
+ >> Oh, why did i -- i was trying to print it once with
+ Percent d and once with percent x. But that didn't work at all.
+ So i wouldn't recommend that. My approach sucked on that one.
+ All right. I will see you all on monday.
