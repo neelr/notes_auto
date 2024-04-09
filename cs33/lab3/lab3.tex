@@ -1,0 +1,89 @@
+```latex
+\documentclass{article}
+\usepackage{hyperref}
+
+\begin{document}
+
+\tableofcontents
+\newpage
+
+\section{Lecture Notes on x86-64 Assembly Basics}
+
+Welcome to today’s lecture on x86-64 assembly basics. We’ll cover various fundamental aspects, including register usage, memory addressing, and instruction sets, focusing specifically on move and LEAQ instructions. This lecture is essential for understanding low-level programming and is fundamental for courses like operating systems or computer architecture.
+
+\subsection{Introduction to x86-64 Assembly}
+
+x86-64 is an extension of the x86 instruction set that supports 64-bit computing, offering enhanced performance through a broader set of registers and more extensive memory addressing capabilities.
+
+\subsubsection{Registers Overview}
+
+\begin{itemize}
+  \item Registers are small, high-speed storage locations directly within the CPU used to store temporary data.
+  \item In x86-64, there are 16 general-purpose registers named RAX, RBX, RCX, RDX, RSI, RDI, RBP, RSP, and R8 to R15.
+  \item \textbf{RAX, RBX, RCX, and RDX} are the primary general-purpose registers with historical significance and specific use cases.
+  \item \textbf{RSI} and \textbf{RDI} are typically used for source and destination indices in string operations.
+  \item \textbf{RBP} and \textbf{RSP} are used for base and stack pointers, crucial for function call management.
+  \item Registers can be accessed entirely (64-bit), or in parts (32-bit as EAX or 8-bit AL), to support backward compatibility with older 32-bit and 8-bit software.
+\end{itemize}
+
+\subsubsection{Register Naming Conventions}
+
+Register naming conventions follow a pattern where ``R'' indicates a 64-bit register (e.g., RAX), ``E'' indicates a 32-bit register (e.g., EAX), and no prefix with ``H'' or ``L'' suffixes indicates high or low 8-bit parts of the register (e.g., AH or AL).
+
+\subsubsection{Memory Addressing Modes}
+
+Memory addressing in x86-64 allows for various modes to access data:
+
+\begin{enumerate}
+  \item \textbf{Immediate Addressing:} Uses a constant value within the instruction. e.g., \texttt{mov \$5, \%rax}
+  \item \textbf{Register Addressing:} Uses the content of a register as the operand. e.g., \texttt{mov \%rax, \%rbx}
+  \item \textbf{Memory Addressing:} Accesses data in memory through complex addressing modes involving registers and constants.
+\end{enumerate}
+
+\subsubsection{Instruction Set Overview}
+
+\begin{itemize}
+  \item The \textbf{x86-64 instruction set} encompasses a wide range of operations, including arithmetic, logic, control flow, and data movement.
+  \item \textbf{Move Instruction (mov/movq):} Transfers data between registers, memory and immediate values. It’s akin to copying rather than moving in high-level programming.
+  \item \textbf{Load Effective Address (LEAQ):} Computes the effective address of the operand and stores it in a register without accessing the memory. This instruction can perform arithmetic operations like addition or multiplication by powers of two without executing arithmetic instructions.
+\end{itemize}
+
+\subsubsection{Examples and Explanation}
+
+\paragraph{Move Instruction}
+
+\begin{itemize}
+  \item \textbf{MoveQ} is used to move 64-bit data and has the syntax \texttt{move source, destination}.
+  \item \textbf{Immediate to Register:} \texttt{movq \$5, \%rax} moves the constant 5 to RAX.
+  \item \textbf{Register to Memory:} \texttt{movq \%rax, (\%rbx)} moves RAX's value to the memory address contained in RBX.
+\end{itemize}
+
+\paragraph{LEA Instruction}
+
+\begin{itemize}
+  \item \textbf{LEAQ} is particularly useful for calculating addresses or simple arithmetic without accessing memory.
+  \item Example: \texttt{leaq (\%rdi,\%rsi,4), \%rax} computes the address that is the sum of RDI’s content and RSI’s content times four, storing the result in RAX.
+\end{itemize}
+
+\subsection{Practical Application and Memory Addressing}
+
+\begin{itemize}
+  \item \textbf{Memory Operations:} In x86-64, operations directly involving memory are powerful but require careful handling of addressing modes.
+  \item \textbf{Addressing Modes:} The combination of base registers, index registers, scaling factors, and displacements offers flexibility in generating addresses dynamically during program execution.
+  \item \textbf{Use of LEAQ:} Beyond calculating addresses, LEAQ can be used for several arithmetic operations like multiplying a register value by constants (e.g., \texttt{leaq 0(,\%rdi,4), \%rax} multiplies RDI by four).
+\end{itemize}
+
+\subsubsection{Closing Tips for Assembly Programming}
+
+\begin{itemize}
+  \item \textbf{Understand the Register Usage:} Knowing which registers to use for specific tasks can optimize your assembly code.
+  \item \textbf{Master the Addressing Modes:} Complex memory operations often hinge on effectively using the various addressing modes.
+  \item \textbf{Limit Direct Memory Access:} If possible, use registers for intermediate calculations to reduce costly memory accesses.
+\end{itemize}
+
+\section{Concluding Remarks}
+
+Today's lecture introduced you to the basics of x86-64 assembly, focusing on registers, addressing modes, and key instructions like move and LEA. Understanding these concepts is vital for efficient low-level programming and will serve as a foundation for exploring more complex assembly programming techniques.
+
+\end{document}
+```

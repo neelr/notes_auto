@@ -1,0 +1,938 @@
+ I'm Salma, one of the LAs for this course. If you guys don't know me, nice to meet you.
+ I just wanted to come up here and quickly announce that the LAs are going to be giving
+ a workshop on the Data Lab this Thursday. That's going to be at 6 p.m. It's going to
+ be on Zoom. You might already be able to see the Zoom link. It's on the Piazza pinned post
+ for the LAs with LA workshops, LA office hours, worksheet solutions, et cetera. I'll make
+ a separate announcement later as well with the Zoom link and everything again. It will
+ be recorded. We'll post the recording so if you can't make it, be sure to give it a watch,
+ especially if you haven't started the Data Lab, that's totally okay. But it might help
+ you guys get a little bit of a head start before it's due in week three.
+ Yeah, if you guys have any questions about LAs, the LA program, worksheets, workshops,
+ et cetera, always feel free to contact me, email me. I'll try to respond as quickly as
+ I can. But, yeah, hope you guys have a good time in CS33. Let me know if you guys need
+ anything. >> All right. I would strongly encourage you
+ to attend the tutorial or listen to the recording. They will record it and post it. So please
+ take advantage of that. We'll try to do tutorial well in advance of each lab so that you kind
+ of get ramped up. Like I said before on the email, start early. All right, today we're
+ going to cover the basics of the x86-64 ISA. I'm not going to quiz you on the history.
+ This is not a history class, so don't worry about, I know the slides have some material
+ about the historical aspect. Ground yourself in it, great, but I'm not going to test you
+ on that, what came first. We are going to focus on what I think are two particularly
+ confusing instructions today. First is the move queue, which is our kind of basic go
+ to instruction, and then the LEA queue, which the difference between these two seems to
+ be a common question that students have many, many days after this particular lecture. So
+ I'm hoping to kind of handle that today, but I suspect it will take a few more lectures
+ to really solidify. I want to get into operand locations with an x86-64. You've got an instruction
+ that performs some operation. Where is the data? Okay, that's going to be another theme
+ for today. And then getting into the basic arithmetic flow. There's a lot of complexity
+ when you take a program that's from a high level language and compile it down to assembly
+ in terms of what happens with control flow, like if statements, while loops, that kind
+ of thing. What happens with procedure calls? What happens with larger data structures?
+ All that's coming. Today we're going to make it more simple by focusing in on the basic
+ arithmetic flow. So, with that in mind, like I said, we're going to skip over the history
+ and get into some of the definitions. Let's think about ISA. We talked in this class about
+ a layer, the instruction set architecture, that exists between the software side and
+ the hardware side. The ISA is the contract that the hardware has to provide to the software
+ and a notion of what the software is going to use to implement the hardware. So the basic
+ instructions that comprise the ISA is what the hardware has to physically implement.
+ We will get to that physical implementation later, and there's many details in the hardware
+ that are hidden to the software. The number of processor pipelines, the number of arithmetic
+ units that are integer versus floating point, the number of bytes of cache, all of that
+ may be obscured to the software through the ISA, and we'll talk about how we still get
+ high performance and how we leverage that, but today we're going to focus on what actually
+ is shown through the ISA to the software. The micro-architecture is the implementation,
+ the actual design. And the assembly code or machine code is the language that the architecture
+ will natively speak. So everything has to ultimately get compiled down or interpreted
+ down into that. This is a view on the slide, and I kind of enhanced it a little bit here,
+ enhanced but also deprecated it because you have to deal with my handwriting, of the machine
+ model of the ISA. So I'm going to start with what's on the slide because it's clear, and
+ then I'll get into the additional details that I just wanted to kind of prime the pump
+ a little bit with. On the left-hand side, you've got the CPU. This is the processing
+ unit that is handling the execution of instructions. Instructions are these primitives, these simple
+ operations that the assembly language can provide, and the expectation is the processor
+ is going to have a few things. One of them is a program counter. The program counter
+ is tracking where you are in the program. If you're reading a book, it's a bad example,
+ but maybe you put your finger on the word, you're kind of following along, this program
+ counter is that pointer that is telling you what instruction is currently being executed,
+ and the PC changes after each instruction to point to the next instruction. For today,
+ we're going to assume it just goes to the next instruction. There's no weirdness of
+ control flow. Next time, we'll talk about instructions that change where that PC's going.
+ If statements, while loops, procedure calls, that kind of thing. In addition to the program
+ counter, which is a 64-bit register, and in x86 parlance, it's called RIP, okay, it's
+ called RIP, okay, RIP stands for instruction pointer here, R is register, so it's the register
+ that's holding the instruction pointer. That PC is stored within the instruction pointer,
+ it's a 64-bit pointer into memory. In addition to that, we also have a set of registers.
+ Let me stress this, because some people will always get this wrong, okay. Registers are
+ not the same as the main memory. I've delineated sort of the CPU, the physical chip, from the
+ DRAM or DIM or off-chip components, right. So registers are on the chip. They are faster
+ memory, readily accessible in the processor pipeline, part of the actual architecture,
+ where the compiler can place frequently used values. The compiler orchestrates the movement
+ of data into and out of these registers by explicitly stating, use register REX for this,
+ use register RBX for that. In addition, there are a set of one-bit, the registers we're
+ gonna see are actually pretty complex. The nominal size will be 64 bits, but there are
+ ways of addressing them that make use of fewer bits, and that's where it really gets nasty.
+ It's like a Russian nesting doll of one thing after another contained inside of itself.
+ Maybe an onion, I don't know, whatever you like, okay. Then, condition codes. These are
+ one-bit registers, which we're gonna talk about on Wednesdays. I'm gonna put them off.
+ What they basically do is they track certain conditions after the operation of an instruction
+ to inform other instructions. It's a way of passing simple one-bit values between instructions.
+ For right now, let's just say that they're used by control flow operations and data flow
+ operations, and we'll get to them on Wednesday. On the right-hand side, we've got the overall
+ memory structure, and I drew it a little more in detail of what we're gonna have in this
+ class. They mention the different components, but I'm showing you the locations. The four
+ key pieces of memory that we'll talk about at the start of this class will be the text
+ segment, which is where instructions actually are, the global data segment, which is data
+ that is known at compile time. If in my code, I have an int x in the global scope of my
+ code, the value or the data that's storing that x, maybe it's set to a value 42 or something
+ like that. This would be a good candidate for storage in global data. The value is known
+ at compile time. If I had a string that I was creating in my data segment, that would
+ be another thing that might be useful to store in global data. Additional data that is created
+ dynamically or as the program executes can be found either in the stack or the heap,
+ which grow in opposition. The stack is for local data variables, like if I have a procedure
+ call and I create data, like an array on the stack, and it's for tracking the invocation
+ of procedure calls. We're gonna spend a lot of time on this Monday of next week. Yeah?
+ It's reserved for the operating system. We're not gonna touch it in this class.
+ The heap grows in opposition. It's what malloc or calloc uses for allocation of data dynamically.
+ What I want to emphasize here, because as I was drawing this diagram, I was seeing how
+ it could be misconstrued, is that the addresses that are sent to memory, if I have 64-bit
+ addressing and there are 2-64 bytes of memory, this address isn't just going to one place.
+ It can go anywhere. You could specify any address in memory potentially for a read.
+ And that data is either going to be placed in memory or brought to memory, depending
+ on whether we're talking about an instruction that writes to memory or reads from memory.
+ But the address says where and the data says what. This is what we're placing or taking
+ from memory. A special case, and your book delineates this as a separate piece so I'm
+ separating it out as well, a special case is the instruction. You would provide the
+ address of an instruction in memory and it would grab that instruction. And what provides
+ the address of an instruction? It's that instruction pointer. So the overall flow here for an instruction
+ that we would expect, the instruction pointer would tell us go grab this instruction from
+ memory, bring it into the CPU, the CPU is going to look at what the instruction does,
+ is it an add, is it a multiply, is it a move, whatever, and then it's going to start performing
+ the operation. In performing the operation, it may have to get values from the register
+ file or by sending an address to memory and retrieving data back. Ultimately when the
+ instruction finishes, it may or may not write to the register file or memory. So that is
+ the high level flow that we're going to be getting into and delving into, but I just
+ want to see, do we have any questions on the high level stuff first? Yeah. The stack is
+ tracking our local data and procedures as you invoke multiple procedures, it kind of
+ lets them be distinguished in their own scope. So we'll see what's called the stack discipline
+ of when you invoke a procedure, there's an organized amount of way of allocating and
+ deallocating memory and we'll kind of follow that on Monday of next week. Yeah. The register
+ file is a smaller, fast memory. So one way to think about it if you know physical implementation
+ is the main memory we're going to think about is kind of a DRAM. It's high in capacity,
+ but it's slow. The register file is usually more of an SRAM like technology that is lower
+ in capacity so it doesn't hold as much, but it's fast. And so the register file is that
+ quick access data that the compiler can kind of choose to place things in. So whether I
+ read it from memory or registers may not matter much in terms of, I'm still getting the data,
+ but it matters a lot in terms of the speed. This could be hundreds of cycles, this could
+ be fast. And later in the class we'll talk about how we bridge that gap by making memory
+ faster with what are called caches. But we're going to put that off for later. Yep. RIP
+ is the instruction pointer. What's shown is the PC on your slide which stands for program
+ counter. It is the pointer to what instruction we're executing next. So if I execute an ad
+ and then the very next instruction is a move, this pointer is going to point to the address
+ of the ad and then point to the address of the move. And it's telling the processor do
+ this next. Yep. So PC is a broader term. We're going to see that in MIPS they actually use
+ the term PC. In ARM they use the term PC. But in x86 they like to be different. So they
+ have the term RIP for what is effectively the program counter. Program counter is the more
+ general term. RIP is the Intel specific or x86 64 specific term for it. There's a lot
+ of this where you're going to see Intel has their specific nomenclature for certain things.
+ So I'm trying to give you both so that you'll at least have that exposure. But those effectively
+ mean the same thing for today. Yep. No it's not a procedure. RIP points to the literal
+ instruction. It's at a finer granularity than that. It's not procedure. It is the actual
+ instruction. I know this is a terrible example because maybe some of you don't do this. But
+ if you were reading a book and you were, you know, I saw my kids when they learned how
+ to read they would have to put their finger and follow it, right? If you're reading a
+ book and you're trying to figure out this is the next word, this is the next word, and
+ your brain is processing the word as your point. If you're pointing to each word word
+ by word, that is following what the RIP does. It's a pointer that tells you what word am
+ I on so that you don't lose your place. You know what instruction comes next. Does that
+ help at all? Yeah. No, it is one pointer. It is where I'm going next. Okay? It is where
+ I am currently. Another way to think of it is a bookmark. If you think of it at a page
+ granularity. It is telling you where you currently are in finishing up this program. Or a breakpoint.
+ That's another great example of actual coding relevance to all of you. Yes? Address can
+ either come from RIP if we're going to get an instruction or it can come from the arithmetic
+ units, the processor as a whole if it's calculating an address. So that's a great point. We are
+ going to get today into how to calculate an address and send it off to memory. So all
+ of this is we have details that are not filled in. I shouldn't have paused for just general
+ because there is a lot that I haven't talked about yet. But I just want to give the high
+ level flow. So I know we haven't gotten into the details of where the address comes from.
+ How it's calculated. You're right. I have not given you that yet. But I just want to
+ say the overall flow. Do we kind of see this idea of an instruction is grabbed from memory.
+ It's executed. We figure out what we need to do and in its execution we might read values
+ again from memory and pull it in. I just want to get that sort of flow of we go in the overall
+ course of executing an instruction, there may be multiple accesses to memory. Yeah.
+ Alright. So you're asking about enduring compilation and runtime. The compiler will be a program
+ running and making use of memory. But the program that it creates will later when it
+ actually executes also make use of memory. So yes, let me put it this way. A program
+ in execution will make use or can make use of the register file and memory. And we'll
+ talk about how the compiler specifies the instructions that tells it when to use which.
+ Alright. We'll talk about that. Yeah. If I am modifying, let's say I'm going through
+ an array for an image. So I've got or let's just say just maybe a linear array. And I'm
+ just incrementing each value. My goal for my program is to go through an array and plus
+ one every element of this array. It's a very exciting program. In that sense I have to
+ read what's in the array from memory, increment it with an addition operation and then compute
+ and put the new value into memory again. So data goes both ways because we both read and
+ write from memory. Instructions only go one way because the program does not modify its
+ own instructions. Okay. Self-modifying code is outside the scope of this. So we are going
+ to talk about instructions where we're flowing one direction for instructions. But data will
+ flow both ways. Alright. Great. Let's keep going. We talked about the compiler before.
+ We talked about the overall compilation flow. Again, what we're doing here is we're taking
+ high level code that's written in whatever portable language there is, right? The benefit
+ of high level code is that it's portable. I can run the same C program on MIPS that
+ I can run on x86-64 in spirit. But what I'm eventually going to distill it down to is
+ that native language, that assembly language for the architecture. If we look at compilation,
+ there's different flags that GCC can make use of. What they're showing here is the OG
+ in this context means optimization level debug. And so it's not doing anything crazy to change
+ around the code or try to make it better. It's trying to keep it as close to your original
+ source code as it can so it is easier for you to debug it. And in this case, with the
+ -s flag, it's creating assembly. So it's not going all the way and linking and creating
+ an actual executable binary. It's creating a text-based assembly that we can read. And
+ so on the right hand side, that is an example of the kind of assembly that that will generate.
+ It's a sequence of instructions that do simple, relatively simple tasks. And what we'll notice
+ is we'll start to get more used to some of the instructions themselves as we go through.
+ But some of the bigger ones, like I mentioned today, we were going to talk about move_q
+ as our starting point as one of the least sophisticated instructions. And then we'll
+ get deeper and deeper. But on the left hand side, so sort of along this path here, we've
+ got the name of the instruction and then its operands on the right as a comma delimited
+ list. Sometimes with parentheses, sometimes not. We'll talk about what all that means
+ in a second. Assembly that we'll deal with today and in general works with very basic
+ types. It's going to handle data that is comprised of one, two, four, or even eight bytes. It's
+ going to deal with pointers to locate where something is in memory. It'll deal with floating
+ point data. We haven't gotten into floating point yet. We'll deal with that after x86
+ because floating point is not in the bomb lab, so I delay that one. It doesn't have
+ natively arrays, structs, or anything. What we'll do when we get to arrays and structs
+ on Wednesday of next week is deal with bulk allocation of memory and then the compiler
+ has to be smart enough with how it injects the code to handle it. So we're really dealing
+ with very simple types at this point. The kind of assembly instructions we're going
+ to deal with do an arithmetic or logical operation to either a register or memory data. One of
+ the things that makes x86 so difficult is that it can do operations on either registers
+ or memory. A lot of simpler ISAs like ARM to some extent, except for the extensions
+ and thumb, but ARM and MIPS deal with operations on registers only and they have separate instructions
+ that transfer data in and out. We're going to talk more about the history of x86 a little
+ bit at least as far as the type of architecture that x86 is versus others later in the class.
+ I don't need to do that before we get into it, but x86 was designed at a time where memory
+ was very expensive and low capacity and it benefited from having horrendously complicated
+ instructions. What we're going to do in this class is not try to learn all of x86. So for
+ those who like to sort of do their own work on the side, maybe we're not connecting or
+ whatever it is, I don't encourage you to learn all of x86. It's way too much for this class.
+ We are going to focus on the parts of x86 that are commonly used by the compiler and
+ are actually made in real binaries. Not all the theoretical x86 that you could do because
+ it's a lot of baggage. So what we're going to focus in on is really what we see in x86.
+ This is not a class about necessarily programming an assembly. It is a class about understanding
+ assembly. Does that difference make sense? By all means, if you enjoy pain, go for it.
+ Go into full assembly, but I'm not asking you to do that.
+ The actual object code that your processor will get looks more like this. A sequence
+ of, in fact this is even nicer because it's hex, but it's going to be a sequence of bits.
+ And these bits have some meaning. The processor is going to grab bytes at a time, figure out,
+ the difficulty with x86-64 from an architect's point of view is it's hard to even tell where
+ one instruction ends and the next begins. You have to grab a collection of bytes and
+ kind of figure out is it a one byte instruction, two bytes, three bytes, four bytes, where
+ does it go? So that complexity is baked into the microarchitecture. We're going to push
+ that aside. We don't have to worry about it in this class. But that is a problem for this
+ ISA. But in this case, when we look at an actual instruction, this is a move queue instruction
+ and it was created from one line of C code and it will be represented by one line in
+ binary, or in this case shown as hex, on the bottom. Starting at address 40059E, there
+ are three bytes to this instruction, so it's going to take up 9E, 9F, and then what's the
+ next one going to be? A0, said no one. Good, okay. So as the addresses increase, it goes
+ E, F, and then we wrap back around, 9 will go up to A, the F will turn to a zero. Those
+ three bytes, 488903, are the literal bits that comprise the instruction. They have meaning
+ to the microarchitecture. The microarchitecture is going to look at it and say, oh, that's
+ a move queue from register RAX to the contents of memory pointed to by RBX. It understands
+ what that means. I will never give, I will not give you that and ask you to understand
+ it with no context. When we get to the attack lab, I will ask you to be able to look for
+ certain patterns, but you will have tables to help you with that. So this is not about
+ memorizing what those bits mean. Most of the time, except for the attack lab, and questions
+ like that, you'll have the translation as the text in the middle, the move queue.
+ If you use a disassembler, I gave an example earlier in class of something called object
+ dump. If you use object dump with the dash D option on a binary, and you can use this
+ on any binary and in a particular ISA, it will give you a dump of all the assembly instructions
+ that are part of that binary. This is different than the GCC dash S, and on a test, I will
+ be using object dump to give you your binary. So I would prefer, you can use GCC dash S,
+ if you can say it. You can use it to explore things and try out the assembly, but the assembly
+ is a little different than what you're going to get here. I'll give you this essence in
+ a second, but for a test, I will use object dump. The difference here is whether you're
+ starting with the C code or the binary to get the assembly. And the difference for our
+ purposes in terms of detail is that the object dump does not have some of the information,
+ some of the labels that the other assembly would have. It's a little bit more raw. But
+ when you use an object dump, we talked about this before, there are three columns. We've
+ got, I really need to find a better way of pointing here, instead of having to just pull
+ up the X. On the left hand side, we've got a column 400595 to 400596 and so on. That
+ is the address in memory in the text segment where the data is, where the instructions
+ are. Then, in the middle kind of column, starts with 53, then 48, 893. Those are the actual
+ bits of the instruction. On the right hand side is the translation, push rbx, move rdx
+ and so on. Within GDB, you can also run disassembly. I don't recommend that you do this for the
+ bomb lab. I think if you're going to be doing the bomb lab, the way I usually try to do
+ it is I use object dump to dump out the entirety of my bomb. I put that in an editor in a separate
+ window and I can just page through it whenever I want. And then on the other window, I'll
+ actually keep GDB open, just interacting to go through the bomb step by step, making sure
+ I don't blow it up. But you can disassemble within GDB and then you can examine some of
+ the procedures and look at the individual bytes of the instructions. These are all possible
+ within GDB. Just to be clear, disassembling is not the same as a decompiler. A decompiler
+ tries to reverse the compilation process and you start with a binary and give you high
+ level code. This is dumping out the actual assembly. Disassembling is getting the contents
+ in assembly. Yep? Yeah, so GDB is a debugger. It allows you to step through code interactively.
+ You can choose to set a breakpoint at instruction 400581, that pop that's up there. You can
+ set a breakpoint there, run your program, it gets all the way to that point and then
+ it stops. And once it stops, it's not running anymore, it's frozen, you can look at the
+ registers, you can look at the memory, you can do anything you want as far as understanding
+ what's happening in the code right now and then you can step one instruction ahead to
+ get to the return queue and see what the pop did. So the GDB is a powerful tool for interactively
+ going through a program step by step and understanding what instructions are doing, seeing what memory
+ is looking for. So let's say it's asking you for a passphrase. You can look and see what
+ comparisons is the assembly doing, what was it looking for me to enter? And that's how
+ you're going to reverse engineer the bomb line. So GDB is essential. Object dump is
+ a program that just looks at the binary and it provides human readable form of the text
+ portion of that binary's memory. It's not interactive in the sense that it's going to
+ let you run the program or stop the program. There is a version of that inside of GDB called
+ disassemble. But object dump is just another separate program that lets you view the content
+ of that binary. All right.
+ Let's hit this one. This is, I think, one of the more complicated parts of this first
+ lecture on x86. Registers. So I talked about a register file. I heard somebody say registry
+ before. Registry is something different in Windows that lets you register certificates
+ or other types of things. These are register files that are even more primitive hardware
+ structures. This is, you can view a register file as being like a memory. It's got an address
+ that comes in and either data gets written to it or read depending on its use. But it
+ is just a memory. And in this case, we could view it in x86-64 as having 16 general purpose
+ registers with names like RAX, RVX, all the way to R15. They ran out of creative names?
+ No. These were added on over time. They used to have different functions. But for right
+ now, most of them are general purpose. The R versions, the ones that are on the left,
+ RAX, RVX, RCX, RDX, RSI, RDI, RSP, RVP, and then RA through R15. Those 16 names are the
+ 64-bit registers. So in that case, there's 64 bits of data stored in each register. If
+ I ask, hey, give me RAX, and RAX happened to hold the value 42, then the data that would
+ be read out would be 42. It would be 64 bits representing 42. If I then say, no, I want
+ to write RAX, the value 8, it would overwrite that as 8. It is another location memory,
+ but it's faster to access and the compiler is explicitly telling you what to use. You
+ with me? Yup. If you want to store more than 64 bits worth, you have to use something else.
+ This register only holds 64 bits. Oh, you're saying what if you needed to have a 17th value?
+ Ah, good. The compiler has a process by figuring out which of these registers it's going to
+ be able to use. The compiler knows because it's compiling for an ISA that you have a
+ limit of these 16 registers and if it needs to juggle 17 values, one of them is going
+ to have to be in memory. If you have a code loop that is frequently using a lot of different
+ values across the spectrum, it might slow down because some of those values have to
+ be in memory and what is called spilling to memory, meaning you have to go and endure
+ that longer latency. But what the compiler tries to do is keep values in the registers
+ for speed. But at least you always have memory if you need it. Yup.
+ I haven't done that yet. So I will get there. That's a great question. I'm not dissing your
+ question but you said again and I haven't even done it the first time. So I want to
+ just correct my teaching ability. Alright. I will do it though. Other questions? Yes.
+ A 17th or 18th integer value. Yeah, go ahead. I would say first register. I don't like
+ registry. I don't want to be picky but that's a separate thing in Windows. I don't want
+ it to get confused. So yes, you're right. If I had 16 values in the register file and
+ I needed all of them and I wanted to keep all of them there and I have a 17th, the compiler
+ has a choice. It can either pick one of these to kick out or it can just put the value in
+ memory. So the compiler might look, it forms things called liveness analysis and def use
+ change. It knows when values are going to be used. So it may say, you know, this value,
+ it's important, I need it but I'm not going to use it for a very long time. So I'll stick
+ that in memory and I'll make space for this new value that I'm going to use. Does that
+ make sense? Yeah. Register files have registers in it. That's correct. It is a file of registers.
+ Yes. Alright. Let's get to your question. You'll notice that there are other boxes inside
+ of these registers. This is the onion example that I was kind of trying to talk about, right?
+ In this case instead of accessing all, let's just take a look at RAX. The register RAX,
+ I already told you, is 64 bits in size. But what if I don't need all, you know what, I'll
+ do it on top. What if I don't need all 64 bits? What if I want to do an int? How many
+ bits do I need for an int? 32. So I really only need half of this space. What if I'm
+ doing an older program that didn't have 64 bit addressing? I'm running legacy code, some
+ old program that I don't have the source code for anymore, that was compiled under what's
+ called IE32. This was the 32 bit version of x86-64 that came before it. And I have code
+ that is written in this older ISA, and I want to run it. This older code didn't have any
+ notion of RAX, it wasn't even a thing. What it had was a register called eax, which was
+ only 32 bits. So whether I want to use less of the register space, or I have older code
+ that wants to use the older nomenclature, I need to have a flexible register file. So
+ in addition to having RAX, which does the full 64 bits, I also have eax, which only
+ does the lower 32 bits. It's the same space, but I'm accessing it with different names.
+ In the event that you were using it to store a smaller value, like 32 bits, would you be
+ higher 32 bits for a different thing? So, no. The question was, could you use, this
+ space here is just sitting here available, why can't I use it for something else, right?
+ You might be able to pack the values in, but the compiler would have had to have orchestrated
+ that. So the way that you would try to work that is, just like the example homework you
+ had from last time, where you create a packed register that has different values across
+ it, you could try and do that. But then you would have to have explicit instructions to
+ pull out RAX, and then shift it right. There's no way to just access these upper bits. So
+ that's why it's a little cumbersome. But it is possible, with careful coding, that you
+ could try to do something like that. Yeah?
+ - So if we're using eax, the other half of RAX is just wasted.
+ - That's right. What's that?
+ - How do you call eax instead of RAX?
+ - So in the actual instruction, the question was, how do you specify one or the other?
+ In the actual instruction, if you want to specify a particular operand, and it's a register
+ operand, you put a percent in front, and then we put a textual name. This is going to get
+ translated to something else. It's going to be a bit pattern, right? But for us, if I
+ put RAX, that means I'm expecting to grab 64 bits from the register file. If I put eax,
+ I'm expecting to grab 32 bits. Thank you, that's good. 32 bits from the register file.
+ So this is one way to tell how much data I'm writing or reading from an instruction, is
+ by looking at its intended either input or output. There was a question. Yeah?
+ For a register, did you say, can we use either one of these? Is that what you said?
+ (muffled speaking)
+ Oh, I see what you're saying. For the different registers that are available, right? Okay.
+ So for the most part, they are flexible. You can choose to put it in RAX, you can choose
+ to put it in RBX, it really won't matter. But there's going to be some special cases.
+ RAX is typically a return value from a procedure call. RSP is reserved as the stack pointer.
+ It tells you where the stack has been growing, where it's currently at. So we're going to
+ see there are certain things that are a little bit different. The order of parameters that
+ are passed to a function use specific registers. So there's a whole discipline that we'll get
+ into next week. It gets a little bit weird. But for right now, let's just treat them as
+ 16 places to put data. Yep?
+ (muffled speaking)
+ I'm glad you said that. Okay, so the question was anything smaller than 32 bits, we would
+ just use EAX. And unfortunately, that's not true. So if we go back to before IA32, there
+ were other register names even before that. So for the registers that were on the left,
+ not the R8 through R15, and wouldn't it be nice if they were all numbered instead of
+ having these weird names? But for the ones that aren't RA to R15, there are finer divisions
+ even so.
+ So for EAX, I can look at the lower half of 16 bits, and that's called AX. And then I
+ can split that into two pieces, where I've got A high and A low. The low and high are
+ only for the first four, because those were the original registers from earlier versions
+ of assembly language for Intel machines.
+ So you will see, again, I'm not going to make you create assembly code from nothing, but
+ you will see references to these. So if you see that something is writing to BX as an
+ output, how many bits is it going to be writing? 16, great. If you see that something is writing
+ to AL, you know it's only using eight bits. So these are flexible namings for the same
+ space, but they give you some sense of what the program is doing.
+ (inaudible audience question)
+ Oh, so why are we using the lower 32 bits? So there's a notion of significance here.
+ Even though, like we said, bits can be bits. But in this case, the lower 32 bits are lower
+ significant bits. Whether we're talking about an imager or a pointer, these are bits of
+ lower significance. It's not expressing the same dynamic range.
+ So older machines, where you had 8-bit quantities that you were manipulating, and you wanted
+ to have a 16-bit quantity, wanted a way of leveraging those upper bits so that you could
+ do the first half of them, multiply one place, and then move the next half of the other.
+ So there will be instructions. I cannot think of a case in this class where you'll see an
+ AH, CH, DH, or BH. I might be wrong. I just can't think of it right now. But I don't think
+ you'll probably run into that at all. I can think of a case where you'll see AL when it's
+ doing like a mask that's a single byte. I can think of that, but I can't think of a
+ case where you'll see the higher numbers.
+ Okay. Great. Now, yep?
+ So if you, let's say that I wrote to RAX, and I create a value. I'm going to change
+ your example a little bit just to make it more likely of something you'll see. I write
+ to RAX, and then I read from EAX. The compiler does weird things sometimes. I'm not going
+ to say that it always makes sense when you look at the compiled code, because it does
+ a lot of optimization, and it's programmatically optimizing means that there's sometimes weird
+ choices that it seems to make. So you'll see it write to RAX, but then read from EAX. And
+ if you look back at the original code, you'll see that what it was writing and reading was
+ an integer. So it makes sense that it only cares about 32 bits, because the integer only
+ has 32 bits of significance.
+ But then why did it write to RAX in the first place? I don't know. It was code that was
+ maybe reused across different sizes, and it doesn't matter, because you're wasting the
+ space anyway. So that's why, what your question is, you know, if you write to one and read
+ from the other, you will be seeing the same, an overlap of a value. But there could be
+ significance lost. So if you were writing the assembly, no offense to you, but, and
+ you made a mistake, and you wrote RAX, but you wanted to read along, and you read EAX,
+ that would be a bug. But you'll see the compiler do that all the time when it's just dealing
+ with integers, because it doesn't have to go bigger.
+ Yep?
+ [inaudible]
+ Yeah, so E was originally extended, and now R is registered. So it's like, why would they
+ pick these random letters? But you're right, there is meaning. But for the other letters,
+ they used to have significance for why it was A, B, C, and D, what RSI stood for, what
+ RDI stood for, there was significance. For now, we're gonna get into some of what's significant
+ about it, but for right now, we'll just treat them as all the same. They aren't interchangeable
+ because your compiler's gonna write to one and you want that value, right? But for our
+ purposes, they're just places to put stuff, with funky names to make it more difficult.
+ I consider that kind of funky naming job security. You want something that's complex enough that
+ no one else gets it, that you're now valuable, but not so complex that you don't get it. That's
+ really the sweet spot. Anyway, alright. Move. I hate the name of this instruction, but it's
+ what we got, we're gonna have to deal with it. When you move something, if I move this
+ from here to here, I didn't make a copy, it's only one thing that I moved. But move doesn't
+ work like that, move is really more like copy. So what move does is it takes a value, uses
+ the value, doesn't change where it came from, it's not destructive in the sense that it's
+ changing its input, but it's copying a value from one place to another. So yeah, I wish
+ it was copy. But it's move queue. Let's talk about this queue at the end. In x86-64, you
+ can move different sizes of values. I could move 32 bits, I could move 8 bits, I could
+ move 64 bits. The move part stays the same. Now some assemblers will just keep it as move
+ and that's it. Some assemblers add a suffix to make it nicer. And what makes it weird
+ is that the assemblers that create the suffix sometimes use it and sometimes don't. Again,
+ it's gonna be frustrating. But don't be surprised if sometimes you see move alone, sometimes
+ you see move queue. You can always tell the size of the movement by looking at the operands.
+ So the suffix is an imperfect second way of telling. Move queue stands for quad word.
+ This means 64 bits are gonna be moved. In Intel parlance, move L is for 32 bits and
+ I know, move W is for 16 bits. Move B is for 8 bits. So you could see one of four different
+ suffixes or no suffix at all. It's fun. In terms of the instruction, the move instruction
+ does like I said, the same thing. It copies a value from one place to the next. And in
+ x86 ISAs, typically, typically, not always, the first operand is source and the second
+ operand is destination. So what is specified after the move queue will be I'm moving a
+ value, copying, from a source to a destination. Everybody with me? This is where it gets a
+ little more murky. So there are three different locations operands can be. And I just wanna
+ pause for a second. An instruction you could consider as an operation. It does something.
+ But it manipulates data typically. And so where are the operands? They can either be
+ explicitly declared. I'm telling you the source and I'm telling you the destination. Or they
+ can be implicitly declared. Some instructions will implicitly work either with certain parts
+ of memory or with certain registers without you specifying. So you kinda have to know
+ if an instruction has an implicit operand. This one does not. This one has two explicit
+ operands. A source and a destination. Everybody good with the notion of operand and operation?
+ Operands are what are being worked on by the operation. The operation here's a copy and
+ the operands are the source and destination of that copy. So the three types of places
+ the value can be. And I think it's helpful to draw out a kind of a flow for this. I think
+ this helps. Or makes it worse. Either way it's good. So if I have an instruction, this
+ move. Let's say that this move is a three byte quantity. It is three bytes of data that
+ tell me what the operand is for the source and the destination and it tells me that it's
+ a move. Are you with me? One place that I can look, let's say that I'm dealing with
+ the source. One place I can get the source from is in the instruction itself. This is
+ what is known as an immediate. Also sometimes called a constant. For example, if I always
+ want to increment a particular register by 32. It doesn't matter when I run this code
+ on a data set that's blue sky or a picture of this classroom. If I'm always incrementing
+ by 32, this is an example of an immediate. The instruction would never add anything else.
+ This is different, for example, than X plus equals Y where Y is a variable. Everybody
+ with me? In a case like this, when I create an instruction that does an increment operation,
+ for example, then the immediate would be inside of the instruction. The value 32 would be
+ encoded as an integer inside of that instruction. The instruction carries the operand with it.
+ It doesn't add anything else. So one source is immediate. I will do some more examples
+ on the next slide. One source is the instruction itself. But this value that's in the instruction
+ may not be the actual value I want. I may have to go through a level of indirection
+ and so one example would be that I would go to the register file. And then that's the
+ actual value that I want. So the value inside the instruction is an index that takes me
+ to the register file and gets me the actual value that I want. You with me? That would
+ be an example of the register input where I say add X to RAX. RAX is the other operand.
+ It's the value in the register. Just adding to RAX alone doesn't mean anything because
+ I don't know what RAX is. But when I look in the register file, I see what that value
+ is. It's more flexible. The last one is a little bit more complicated. And it's memory.
+ Somehow I'm going to have to grab it from memory. And at first you might say oh it's
+ just another box. What's the big deal? But the problem is getting this address is where
+ there is a lot of complexity for x86-64. So we'll talk about that in a second. But these
+ are the three basic places where the operand can come from. From the instruction itself,
+ from the content of the instruction, as a level of indirection to the register file
+ or as a level of indirection through memory. Yes.
+ No. The register file would be this example here. And depending on whether the compiler
+ put Y into the register file or in memory, that would be a question of whether you got
+ that value of Y from register file or memory. Think about it this way. If I run my code
+ a thousand times and Y's value changes depending on the inputs of my code, I can't have the
+ compiler figure out the value of Y. It doesn't know what it is. It's variable. So it has
+ to come from some storage. But if it's known at compile time, I don't need to put it in
+ a register file, eat up space, take up one of my 16 spaces, or memory. I can just stick
+ it in the instruction itself. And that's the benefit. If everything was immediate, we wouldn't
+ need to run the program because we'd know all the values ahead of time. But they help
+ when we can use them. For those of you who do GPU programming, it's kind of like a uniform
+ or a literal, right? Okay, anyway. Let's look at some of the combinations here that make
+ sense from point of view of source and destination combinations and the equivalent type of C
+ code where you might actually see this. So starting at the top, if I have a move queue
+ that has a source that's an immediate and a destination that's a register, this is the
+ compiler choosing to initialize a register with a value. That would be like me saying
+ temp as a C variable is equal to the value four. Temp is being chosen by the compiler
+ to be placed into a register. In this case, it's putting it into register RX. Register
+ coloring, as the term is called, kind of like map coloring, is figuring out what register
+ is storing what value. And the reason they call it coloring kind of like map coloring
+ is when you're coloring countries on a map, you try not to color countries that are on
+ the same border with the same color so that you can distinguish one from the other on
+ a political map. In that same way, when you're trying to figure out what registers can go
+ and what location, you think of a register value or a register location as a color. And
+ so I only can color one thing red. I can only color one thing blue. Anyway, that's not going
+ to be in this class. I'm just giving you a preview of compilers. So in this case, I'm
+ moving four and you'll notice a dollar sign in front of four. Dollar signs are how we
+ specify literates or literates, how we specify literals or immediate. And then the percent
+ in front of RX indicates the destination is the register file itself. Now looking at the
+ next line, I have another movement of a literal into a destination but there are parentheses
+ around it. In the move queue instruction, and this is not true of every instruction,
+ but most instructions and move queue is one of them, if you see parentheses, it means
+ that you are dereferencing a pointer. That's not true of LEAQ and that's the big bottleneck
+ that we're going to face in the next half of class. LEAQ does not treat it that way.
+ But for move queue instruction, when you see parentheses around that register specifier,
+ it indicates it's going to dereference a pointer. So what this is analog to in C is dereferencing
+ pointer P and then placing the value of negative 147 in that location of memory. So that changes
+ this picture a little bit. Instead of it just going directly to memory, what it's actually
+ doing in this instance is it's going to the register file first, getting a value from
+ the register file and then using that as an address into memory. So two levels of indirection.
+ We get a register specifier from the instruction, we look up the value in the register file
+ to get the value out, we use that as an address to grab a value from memory and then pull
+ that back. In this case we're writing to memory. But same idea that you're using the address
+ from the register file. Yeah. Yeah, the red sentence at the bottom is that you can't do
+ memory to memory in x86-64. Alright, other questions on what we've covered so far? Yeah.
+ That wouldn't work. Well, actually, okay. It would work, but you would have to put the
+ immediate on the outside of the parentheses. So if I specified directly the address and
+ told you to use it to go to memory, that is an option. But the value wouldn't be inside
+ the parentheses, it would be outside. Let me get to that. Because the addressing mode
+ itself is pretty complicated, but the way they would handle an immediate addressing
+ is to put a displacement on the outside of an empty parentheses. So we'll get to that.
+ It's a good question. Yeah. How about we go with blue shirt and then white shirt? Go ahead.
+ Yes. That's correct. Yep. I'm gonna just stop. Don't say registries. I don't wanna be picky,
+ but it's registers. Because that's different. Registry is a Windows registry. Go ahead.
+ What were you gonna say? Yeah. Okay, great. I've got this question before too. So what
+ if the compiler said, hey, get this value and put it into the register, but it wasn't
+ there. I had a pointer that was something else. Right? REX is not a pointer to memory.
+ It's my high score in a video game and it doesn't give you anything into memory, right?
+ It'd be a zero. All right. So what would that mean? Well, the whole point here is that the
+ compiler is the one writing the code. The ISA is the communication device to the architecture.
+ So the assembly is being told, do these steps one at a time. If they give us the wrong address,
+ that's not our problem. Right? We were told that the address that we wanted was in REX.
+ If the compiler screwed up or a programmer screwed up, we're just following orders at
+ this point. Right? So yeah, it's possible that REX is gonna lead to blue screen to death
+ here because we are accessing something that would be a segmentation violation. But we
+ don't control that. Does that make sense? Yeah. I mean, so at the system level, we are
+ providing a service of exposing the hardware and giving access to the hardware. What the
+ application writers choose to do with that is, at this point, there should have been
+ so many layers of protection and everything else that was based on Java and safety and
+ all that. But at this point in assembly, that's all gone. You tell me to go, if you're telling
+ me in assembly language to go to this memory location and treat it as a pointer, it's gotta
+ be a pointer. So all of that wrappers had to be higher up to protect us. Yeah. The memory
+ option is similar to what I did here. So X plus equals Y could be a memory option. That's
+ a trick. It could be a register or it could be memory. The compiler, when it sees Y, is
+ gonna figure out, do I put Y in a register or is it gonna have to stay in memory because
+ I don't have enough space in my register file. So that's where we, we don't really know what
+ Y is, but it could be either one. Does that make sense? Yeah. So the addressing will be
+ based on how, um, let me answer the addressing question in a second when I have the slide
+ up, but the high level picture is if I wanted to address an array, it would be very different
+ than if I wanted to address a link list where I'm chasing pointers. Where I'm chasing pointers,
+ the value of the displacement in a struct where the pointer is will always be the same.
+ But in an array, the displacement from the top of the array will be different. So there's
+ a kind of a weirdness as to how you figure out what displacement mode to use. But let
+ me go over the modes first and then we'll talk about how to use them. Yeah.
+ [inaudible]
+ Ah, so your question is, if I wanted to place a smaller value into a larger value, right?
+ Then how would I specify that? You would have to specify that with additional stuff on the
+ move. So move gets even more complicated when you're dealing with different sizes. Um, let
+ me come back to that. Let's get through the basics of move and then we'll come back to
+ the more difficult part of move. Yeah. All right. Let's do registered question.
+ [inaudible]
+ You're saying for the second line where I have it in parentheses of Rex, how would I
+ have known that was in memory, right? For the purposes of move Q and I want to stress
+ that I'm talking in the context of move Q. When I see one of my operands has parentheses
+ like that, I know that it's dealing with a dereferencing that it's going to be dereferencing
+ it and going to memory. If I had RX, the one line above without the parentheses, that means
+ I just want RX. So we're going to talk about the general addressing mode in a second. The
+ quick answer is that, um, the addressing mode contains a displacement, a base register,
+ a scaling register and an index. We'll talk about, I think I might be using different
+ letters in the, what's in the slide, so I don't want to confuse you, but it's like really
+ complicated as far as what you could have in it. Right now we just have a base register,
+ but it can get worse than that. So the parentheses give us a more expressive way of providing
+ an address. And for the move instruction, when we see parentheses, it means that we're
+ dealing with another level of indirection. Yep. Parentheses for move Q means that I'm
+ going to be using memory, but don't think that's for every instruction. Have I said
+ that enough yet? Cause LEQ is different. Yep. Ah, okay. So your question is, I really only
+ have 16 places in my register file, but I can have tons of places in memory. How can
+ I hold them all, the addresses for where they are? Right? And the point is that memory can
+ hold the address of other pieces of memory. And so as long as I, if I have a tree, as
+ long as I have the root of the tree somewhere that I know, all the other pointers can take
+ me where I need to go. Right? So there is ways of piggybacking, but it's a lot of passing
+ through memory. So that's why I can get cumbersome. Yeah. All right. Let's do the second one.
+ Register is my source. So now I am moving from the register. So we would expect that
+ the first operand that I'm providing should be a percent and then R something, right?
+ Or E something. In this case, we're dealing with move Q, so it should be R something.
+ In both of these cases, moving from RAX, meaning that it's going and looking in the register
+ file for a value that's inside of RAX. And then it's placing the value either in another
+ register, so the first line here moves from RAX into RDX. It grabs from one register and
+ places the value into a different register. So at that point in time, the value that was
+ in RAX is effectively copied into another location. RDX holds it. Why would you ever
+ want to copy the same thing? If you have limited space in a register file, why would you want
+ the same value twice? What's that? Yeah. A swap might be nice. That's a good point. Yeah.
+ A swap, you're also going for swap? Okay, good, good. Another reason could be that -- oh,
+ you got it? Yeah, you might want to use the first -- that's kind of like a swap. I like
+ that. Okay. But in x86-64, most instructions are what are called destructive on one of
+ the variables. When we talk about adding, we don't really have an easy way or let's
+ say multiplying. Usually -- sorry. It's very rude to have your phone on during class. If
+ we're talking about maybe moving from an add where I'm doing x plus equals y, does the
+ value of x change at the end of this execution? It does, right? This is a notion of a destructive
+ set. This is different than z equals x plus y where x is still available afterward. So
+ if I wanted to increment something with x but keep the old value of x around, it would
+ benefit me to copy x first and then increment it by y so that I have two separate things,
+ the original value of x and the modified version. And that's basically what we're doing here.
+ So copying is beneficial because you're setting up a value to be modified further and you
+ want the original value as well. Alright. The second move queue under register. So here
+ I have memory. I'm doing a move queue from rx into the memory pointed to by rdx. The
+ key difference between the first and second line in this register thing, we're using the
+ same registers, rdx and rx. The key difference is that instead of writing into the register
+ file rdx, I'm going to read the value of rdx from the register file and use that as an
+ index into memory. So let's trace what happens. I have, for example, here it's saying rdx
+ and here it's saying r, oops, I did that wrong. I'll get it. rx is my source and rdx is my
+ destination. Here I'm saying let's grab the value of rx from the register file and write
+ it into memory at the location specified by the value of rdx in the register file. So
+ this is the address and this is the data.
+ That's a good question. I think they were just giving an example. I don't think that
+ there's any connection between all those different lines. So I wouldn't take anything that there
+ was some underlying C code. They're giving you an example that is kind of divorced from
+ all the other examples. So I think in the case where they're doing temp one and temp
+ two, they're trying to orchestrate the idea that there's two variables, one and two. Whereas
+ in the second example, there's just one variable, temp. They're not supposed to be related.
+ The address in what? Yeah, so in this case, the address of where I'm writing to comes
+ from the value of rdx. So I look at rdx's contents and I grab the address and say I'm
+ gonna write to this particular location in memory. Then in terms of the data that I'm
+ gonna write there, I'm gonna use rax's contents to specify the data. So here rax gives me
+ the what and rdx gives me the where. But we still don't know why. All right, let's do
+ it. Let's take five now and then we can finish this one off. I think I took a late break,
+ sorry about that. All right, let's keep going. We've got more to do. So the move instruction
+ at the bottom is from memory to a register. We do not have a way to go memory to memory
+ in x86-64. There's no memory to memory transfer. So what we'll have if we have a source is
+ memory, the only possible destination is a register. Why can't the destination be an
+ immediate? Because an immediate is a constant, you don't write to it. It is a constant value.
+ So the last one is my source has the parentheses at this point. Rax is being used with a level
+ of indirection. Rax is an address in memory. We are taking a value from that address and
+ placing it into the register file. Rdx is being changed or not being changed in this
+ one? It's being changed. All right, let's get to this memory addressing part which is
+ really painful, I know. But addressing of memory means how do I figure out the where?
+ How do I figure out where in this big 2 to the 64 bytes I'm going to either read or write?
+ So addressing is used for both reading and writing. You have to know where. Either we
+ go with what we had before, which is just the parentheses and a register itself. In
+ that case, when you deal with that kind of addressing, the address that is created is
+ based solely on the contents of a register. You're taking the value of a register and
+ that is your address. What you choose to do with that address is separate. But that's
+ the address. I can also have a displacement on the outside from that base register value.
+ That's the D. The D here is an immediate. It is not a register. So you put a value from
+ 512 on the outside and then you put the value of the register on the inside. You're basically
+ adding 512 as a displacement to that register value. So they give an example here on the
+ bottom. Move Q8 % RBP to RDX. What this code does is it looks at the value that RBP has,
+ it adds it to 8 and then goes to memory to grab those contents and puts that value from
+ those contents into RDX. So let me just sketch this one out because I think if we do this
+ one, I think it might help with some of the later stuff.
+ So let's take a register file here and let's have RBP and RDX. So I'm only showing two
+ registers in the file right now. All the registers are there but we're just focusing on these
+ two. And let's say that RBP is 1024 and RDX is currently 8. Those are my initial values.
+ What's going to happen is it's going to read out move Q, it's going to read out the content
+ of RBP and it's going to add that to the literal or the constant 8. And I'll get as a result
+ what? 102C. With that address, I'm going to read
+ it out. 102C. With that address, I go to memory and let's say this is the starting
+ address of 102C. How many bytes of memory am I going to grab? How many bytes? So you
+ said 32 so 4 bytes. But this is a move Q. So a quad word is 64. So 8 bytes. So I'll
+ start at 102C. So this is C, D, E, F and then I'll wrap back around to 30. This is a terrible
+ access because it's not well aligned. But forgive me for it, I just came up with that
+ on the fly. But it's not well aligned. But 1, 2, 3, 4, 5, 6, 7, 8.
+ So this is my value that I just grabbed. 8 bytes from memory. I will take the contents
+ of these 8 bytes in little endian order and I'm going to write them into RDX. So if my
+ contents at little endian order was... Then what will be written into RDX would be dead
+ beef. Wow, that's really getting bad with the stub of chalk that I have left. But that
+ says dead beef. So I'm taking the contents from memory and I'm putting it in the register
+ file. Question? Yes, negative offsets are allowed. It is a signed edition. The registers
+ don't have to store things in little endian. The way that we'll represent them in this
+ class, if you remember, I erased it, but I had EAX on the right hand side. So it was
+ going to be viewed from big to little and there's no address in the register. It's one
+ address for the whole thing. So there's no endianness to worry about with registers.
+ You only have to worry about it with memory. Why am I writing from what to what? Usually
+ when we draw memory in this class we start with 000 on the bottom and FFF on the top.
+ So that was just my convention. This is 1020C. Yeah, my head is up. I'm going to have to
+ write it. This is 1020C. Yeah, my handwriting is atrocious. I know. I would get Cs in high
+ school or not high school. We were graded on other things in high school. I was talking
+ at elementary school. Other questions? Yeah. So I added 8 to 1024. Did I make a mistake?
+ It has happened before. Let's see. So 1024 plus 6 would be 10 to A, right? And then plus
+ 2 more would be 10 to C. That should be right. 4 plus 8 is 12. So C is 12. Yeah.
+ [ Inaudible ]
+ On my drawing. So the 10 to A is going to be 10 to A.
+ The 10 to C was the sum of RBP and 8. And then I looked up in memory. This is the 10
+ to C address. The next 8 bytes from there. And that content is what I'm grabbing from
+ memory that I eventually put into RDX. So the C part is not in the RDX because we have
+ to dereference it as a pointer. Yep.
+ [ Inaudible ]
+ Yes. So what you said was I'm taking the contents from memory, starting at the address specified
+ by the displacement, and putting the 8 bytes from that starting address into the register
+ file. That's right. Yeah.
+ [ Inaudible ]
+ Oh. Does it make it look like I'm going the wrong way? I'm trying to show that the value
+ is coming out of memory and into here. Okay. So maybe my -- I don't know a better way of
+ putting it. The trick here is that this is the address and this is the data. So with
+ memory it's tricky because you have two inputs coming in if you're reading. Two inputs -- one
+ input if you're reading and two inputs if you're writing. But you always have an address
+ input to tell you the where. This is again the where and the what, right? So the where
+ I have to kind of supply. It's not that I'm changing the content but I'm picking where
+ I'm reading from. Yes.
+ [ Inaudible ]
+ Yes. Displacement is an integer literal and it could be negative. Yes.
+ Does it have to be 8 bytes? Is that what you said? It does when I'm writing to RDX for
+ example and when it's a move queue. So the two pieces of information that told me that
+ it was 8 bytes of content was I'm writing it to RDX and it's a move queue instruction.
+ So that tells me that it should be 8 bytes that I'm dealing with. Yes.
+ [ Inaudible ]
+ I didn't know -- I mean there's a lot of conversation going on. It's having a hard time hearing.
+ If you want to talk you can go outside. I won't be assaulted. Go ahead.
+ [ Inaudible ]
+ If the content of memory is itself a pointer we would still do the same operation. So what
+ I don't have is the ability to read multiple times from memory in one instruction. So let's
+ say that this was -- first of all I hate to make it sound like we're just zombies following
+ whatever the compiler tells us but in the hardware point of view if the compiler says
+ you add 8 to RBP and you stick it in RDX we just do it. The compiler is then going to
+ do something else with that. So maybe it's going to read that out as a password. Maybe
+ it's going to read it out as another pointer and it's going to use it in the next instruction.
+ But we're just putting that 8 bytes there and who knows what it's going to be used for.
+ So from the perspective of a single instruction we may not know what's going to happen. We
+ just do what that instruction has to do. Beyond that, yeah, it could be used as a pointer,
+ a value, who knows. Yep.
+ [ Inaudible ]
+ Yes, if I did move L it would only do 4 bytes, that's right.
+ [ Inaudible ]
+ Without any suffix if they just had move I would look to the register destination because
+ that's going to tell me how big it is.
+ [ Inaudible ]
+ In this case I use the suffixes so we all have it but if it was a move without anything
+ after it then yes, we would look at the register and if it was RDX I would know it was 8 bytes.
+ So yeah.
+ [ Inaudible ]
+ That would be a compilation error. We won't have that happen normally.
+ Alright, let's move on because I want to get to LEAQ so I'm going to, this is an example
+ of a swap instruction. On the left, sorry, not a swap instruction, my bad. It's a swap
+ function on the left hand side. It is taking in two pointers and it's swapping the contents
+ in terms of memory itself, writing to memory. So it reads from memory and then writes to
+ memory swapping the contents. For right now you don't know why the values are starting
+ out the way they are. So I'm going to ask you to make an assumption until next week
+ when we talk about procedure discipline. But for right now, let's assume that RDI and RSI
+ are holding the value of XP and YP respectively. Okay, so go with me on that assumption. In
+ that particular case, what this code does is it dereferences XP, grabs the value in
+ memory which would be how big? How many bytes? 64. We know it's 64 bits so 8 bytes because
+ number one, it's coming from a long which is an 8 byte integer. But number two, it's
+ using a move queue which is a quad word. And number three, it's writing to RAX which is
+ an 8 byte destination. So for all those reasons we're dealing with 8 byte quantities here.
+ So I go to the value pointed to by XP, I grab that value and I write that into RAX. Then
+ I go to the value pointed to by RSI which is YP and I put that into RDX. So XP is going
+ into the contents of XP go into RAX, the contents of YP go into RDX. What in the original code
+ does RAX represent? T0. RDX represents T1. Great. Then for XP and YP getting written,
+ we just swap their values so I'm moving RDX which was the value T1 and I'm putting that
+ into the location pointed to by XP, that's RDI. And I'm taking the value of T0 and putting
+ that into the contents pointed to by RSI which is YP. So four move instructions to implement
+ this. The RET at the end we'll get to, that's a return from a procedure invocation that
+ changes the RIP, we'll get to that instruction later. But the four move instructions here
+ are effectively creating a swap for contents in memory. This is a breakdown going through
+ examples for swap. I'm not going to go through that right now because I want to get to LEAQ
+ but that's a good way to kind of cement in your understanding of that swap instruction
+ itself. All right. In addition to other memory addressing modes and now let me, I erased
+ it so it's all good, my arrow is gone. This is the complete set of addressing. You've
+ got a displacement on the outside, a base register called RB, a scaling register called
+ RI and then a scaling factor called S. You can use these in any combination to try and
+ create the addressing that the compiler would require for your particular data structure.
+ So the complete set of addressing though is the displacement itself D plus the register
+ file contents of RB plus the register file contents of R, what do we use, I? Yeah. Multiplied
+ by that scaling factor where the scaling, they just call it S? Yeah. Where the scaling
+ factor is some power of two. Any idea why they force us to use a power of two for the
+ multiplication that's being done? Shifts. Yeah, so you can just shift it, that's right.
+ So we don't have to put a full multiplier at the front end of our hardware and handle
+ this type of addressing, we can just get it done with addition and shifting. Great. So
+ just to look at a few options here, if I did RB and RI and that's it in the parentheses,
+ the addressing mode would be to grab two values from the register file, add them together
+ and that's your address. If I have displacement on the outside with RB and RI, I would be
+ adding an additional displacement. So you will see different flavors of this depending
+ on what needs to be accomplished. The goal that Intel tries to do is to avoid having
+ extra instructions by packing more complexity to this addressing mode. But what that means
+ is that you have a resource here because your processor has to be able to handle all this
+ crap, you have a resource to perform extra addition and shifting as long as it's multiples
+ of two. And so there's a new instruction that I want to clarify the distinction between
+ MoveQ here, called LEAQ, which in its heart uses this addressing mode as its way of doing
+ calculations. So here's the real crux of the difficulty I think for this lecture.
+ MoveQ and LEAQ are both instructions that can make use of this addressing mode. The
+ difference is that MoveQ will access memory whereas LEAQ does not. LEAQ uses this same
+ addressing mode just to compute the address but it never dereferences it. LEAQ stands
+ for load effective address and the effective address is the address to memory. So its job
+ is to compute an address but not dereference it. So if you see something of the form LEAQ
+ RDI comma RDI comma 2, that instruction, and then write the result in RAX, that instruction
+ will go to the register file, read RDI, read RDI again and multiply RDI by 2 and then place
+ the eventual result of the sum of RDI and RDI times 2 into RAX. That's effectively doing
+ what? It's effectively doing RDI times 3, right? Everybody see that? X plus X times
+ 2 and placing the result into RAX. So they did in an LEAQ a cheap form of multiplication
+ by doing X plus X times 2 is X times 3. And then in the very next line, they're using
+ a shift instruction. So SAL stands for shift arithmetic left. It's shifting using an arithmetic
+ mode. What does arithmetic mode for a left shift mean? Actually it means nothing because
+ left shifting could be arithmetic or logical, it's the same. But it's always just sticking
+ a zero in. So it's confusing, I know. It means that it's shifting to the left a particular
+ value by a certain number. So in this case, shift arithmetic left two spaces, RAX. Shifting
+ something left by two is the same as multiplying it by? Four. So all of this junk on the right
+ here is to allow them to avoid doing one multiply instruction. Instead of doing X times 12,
+ they're doing X times 3 in one instruction and then taking that and multiplying it by
+ four in another instruction. So this is where we get our job security because who would
+ think instead of using a multiply instruction that we have, that we would want to replace
+ it instead with two other arithmetic operations. And the reason is that it's still faster to
+ do it with these arithmetic operations than a single multiply.
+ LEAQ has to use an addressing mode. So let me do a couple things here just to cement
+ this home. I wish I had more chalk. I keep saying I'm going to bring a marker next time.
+ I really will do it. If I gave you moveQ of %RDI %RAX and that's it. And I did the same
+ operands for LEAQ %RDI %RAX. Would the answer be the same? No. It would not be the same.
+ So what would be different? If RDI held the value 1024, because I'm not creative, RDI
+ holds the value 1024. And in memory, starting at 1024 is the value 42. I pull out a full
+ 8 bytes from memory and I'll get 42. And RAX currently holds the value 16. It's a very
+ important detail in this problem. What would be the value, what would change from the moveQ
+ and what would happen? It would put 42 into where? Into RAX. So the moveQ would replace
+ this with 42. That's exactly what the moveQ would do. Why? Because the moveQ looks at
+ the address pointed to by RDI, grabs the content in memory at that address and writes it to
+ RAX. Source, destination, memory reference, dereferenced. LEAQ, same destination, but
+ when it grabs RDI, it only reads it. It doesn't dereference it to memory. And so for the RDI,
+ this would be 1024. This example doesn't showcase why we need LEAQ. Because you could argue
+ that by removing the parentheses on the moveQ, I could get the same thing. That'd be right.
+ But where it gets powerful is when you use it with the full addressing mode, like we
+ did here. And you can replace a sequence of arithmetic operations with a single LEAQ.
+ That's the better use of it. This is a simple use that I'm trying to show the difference.
+ But it's not a good illustration of what you can do. LEAQ has to use the addressing mode.
+ moveQ does it. So the same if I did another moveQ with just RDI and just RAX. Would these
+ two be identical? They would? Yeah. They would be identical. Good. That would be the same.
+ Not always, because just in this particular case, but I could create something in this
+ LEAQ with another parameter here where I couldn't match it with the moveQ. So it's not that
+ they always overlap, but this particular case overlaps. Question?
+ [inaudible question]
+ In LEAQ, you have to put parentheses around your source. Because you have to be basing
+ your address computation on this addressing mode. So you have to use it. The whole heart
+ of LEAQ is that it uses that addressing mode. Yeah.
+ [inaudible question]
+ So in this particular case, and I'm going to couch it again with the idea that it's
+ not always equivalent, but in this particular case it is because this is taking the contents
+ of RDI and putting it into RAX. This is doing the same thing. It's taking just the contents
+ of RDI and it's putting it into RAX. Yep?
+ [inaudible question]
+ So both LEAQ and moveQ will overwrite the destination register.
+ [inaudible question]
+ At the end of the day, it may not be an address. This is not an address. So LEAQ is flexible.
+ I wouldn't view it as that. So let me try and finish up a couple more things. On this
+ slide, these are a collection of arithmetic operations. Okay? I have listed the arithmetic
+ operation. Again, it's source destination for all of these. They're all taking two operands.
+ And they have one operand that's going to be changed, or potentially changed unless
+ it's being added to zero or something like that, and one that remains the same. So you'll
+ notice it adding, subtracting, integer multiplication, meaning that it's going to be constrained
+ by the amount of space and there will be overflow. Shifting arithmetically and logically, in
+ this case there is an arithmetic shift to the left, and then there's no corresponding
+ logical shift because arithmetic and logical are the same. SARC, S-A-R-Q, is shifting arithmetically
+ to the right, so it's taking the most significant bit and replicating it. SSHRC, which is S-H-R-Q,
+ is a logical shift, and so it's using a zero when it shifts to the right to fill in the
+ empty spaces. XOR, AND, and OR are doing those bit level operations on the values that are
+ coming in. These are single operand instructions, increment, decrement, negate, and not. Remember
+ negate is not the same as not, negate flips the bits and adds one, whereas not just flips
+ the bits. Yep. What? Oh. All of these will have the ability to do the full D parentheses
+ R-B-R-I-S. Yes. They all could be dealing with operands that are either in immediate
+ registers or memory, but not both in memory. Yep. This is an example, I think, that kind
+ of drives home, if you wanted to come out of this lecture and feel really good about
+ yourself, because we all want that, I think looking at this example is a great way to
+ do that. And look at the left most code, this is a sequence of arithmetic operations. You'll
+ notice that the compiler took this and reduced it down to the code on the right. It's not
+ always going to correspond where you can see, oh, that's T1, that's T3, that's T4. In fact,
+ there will be cases where the same register will be used for different labels and things
+ will be done out of order. The compiler is doing its own thing to try to create this
+ code. But a good test of how well you're going to be able to start here and get ready for
+ this bomb lab is understanding this particular example. So, I have a walkthrough here on
+ the next few slides where I talk through what this example is going to do. The initial starting
+ points are, again, RDI, RSI, RDX are going to be our starting registers. Hopefully, if
+ you see this enough, it will start getting in the back of your subconscious and invading
+ your dreams. But still, the reason that it's always RDI, RSI, RDX is that is the order
+ that the compiler puts parameters for a function. So, X goes in RDI, Y goes in RSI, and Z goes
+ in RDX. So, assume that is our starting position. And what we want to have at our endpoint when
+ we get to the return at the end is we want the value of rval to be in RAX. I'm going
+ to give you those as starting points because we haven't talked about the Y of any of that
+ yet. But that is your input and output for this flow graph that you're thinking about.
+ I've got RDI, RSI, and RDX holding the initial values and then RAX holding the eventual output
+ that I'm going to return. With that framework, this is the code that we have that kind of
+ flows through. So, I'm going to talk through it a little bit. And then, like I said, there
+ are slides here. Oh, there's no slides. Nevermind. Okay. So, let's talk through it a little bit.
+ LEAQ is going to first do a computation on RDI and RSI. I see parentheses. So, it's dereferencing?
+ No. No. It's taking the registered contents of RDI, adding them to the registered contents
+ of RSI. That would be the same as doing what in the original C code? X plus Y because those
+ are the contents of RDI and RDX respectively, RSI respectively. X plus Y. I place the result
+ of that addition into RAX. No dereferencing. The next instruction is an ADQ. It takes the
+ contents of RDX and the contents of RAX and adds them together. Notice the difference.
+ In LEAQ, the instruction before, it didn't look into RAX. It only wrote to RAX. It only
+ reads from the first part, the source. That's different than an ADQ, which adds RDX and
+ RAX together. So, this is taking Z and adding it to T1. So now, the value that is contained
+ within RAX is X plus Y plus Z. You with me? The very next line does RSI plus RSI times
+ three. This is what we saw in that pattern earlier. You're going to see this with a lot
+ of LEAQs, especially in Bomb Labs and other code, where they just seem to be doing weird
+ things, adding it together to create multiples that are not powers of two. So this one is
+ creating RSI, which is Y, times three into RDX. Is RSI changed by that instruction? No.
+ The next instruction is a shift arithmetic left, and it's shifting by four, the value
+ of RDX, which was Y times three. What happens when I shift by four? What is that effective
+ of the same as multiplying by? 16. Wow, beautiful. 16 times three is 48, so this is like multiplying
+ by 48. That's giving me the value of T4. Then I've got an LEAQ that takes RDI, which still
+ at this point is holding X, adding it to RDX, which at this point is holding Y times 48,
+ and adding that to four. Four on the outside here means we add a displacement of four.
+ I place that sum into RCX, which at this point hasn't held anything. What value would that
+ be? The same as T5. Where is T3 in all of this? Non-existent. It never created any register
+ that you could say at any point held T3. The compiler looked and saw that T3 was used in
+ one and only one place. That's in the creation of T5, and it folded in the X plus four into
+ the rest of T5's ability here. So there's no corresponding register that holds T3. Then
+ the last thing it does is it does an actual multiply. Why did it choose to do a multiply?
+ We've been really resisting multiplication at this point. We always do it as a bunch
+ of shifts. So why did we have to do a multiply? Because at this point we don't know the value
+ of T2 and T5 in any way that we could reduce it down to a sequence of shifts. I don't know
+ X, Y, and Z coming in. It's not like multiplying by a constant like 48. So if I don't know
+ what I'm multiplying by, I can't make it a bunch of shifts and adds. I have to use multiplication.
+ So it uses that final multiply, and the value that it writes to is RX, which is what I wanted
+ as my output. This is not easy to start with because it's low level, primitives being moved
+ around in an archaic looking series of register names. But this is only going to get worse
+ as we start to explore X86. So take the time to puzzle through this mapping now because
+ I promise you it's not going to be like this as we continue.
+ Last thing before I let you all go. One second. I have bonus material here. This is the bonus
+ DVD material. So I am going to give a video tonight of me going through the problem on
+ the left so that you can see actual GDB interaction and start prepping for that.
+ Alright, that's it. Thank you.
