@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\title{Lecture Notes on Unix File System, grep, and Shell Scripting}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Unix File System: Inode Numbers and Directories}
+
+\subsection{Inode Numbers}
+
+\textbf{Inode Numbers}: A unique integer assigned to a file in a Unix file system. It serves as an identifier for each file and is a part of a file-inode number system pair. This concept is crucial for understanding how files are identified and managed in Unix.
+
+\begin{itemize}
+    \item \textbf{Practical Understanding}: Imagine a library card catalog, where each book (file) has a unique card (inode number) that tells you where the book is located (the file's metadata).
+\end{itemize}
+
+\subsection{Directories}
+
+\textbf{Directories}: Directories in Unix are special types of files that store information about other files. Each process in the system has a working directory, sometimes called the current working directory, which forms a part of its context—indicating where it is within the file system.
+
+\section{Understanding File Paths: NameI Function}
+
+\textbf{NameI Function}: This is a simplified way to understand how Unix resolves file paths to inode numbers. A file path consists of characters separated by slashes (/). The root directory is represented by the slash at the beginning, while other directories are defined after slashes.
+
+\begin{itemize}
+    \item \textbf{Example}: In a file path \texttt{/home/user/document.txt}, \texttt{/} is the root, \texttt{home} and \texttt{user} are directories, and \texttt{document.txt} is the final file.
+\end{itemize}
+
+\section{Shell Basics: The \texttt{cd} Command and Environmental Variables}
+
+\subsection{\texttt{cd} Command}
+
+\textbf{\texttt{cd} Command}: Used to change the current working directory. Using \texttt{cd} without any argument takes you to the home directory. It alters the current process's idea of its location within the file system.
+
+\begin{itemize}
+    \item \textbf{Example}: \texttt{cd /usr/bin} changes the current directory to \texttt{/usr/bin}. If \texttt{ls} is typed afterward, it lists the contents of \texttt{/usr/bin}.
+\end{itemize}
+
+\subsection{Environmental Variables}
+
+\textbf{Environmental Variables}: Variables that define the system behavior for processes. \$HOME is an environmental variable that typically holds the path to the user's home directory.
+
+\begin{itemize}
+    \item \textbf{Example}: Typing \texttt{echo \$HOME} in the shell prints the path to your home directory.
+\end{itemize}
+
+\section{grep: The Basic Regular Expressions (BREs) and Extended Regular Expressions (EREs)}
+
+\textbf{grep}: A Unix command used for searching text using patterns. It searches through files for lines that match a given pattern and outputs the matches.
+
+\begin{itemize}
+    \item \textbf{Example}: To find all lines containing "example" in a file named "text.txt", the command would be \texttt{grep "example" text.txt}.
+\end{itemize}
+
+\textbf{BREs vs. EREs}: Basic Regular Expressions and Extended Regular Expressions differ in syntax and capabilities. EREs offer more features like additional metacharacters and constructs for matching patterns.
+
+\begin{itemize}
+    \item \textbf{Special Characters}: Certain characters have special meanings in regular expressions. For example, \texttt{.} matches any character except a newline, while \texttt{*} indicates zero or more occurrences of the preceding character or expression.
+    \item \textbf{Character Classes and Ranges}: \texttt{[a-z]} matches any lowercase letter, while \texttt{[0-9]} matches any digit.
+\end{itemize}
+
+\textbf{Repetition Operators}: These are used to specify the number of times a pattern should match.
+
+\begin{itemize}
+    \item \texttt{*} (Star): Matches zero or more occurrences.
+    \item \texttt{+} (Plus): Matches one or more occurrences.
+    \item \texttt{\{n\}}: Matches exactly n occurrences.
+    \begin{itemize}
+        \item \textbf{Example}: The pattern \texttt{a\{3\}} matches exactly three consecutive 'a's.
+    \end{itemize}
+\end{itemize}
+
+\section{Special Syntax in grep}
+
+\textbf{grep Options}: \texttt{grep} has various options that modify its behavior. For example, \texttt{-i} makes the search case insensitive, while \texttt{-r} searches directories recursively.
+
+\textbf{grep and Regular Expressions}: Understanding how to combine grep options with regular expressions can greatly enhance text searching and processing tasks.
+
+\section{Shell Scripting: Variables and Quotes}
+
+\subsection{Variables}
+
+\textbf{Variables}: Shell variables can store strings and be used to hold and manipulate values throughout a script. They can be accessed using \texttt{\$}.
+
+\begin{itemize}
+    \item \textbf{Example}: Assigning \texttt{text="Hello World"} and then typing \texttt{echo \$text} prints \texttt{Hello World}.
+\end{itemize}
+
+\subsection{Quotes}
+
+\begin{itemize}
+    \item \textbf{Single Quotes}: Treat everything inside as a literal string.
+    \begin{itemize}
+        \item \textbf{Example}: \texttt{echo '\$text'} would literally print \texttt{\$text}.
+    \end{itemize}
+    \item \textbf{Double Quotes}: Special characters inside are interpreted.
+    \begin{itemize}
+        \item \textbf{Example}: \texttt{echo "\$text"} would print \texttt{Hello World}, as \texttt{\$text} is interpreted as a variable.
+    \end{itemize}
+\end{itemize}
+
+\section{Combining grep with Regular Expressions for Advanced Searches}
+
+Regular expressions are a powerful tool in combination with \texttt{grep} for performing complex text searches and manipulations. Mastering their syntax and application can help in efficiently navigating and processing text within the Unix environment.
+
+\section{Conclusion and Tips for Effective Study}
+
+Practice makes perfect. Experiment with the commands and syntax discussed to build familiarity and proficiency.
+
+Pay attention to context and specifics, like whether to use single or double quotes, or understanding the hierarchy in the Unix file system.
+
+Seek out additional resources like man pages (\texttt{man grep}), and online forums for when you encounter more complex scenarios or errors.
+
+This lecture provided a foundational overview of several Unix and shell scripting concepts crucial for navigating and utilizing Unix-like environments effectively. Regular practice and exploration of these concepts will lead to greater comfort and capability in software development and system administration tasks.
+
+\end{document}
