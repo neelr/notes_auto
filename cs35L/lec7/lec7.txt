@@ -1,0 +1,1614 @@
+ a little bit more to talk about Python.
+ And I'd like to take a little excursion into character encoding.
+ And if we're lucky, we'll be able to actually start on sort of client-server computation.
+ Character encoding is, in some sense, a bridge between the two, because Python has to worry
+ about it and worries about it all the time.
+ And when you're doing client-server computation, you somehow have to ship characters from the
+ client to the server and back, and that involves encoding them.
+ So where were we in Python?
+ We had finished things like numbers and sequences, lots of different kinds of sequences.
+ I wanted to talk about some other types that Python has, and particularly mappings.
+ And the built-in Python type that's sort of the canonical version for mapping types is
+ dictionaries.
+ They're used a lot, they're built into the language, and it's important to understand
+ sort of how they work.
+ The simplest way to think of a dictionary is it's a hash table.
+ That's all it is.
+ All that stuff you learned about hashing in CS31 and 32?
+ Is it 32?
+ And how many people here have taken CS32?
+ Almost everybody.
+ It's not required.
+ How come you guys take it before you take this?
+ You're laughing like I should know the answer.
+ Is there a reason?
+ Easy one.
+ No, no, no, no, no, no, no, no.
+ This is totally wrong.
+ And when you're doing the homework for this class, do the hard stuff first.
+ Get it out of the way.
+ Save the easy.
+ It's like dessert for a meal, right?
+ You save the good stuff for the end, the easy stuff.
+ I can tell my philosophy doesn't quite match yours.
+ But anyhow, once you take CS32, if you haven't taken it already, you'll learn about hashing.
+ In Python, it's done for you, right?
+ This goes back to the old model with ABC, where we didn't want to waste time teaching
+ you all that low-level stuff about hashing and sorting.
+ We wanted you to be able to see what you could do with it once you had it.
+ So in Python, a dictionary is basically a hash table.
+ You can write down a dictionary just using this sort of a syntax, D equals-- that's supposed
+ to be a curly brace.
+ Oh my goodness.
+ That's not a very good one.
+ This constructs an empty dictionary and assigns it to D. Notice each time you write something
+ like that, you get a new dictionary.
+ So for example, if you ask Python the question, is this dictionary this dictionary?
+ What's the answer?
+ The answer's going to be no, because is checks for object identity, and each time you invoke
+ that empty dictionary operator, you get a fresh one.
+ But you could also say something like this, if you like.
+ We'll map ABC, this is the key, to the value, I don't know, XYZ.
+ And we'll map the value, I don't know, 37, to the string QRS, and so forth.
+ So you can create a new dictionary using this notation and put as many key value pairs in
+ there as you like, and it'll create that dictionary for you.
+ There are some restrictions, though, on what kind of key value pairs you can put in there.
+ A short name, by the way, for a key value pair is an item.
+ So this dictionary has two items.
+ The first restriction is that every key in a dictionary has to be unique, distinct.
+ No two keys, no two items can have the same key value.
+ So if we tried to put ABC here, actually, I don't know what would happen.
+ What do you think should happen?
+ Let's do, let's map A to two, and let's also try to map A to three.
+ What do you suppose happened here?
+ There's a way you can see what the items are in a dictionary.
+ You can say, please give me the items.
+ So there's a built-in method called items, which gives you all the items in the dictionary
+ as sort of acts like a list.
+ We could convert it to a list to make it look easier to read.
+ So we can say list of the items, and then like that, and you can see there's only one
+ item in the list.
+ So if you pass a bunch of key value pairs in here and there's some duplicates, the later
+ ones win.
+ In a sense, you can think of a dictionary as being a mutable hash table.
+ Every time you slap a new key value pair in it, it will store it, but if there's an existing
+ item in that dictionary with the same key, it will discard that existing item.
+ So assigning to a dictionary might grow it, but it might not.
+ It depends on whether there's already an item in the dictionary with that same key.
+ Question?
+ The example you grow will not be valid even though the key types aren't the same.
+ Yeah, this is Python.
+ All right.
+ Yes.
+ There is a sort of a philosophy that says you shouldn't do that.
+ Dictionaries should be nicely typed.
+ All the keys should be the same type.
+ All the values should be the same type.
+ And if you program that way, your life will be saner but less interesting.
+ This is interesting.
+ All right.
+ So it's perhaps not the dictionary that most people would want, but Python will take it
+ because, you know, at its core, Python is an interpretive sort of language where the
+ types all get figured out at run time.
+ All right.
+ So two rules about dictionary.
+ I've mentioned one, right, no two keys are the same.
+ Second rule, just as important, the keys have to be immutable.
+ You can't use a key in a dictionary where the key's value itself could change.
+ Now this dictionary is fine because strings, as we mentioned last time, are immutable.
+ Once you have a string, you cannot change it.
+ You can construct a new one, but you can't change this one.
+ Also integers are immutable, but we have some things that are not immutable, right, like
+ lists.
+ All right.
+ If we create a list here, L, and we'll put, I don't know, the numbers three and minus
+ nine in it, right, and we try to create a dictionary, let's call it E, and it will use
+ L as a key, that looks like a one, doesn't it, well it's really an L, and it's 37, right,
+ and it'll say, "What are you trying to do here?
+ You're trying to use a key that's mutable, or more specifically, it's unhashable.
+ Why are mutable objects unhashable?
+ What does hashable mean?
+ Hashable means you have a value.
+ You want to construct an integer, a small integer, sort of representing the hash code
+ of all those values.
+ If you've taken CS32, you've written hash functions probably yourself.
+ If we wanted to write a hash function ourself, maybe if we wanted to hash a string in C.
+ All right, int hash char star S, we might do something like this, int H equals zero,
+ style star S, we'll do H equals H shifted left by three, exclusive or H shifted right
+ by 29, and then exclusive or star S. I don't know, something like that, right?
+ The point is that you jumble together all the bits in the string in such a way that
+ the result, if the input strings are different, the results are likely to differ as well.
+ We got to return this, return H. Internally, Python uses hash functions like this, except
+ higher quality, to hash strings, hash pretty much any object that you've given.
+ Why is this little list here, our list L, not hashable?
+ What's hard about hashing the list three and minus nine?
+ Can't you do this same sort of code with three and minus nine and exclusive or and shift
+ and all that sort of thing?
+ What's wrong with hashing L?
+ As a hint, there's something we did to L in our last lecture that's going to screw up
+ the hashing for it in this lecture.
+ Yes?
+ [inaudible]
+ If you can mutate something, then its hash code probably will change.
+ If its hash code changes, that means all hash tables built out of using this key, all of
+ a sudden they're going to be unsearchable because you'll hash the key, get the new hash
+ value, use that to search into the hash table, but it was set up with the old hash value.
+ It won't work.
+ Hashable values in Python to a first approximation are the immutable values because you can reliably
+ compute their hash code and you'll get the same hash code each time, so the hash tables
+ internally in dictionaries will work.
+ Question?
+ [inaudible]
+ Do we need a ... Oh, yes, all right.
+ Thank you.
+ Good catch.
+ [inaudible]
+ Question?
+ Are you able to add some sort of immutable keyword in front of it to be like, "Hey, we
+ promise we're not going to [inaudible]?"
+ Not with lists.
+ Python does have facilities like that, but to be honest, I'm not totally up on.
+ This is an area ... How shall I say it?
+ It's problematic.
+ That is, Python ... JavaScript has the same problem.
+ They started off with everything or most things being mutable because that's how people were
+ brought up.
+ They were brought up in the C++ or C world, right?
+ You can step on anything practically, right?
+ You have freedom.
+ What people found was that there are a lot of advantages to having objects that can't
+ change, having them be hashable as one.
+ There are others.
+ The Python world has more and more moved towards having things be immutable.
+ When in doubt, make it immutable.
+ If you need to change it, come up with a new one, right?
+ That sort of attitude.
+ JavaScript has gone through the same revolution.
+ You'll still see a lot of code that mutates stuff.
+ Don't get me wrong, but more and more new libraries in JavaScript and Python tend to
+ edge more into the immutable direction, partly because of this problem here.
+ Yes?
+ [inaudible]
+ Yes.
+ That's right.
+ Tuples are immutable if their components are immutable, right?
+ We can certainly do something like this.
+ We'll say E equals, and then here we'll have the tuple, A, B, C, three being the key, and
+ the value is, oh, I don't know, D, E, F, why not?
+ So now E has, we can then look up later, something like this, I don't know, A, B, C, three, something
+ like that, and we'll get the E out.
+ We used that tuple as a subscript for E. This goes on to, I guess what I should say is the
+ next major notation is you want to look up something in the dictionary, you do it with
+ D sub K, where D is the dictionary and K is the key.
+ This should be immutable, or hashable, I should say, so that you can actually go and look
+ it up internally, and this will succeed and give you the corresponding value if one exists,
+ and it will throw an error if the key is not in the dictionary.
+ Yes?
+ [inaudible]
+ Yes.
+ [inaudible]
+ Well, let's try doing that, right?
+ So what we're going to do is we're going to have a different tuple, and this is going
+ to be the list, I don't know, 5, 7, and then A, B, C, something like this, equals 34.
+ As you'll see, the tuple is hashable only if its components are hashable, because when
+ you compare two tuples to see if they're equal, you look at their components left to right,
+ and if any of their components are mutable, that equality test might differ next time
+ than it did this time, so for tuples, we insist that all the components of a tuple also be
+ hashable.
+ Yes?
+ [inaudible]
+ Oh, you can put lists and tuples all you want.
+ You can say here's a tuple, and here's a list, 45, whatever, so T is a tuple, it's fine.
+ It's just not a hashable tuple, and T itself is immutable.
+ If we were to try to change T sub 0 to be 5, it's going to say, "Sorry, you're not allowed
+ to change the tuple," but if we wanted to change T sub 0 sub 0 to be 5, this first subscript
+ operation is subscripting off of T, that gives you the list.
+ The second one subscripts off the list, and lists are mutable, so this is going to modify
+ that list inside T, and later on, we say, "What's T?" and it's the list 5445, I'm sorry,
+ it's a tuple 5445.
+ We haven't changed the tuple, but we have changed the list that is the tuple's first
+ component.
+ All right, and this is normal.
+ This is not like weird stuff.
+ This is like super basic Python.
+ You have to get the understanding of how objects work in Python, and which are mutable and
+ which aren't, and it just goes with the territory.
+ Other questions about this example.
+ All right, let's do a little bit more dictionary operations.
+ Once you have a dictionary, you can say, "What's its length?"
+ This gives you the number of items in the dictionary, so if we say, "Oh, I don't know.
+ What's the length of D?"
+ Well, D is length is one, because it's a dictionary with just one item in it.
+ You can also convert any dictionary to a list by just passing it to the list constructor.
+ The list constructor is pretty Catholic.
+ It lets anybody in, right?
+ Here, it will give you the list of all the keys in D.
+ All right, let's see.
+ What else can we do?
+ Oh, I left off one of the most important things.
+ This is a subscripting operation.
+ You can also do something like this.
+ This is done very often.
+ You can mutate a dictionary, all right?
+ Dictionaries are mutable, and what this does, it assigns V to the kth item in the dictionary.
+ If there's already an item in the dictionary with key K, it's discarded, and a new item,
+ KV, is added.
+ If there isn't any existing item with key K, this adds an item to the dictionary without
+ disturbing any of the other items.
+ All right, let's see what are some other things we can do with the dictionary.
+ Well, here's some obvious things.
+ You can probably guess what that does.
+ That empties out the dictionary very efficiently, all right?
+ Or you can do this.
+ This gives you a copy of the dictionary.
+ The dictionary itself is copied, but all the items in it, their components are not copied.
+ The items aren't even copied, right?
+ You just get a new dictionary with the same items that the old dictionary had.
+ All right, let's see, let's do some other operations over here.
+ This expression in is a binary operator.
+ It returns true if the dictionary has an item with the key K, and false otherwise.
+ You can use this to test whether something's in the dictionary before actually doing anything
+ with it, and you can probably guess what this means.
+ K not in D is the negation of K in D, right?
+ So we can do something like this, B in D, and it'll say false, because this dictionary
+ doesn't have an item with the key B. You can also ask ... I guess I've already mentioned
+ dictionary items, but I'll mention it again.
+ This gives you something that's like a list.
+ It's an iterable object that lets you iterate through the items.
+ You can also just get the keys, and if you like, you can get the values.
+ So this gives you the full items, the key value pairs.
+ This gives you just the keys.
+ This gives you just the values.
+ What do you suppose the difference is between list D, which we've already seen, and D.keys?
+ They almost act the same way.
+ That is, I can write something that iterates for I in D.keys, print I, and that'll just
+ print A, because there's that one, or I can say for I in list of D, print I, you'll get
+ the same output.
+ So one might think, "What's the difference between these two?"
+ They're obviously different objects, and they behave the same here.
+ When do they behave differently?
+ The key idea is the following.
+ When you invoke any of these three things, you get a view object.
+ This view object is like someone peering into the dictionary with a telescope.
+ Whenever you ask something of this view object, it will give you the current view.
+ What we're going to see here is something that changes with time, depending on what's
+ in the dictionary.
+ If we now do something like this, we'll say D sub C equals nine, and now we'll say for
+ I in list in D.keys.
+ We didn't do this right.
+ We'll try it again.
+ Let's say A equals list of D, and B equals D.keys.
+ What's happened here is that A basically is a list of all the keys that are in D in that
+ moment, and that list is now independent of D, whereas B is a view into whatever D's keys
+ are now, and if D changes, B will change.
+ If we now add something to our dictionary, D equals ten, and then we say, oh, let's see
+ what for I in B, print I.
+ Notice that it saw the D. That is, B is not a snapshot of what the dictionary's keys look
+ like when we ask for the keys.
+ It says, oh, it's whatever the keys are now, whereas if we do the same thing for our list
+ A, notice there is no, you get a different output because A got a snapshot of what all
+ the keys were originally.
+ Because of this, the list operator here can be more expensive.
+ This operation, if D is a large dictionary, needs to create a large list.
+ This is going to be order one, or order N, I should say, or order length of D, whereas
+ these guys, just creating them is order one.
+ If you later iterate through them, well, then you have to spend the cost, but just creating
+ D.keys is going to be more efficient.
+ Go ahead.
+ It's kind of like pass by value versus pass by reference.
+ That is, list gets all the values out of D, whereas the keys method simply gets a reference
+ to the original dictionary.
+ Okay, so where were we, items, keys, all that sort of thing?
+ There's another operation, which you can use in two ways.
+ I'll do the old-fashioned way first, the update operation.
+ You can update one dictionary with another.
+ The source code for the update method is actually pretty simple.
+ In fact, let's write it.
+ The idea here is I'm doing the implementation of this operation.
+ We just do for key value in D1, do D sub K equals V. We just iterate through D1, find
+ all the key value pairs that we find, and then update V accordingly.
+ What that means is the size of D can grow.
+ The resulting length of D can grow by as much as the length of D1.
+ If there are any collisions, D1 wins.
+ Because the dictionary, you can't have two items with the same key.
+ If there's already an item with this key, K, that was in D1, it gets discarded.
+ In reasonably recent versions of Python, I've forgotten what version it was, there's a shorthand
+ notation for this.
+ It looks like this.
+ It means the same thing, they're equivalent.
+ You can think of this as being syntactic sugar for that.
+ The idea here is that we're using vertical bar as meaning sort of dictionary or.
+ What do I mean by that?
+ Well, there's another operation in Python that looks like this.
+ This means please construct a new dictionary, put into it all of D's items, and then also
+ put into it all of D1's items, overwriting any that collide with D.
+ This is sort of like the union of everything in D and D1.
+ Vertical bar or is kind of the closest ASCII approximation we have to the set union sign.
+ Any questions on how update works or what it means?
+ Yes.
+ Why don't you just create a new dictionary, overwrite it, and you just get rid of everything
+ in D and then put everything in D1 inside?
+ Because it seems like delta foster, right?
+ That is, you could clear D and then you can do an update, but that's almost like creating
+ a clone of D1, that sort of thing.
+ Why would you want this operation?
+ Is that the question?
+ It's because it's fairly common to say, "I have a bunch of default values for variables,
+ and that will be D, and then I'll let the user override the defaults if they want to.
+ That will be D1, and I'd like to know what the current settings are, including all the
+ user overwritings."
+ This kind of operation, either this one or this one, is extremely common in processing
+ lots of different things.
+ For example, if I were writing a program to, I don't know, parse C++ code, and I wanted
+ to know, I wanted to look up, where was this variable declared?
+ I'd use this idea, right?
+ Because the idea is that if you have nested declarations, the inner ones override the
+ outer ones, these are the inner declarations, these are the outer declarations, and this
+ combined dictionary will let me look up any variable while I'm inside this function.
+ That's a standard sort of problem, and this operation is a good way to get you that.
+ Yes?
+ [inaudible]
+ D1 wins.
+ Oh, I'm sorry, two different keys?
+ The same key.
+ If it's the same key but different values, D1 wins, D1 loses.
+ [inaudible]
+ Between these two?
+ This updates D. In fact, you can think of this as being equivalent to D gets D or D1.
+ These three things all mean the same thing.
+ This is different.
+ This means, give me a new dictionary that's computed by starting with a copy of D and
+ then overriding it with D1.
+ This creates a new dictionary.
+ I suppose here we take a new dictionary and then we discard the old dictionary and all
+ that sort of thing, but here we are ... How should I say it?
+ This is going to be more efficient.
+ These two guys?
+ Because the problem with this one or this one is you have to create a new dictionary
+ and copy D into it, and that's going to be more expensive than merely updating D. People
+ that are worried about efficiency will use either this or this which works in older versions
+ of Python.
+ Question?
+ [inaudible]
+ D1 always wins, yes.
+ Because D1 can't have duplicates, so it's not like one guy in D1 could overwrite another
+ one.
+ Everything that's D1 will be in the resulting dictionary.
+ That's not true for D.
+ Any comments about these operations?
+ Let's see if we have others.
+ We also have an operation get.
+ I'll put it over here.
+ This is about like D sub K. It only does a get.
+ You can't assign through it.
+ There's no set, or at least not here.
+ The difference is this doesn't throw an exception if the key's not there.
+ You can think of this as being compute either D sub K or not, but I'm hand-waving here.
+ You can't actually write code like this.
+ This basically says, "Give me what's in D, and if it's not there, give me none."
+ If you don't like the none, you can supply your own default value by passing an extra
+ optional argument.
+ I'll call it def here.
+ This funny syntax, you can't write code that looks like this.
+ This is sort of meta syntax that's talking about an API.
+ This says that the get method takes one or two arguments.
+ Second one is optional, and we put that second one inside these square brackets to indicate
+ that it's optional.
+ This provides the default value for get in case K is not in D. The default value for
+ def is none.
+ That's the default default.
+ Yes?
+ Right, you can say D dot get of ABC minus one.
+ This means give me K sub ABC.
+ If there is one, give me its value, and if there isn't one, give me minus one.
+ Other questions about get?
+ Yes?
+ Well, this is part of the meta notation, and the square brackets here indicate that everything
+ inside the square brackets is optional.
+ If I want, I can just do this.
+ This gives me the D sub ABC if one exists, it gives me its value, and otherwise it gives
+ me none.
+ It won't throw an exception like D sub ABC would.
+ You can also do something like this, D set default K V. What this does is this returns
+ the value of D sub K. I'll write the same sort of hand-waving notation.
+ If it doesn't exist, it assigns the default that you specify here to D sub K, and then
+ returns that.
+ It's a fairly complicated operation, but it's pretty convenient too.
+ You'll see that used in a lot of code.
+ This is a comma here, yes, and it's the same kind of commas here.
+ I'm just saying there's an optional second argument here, and if you leave it out, then
+ you get the value none.
+ Part of what's going on here is the subtle distinction between saying we have a key value
+ pair in the dictionary, and the value is none, and saying there is no key value pair in this
+ dictionary with the key as K. Those are two different things, and you really have to understand
+ the difference between the two to understand how dictionaries work.
+ All right, question?
+ It says we're trying to access D sub K. If it's not there, we're going to set it.
+ When we're done with D dot set default, D sub K will exist, whether it was there or
+ not before.
+ We won't override any existing D sub K, but if there wasn't one, we'll set it to be default.
+ This does not modify D. D dot get only its read-only access to the dictionary, yes?
+ It returns the existing value, the existing V. It returns the DEF, right, question?
+ The default is none, so you've now set K sub V to be none, which is different from not
+ having any item with the value K in the dictionary.
+ They're different things, right?
+ I guess I should mention delete D sub K. How did I get this far without talking about delete?
+ This means remove the Kth value from the dictionary, thus updating the dictionary, right?
+ That item is no longer there.
+ All right, there's one subtle thing about this, which I've been sort of skipping over,
+ but I figure I should go through with it.
+ When you do one of these operations, items, keys, or values, or you turn D into a list,
+ D's keys into a list, or when you iterate through a dictionary, you can say, you know,
+ for I and D, print I, like that, and that will print out all the keys in the dictionary,
+ right?
+ So, fine.
+ What order does Python use?
+ This is an area where Python has been a little bit slippery over time, but if you're using
+ a recent enough version of Python, and in this class, we can assume we're running a
+ recent enough version, the order of items in the dictionary is well-defined.
+ It's the order that you inserted the keys, right?
+ Maybe I'll write that down up here.
+ Dictionary order is key insertion order, right?
+ So, if you add a new item to a dictionary with a key that is not there now, that gets
+ put at the end, right?
+ When you replace an item, that is, you update a value for an already existing key, the key
+ maintains its place, and then, obviously, when you delete an item, then the key is no
+ longer in the dictionary, so the order doesn't matter, but all the other guys that were behind
+ this one sort of move up by one.
+ This didn't used to be true, so if you want to write portable code, you cannot rely on
+ this.
+ I think this is true as, I don't know, Python 3.7 or later, and part of the reason I'm mentioning
+ this is not to sort of encourage you to write unportable code, but to sort of introduce
+ you to the topic that you're dealing with an evolving software ecosystem, and code that
+ works properly on C-Snet, which is running the latest stable Python, might not work in
+ older Pythons, and vice versa, and there's an art to writing Python code that's portable.
+ Part of that art is, whenever you use something, you've got to look it up in the manual, see
+ when it was introduced, see when it last changed.
+ The Python documentation is pretty good about that, and it has to be good about that, because
+ they want to encourage people to write portable code.
+ This is relatively recent, and I think also this notation here, if you use it, make sure
+ that it's supported, because older versions of Python won't have it.
+ >> How does it track the order in which you insert an item without totally losing all
+ the advantages of the hash table?
+ >> Oh!
+ They didn't cover that in C-S32?
+ >> I don't remember it.
+ >> All right.
+ Let's think about that for a second.
+ My guess is they didn't, all right?
+ But in 32, they do cover how to create hash tables, right?
+ So you know how to create hash tables in which the orders of keys in the underlying arrays
+ is sort of randomish, right?
+ Because it's related to the hash function.
+ It's the hash function modulo the array size, or some weird thing like that.
+ All right?
+ Now suppose you wanted to do that, because you want lookup to be fast, but you also want
+ to preserve ordering.
+ Any suggestions for how to do that?
+ Yes?
+ >> Can you just store an index as well?
+ >> So every time you store a key value pair in the dictionary, internally the system also
+ stores a little integer, saying I'm the i-th item in the dictionary.
+ That's a start, but now if you delete an item for a dictionary, you're going to have to
+ update all the indices for the later guys.
+ Also, it's going to be hard to iterate through a dictionary efficiently, because you've got
+ to find where's the one?
+ I don't know where it is.
+ I'll look for it.
+ Where's the two?
+ So there's a better way.
+ Yes?
+ >> [inaudible]
+ >> You store the items in the dictionary in a linked list.
+ So you hash them.
+ You have a hash table.
+ The entries in the hash table are key value pairs, but they're not just key value pairs.
+ They're key value next fields.
+ Right?
+ They're triplets, or maybe even quadruplets, depending on your data structure.
+ And then now it's easy to go from any item in the dictionary to the next one.
+ You just follow the next field.
+ So it's a combination hash table and something like a linked list.
+ Now, I haven't actually read the Python source code that does this, so I don't know what
+ was implemented that way.
+ In fact, there are some extra tricks you might play to make it go even faster, but, you know,
+ you can read the Python source code to figure out how it works.
+ But the point is that with a recent enough Python, you can do this.
+ Why do you suppose they did this?
+ Doesn't this, like, make the hash tables slower now, right, because we have to have that extra
+ linked list field in all the items?
+ Don't we want Python to go fast?
+ Obviously, you know, they made this happen for a reason.
+ What's the reason?
+ And this is a software construction question, right?
+ You've got to be thinking about motivation.
+ Why do they do this?
+ Yes?
+ Reproducibility, right?
+ You want Python code to run on, you know, x86 the same way it runs on ARM.
+ You want it to run with the C Python implementation the same way that it'll run on the J Python
+ implementation, all that sort of thing.
+ So this is about making Python code more portable starting in version 3.7, right?
+ And that's a huge advantage, right?
+ Reproducibility is turning into a bigger and bigger thing in software construction.
+ And we want to be able to say here's, you know, like if you're doing a scientific experiment
+ and it's based on Python and you run it, you want your colleague when they run the same
+ experiment to get the same result, right, with the same input data.
+ This is going to help you get there.
+ All right.
+ Let's see if we can do a couple of more.
+ So here's one.
+ What this does is it pops the next item in the dictionary, removes it from the dictionary,
+ right?
+ Pop on a list basically modifies a list to remove something from the list.
+ And it gives you its value, right?
+ So here if we see the dictionary D, right, if we say X equals D dot pop item, right,
+ X is now the--oh, it pops from the tail just like pop pops from the end of a list.
+ So we pop the item whose key was most recently added to the dictionary and the dictionary
+ shrinks as a result.
+ And if you try to run pop item on an empty dictionary, you get an error.
+ So in some sense it works very similarly to how pop works on a sequence.
+ You can also do something like this.
+ There's a pop method that will let you pop any item out of a dictionary, right, and will
+ give you the corresponding value.
+ So D dot pop of A said, oh, well, we removed the item with a key A and its value was three,
+ so that's why.
+ And then as a result, the dictionary has shrunk.
+ So you can use this to, you know, while you're iterating through a dictionary, remove items
+ as you go.
+ All right.
+ Any questions about dictionaries?
+ Yes?
+ Yes, an item is a key value pair, so it's a tuple.
+ So X is a tuple, right, not a list.
+ So it's immutable.
+ All right.
+ So we've done mappings, and we've done numbers, and we've done sequences.
+ The last major type--there's lots more types.
+ We don't have time to cover them all.
+ For example, Python has sets.
+ I haven't talked about sets at all.
+ You can think of sets as being like dictionaries, except they have keys, no values, just keys.
+ So in some sense, they're more efficient than dictionaries, but you can think of them as
+ dictionaries where the values are only booleans, whichever you like.
+ Anyhow, right, but anyhow, we have sets and all that sort of thing.
+ I want to talk about callable values, or callables for short, all right?
+ So the basic idea here is that something is callable if you can use it like a function.
+ You can call this object, whatever it is, pass it some arguments.
+ It will execute some code and return a value to you, right?
+ So we can take a look at a callable.
+ Standard callable is going to be a function.
+ And you can write a function.
+ You can sort of build a new callable with a notation that looks like this, all right?
+ This is sometimes called a lambda expression.
+ It's an expression that yields a function as its value, and when you call this function,
+ you will pass it two arguments, x and y, and here's the code that it will execute, right?
+ So this says I'm a function, here are my arguments, and when you call me, here's the code that
+ I will run.
+ So we can do that here.
+ I'm going to say lambda x, y, maybe something a little bit more complicated, x times x plus
+ y times y, all right?
+ And now I have a callable value f.
+ I haven't called it yet.
+ I haven't multiplied anything or added anything.
+ I've just created a function for use later, and I've given it the name f.
+ I didn't have to give it a name if I didn't want it to.
+ I could have just written the function itself, but then it would be kind of useless.
+ I would have created the function and have no way to call it.
+ Later on, when I want to, I can call the function, right?
+ And it will compute three squared plus minus nine squared, right?
+ In effect, now we've actually executed that code that was inside our callable value.
+ This idea that you have functions and later on want to call them is so common that there's
+ a shorthand notation for it that you're probably more used to than what I just wrote.
+ I could have done something like this, all right?
+ And here we can call g of three minus nine, and we'll get the same answer, right?
+ So f is a function, and also g is a function, all right?
+ And in both cases, when you ask Python, "Hey, what's this function?"
+ Python does some hand-waving, right?
+ It says, "Oh, you've got some function here, and it's machine code.
+ I'm not going to print that out.
+ It's going to hurt your poor little brain," right?
+ So it just prints out the machine address of where that machine code is in hopes that
+ that will pacify you, right?
+ Similarly, for the lambda, it says, "Oh, there's a function, and there's some machine code
+ there."
+ Obviously, the two functions have different addresses.
+ If we were later to say f is g, it'll say false because they're two different objects.
+ Even though mathematically, these functions are identical because whenever you call one,
+ you'll get the same values if you call the other one.
+ They're two different objects.
+ It's like having two strings with the same contents, but they're different string objects.
+ Any questions about this part of Python?
+ Yes?
+ So, can we call them immutable objects, or?
+ Yeah, the functions themselves are immutable.
+ But they're just objects.
+ For example, I can do this if I like, h equals f, right?
+ A function is an object, so I can just assign it to some other variable, and then, you know,
+ call it, right?
+ And I'll get the same value.
+ Or I can create a list with all these functions in the list, right?
+ Here's a list of functions.
+ That's fine.
+ Later on, I can pick guys out of the list and call them if I want.
+ Yes?
+ [inaudible]
+ What's that?
+ [inaudible]
+ Oh, normally, you use def.
+ Lambda is less common.
+ Why would you use lambda?
+ Because you have a function that's so small and simple, you don't want to bother giving
+ it a name, because that'll just clutter up your code.
+ It's just like, when you're, I don't know, when you say, you know, say n is five, right?
+ And then you say n equals two times n plus one, right?
+ So in this last assignment statement, one could say, wait a second, you've computed
+ two times n, but you haven't given it a name yet, right?
+ That two times n value, whatever it is, is going to be nameless, right?
+ But you would say, I don't want to give it a name.
+ I'm about to add one.
+ Who cares, right?
+ So when you're computing numbers, you don't always give every number you compute a name,
+ it just clutters up your code.
+ Same idea applies to functions in Python.
+ When you don't want to bother to give the function a name, just use a lambda expression.
+ It's going to make your code easier to read.
+ Yes?
+ [inaudible]
+ Is it like an inline function?
+ No.
+ It's basically there really is very little difference between that lambda and that f
+ internally.
+ They're both implemented almost exactly the same way.
+ The only difference is if you define the function with def, Python remembers the name that it
+ had when you defined it, but, you know, when it's, when the code's executing, it'll run
+ at the same speed, all that good stuff.
+ Question?
+ [inaudible]
+ Let's try it.
+ It really doesn't know how to compare functions.
+ And by default, when you tell Python to compare two objects that it hasn't a clue about how
+ to compare them, it just uses is internally, right?
+ So the default equals equals in case nobody's figured out how to compare objects is just
+ compare their addresses, right?
+ So this is not the mathematical definition of function equality.
+ Mathematically, two functioners are equal if they behave the same.
+ But you can't do that in Python.
+ It's impractical to compare all, in fact, it's worse than impractical.
+ It's impossible in general to tell whether two functions will have the same behavior
+ when you call them.
+ That was proved by Alan Turing in 1936, right?
+ This is a very, very old and well-known theoretical result.
+ And so the Python developers, who all know about Turing and probably met him personally,
+ know enough not to try to actually compare two functions.
+ Other question?
+ Yes?
+ [inaudible]
+ Oh, yes.
+ Well, why would you do that?
+ Because you're trying to, you've got some function that needs a callback, right?
+ Let's call that function needing callback, fnc.
+ Somebody else has defined the function.
+ And you pass the arguments that you want to pass it.
+ But the last argument to fnc is supposed to be a function, right?
+ And you say, well, I want my callback to be a trivial function, I know, lambda xx or something,
+ right?
+ I mean, this is like one of the simplest functions you can have.
+ I don't have an fnc function.
+ So that would be kind of the way, the reason you'd want to have a lambda.
+ You're just trying to pacify somebody else with a function that does something trivial.
+ All right?
+ Question?
+ Well, I'm assuming that fnc was defined something like this.
+ This is kind of a dumb fnc.
+ I would never write one this way, but I'll write it this way.
+ So you pass fnc three arguments, x, y, and some function that I'll call fn.
+ And what does it do?
+ Well, it just calls that function on x and y and adds one to the result.
+ And oh, we should return that, right?
+ So now, if I call fnc with 3, 5, and lambda, oh, we'll get there, x, y, x times y, right?
+ It will call my little lambda function, which multiplies x times y.
+ And then that gets 15, and then adds one, and we get 16.
+ All right.
+ Let's take a break, and we'll start up again in about seven or eight minutes.
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ [END]
+ All right, I want to talk about two more kinds of functions, two more kinds of callables.
+ We don't have time to do every callable, but sort of two sort of function, how shall I call it, extensions or argument passing?
+ Let's call it arg passing. Why not?
+ The first is, as you've already seen, some Python functions have optional arguments, right?
+ You can pass one argument to get, or you can pass two. It's kind of up to you.
+ You can define functions that will take a varying number of arguments with a syntax that looks something like this.
+ My name of this function is printf. It takes a format, and it takes any number of args.
+ This star means something quite different from C++.
+ In C++, that means it's a pointer, and you're dereferencing, and this means something totally different.
+ All this means is that printf is a function that takes at least one argument, because I've written it down here,
+ but then it can take any extra number of trailing arguments that you like.
+ Then the body of this function can then refer to the trailing arguments this way, arg0, args1, and so forth and so on.
+ This is a tuple of the trailing arguments.
+ When we call printf, we can say "prif" something like this, I don't know, %d - %s, and then we can say 27, and then we can say abc.
+ Inside the body of this function, arg0 will be 27, and arg1 will be abc.
+ This lets you specify functions with varying number of arguments. You just say star something at the end of the function definition,
+ and any trailing arguments get packaged up as a tuple and passed to you.
+ Any questions on how that works?
+ Yes?
+ From the caller's point of view, it's passed two arguments.
+ From the callee's point of view, args is a tuple of two values.
+ The callee sees something a little different than what the callee saw, because the arguments got packaged up.
+ Here's a very simple function. I'll call it tup, and I'll use this notation here.
+ It's kind of a dumb function, but that's okay. It might find some use for it.
+ It returns that tuple, because the three arguments that I passed tup got packaged up as a tuple,
+ and what tup saw as a was a tuple with three components.
+ Any questions on how that works?
+ If you're reading other people's Python code, you'll probably see a lot of this stuff, which is partly why I'm mentioning this.
+ Yes?
+ You can do this if you like. I didn't in tup. I could, I don't know, define some other function. Let's call it, I don't know, t-u-q-tuck.
+ Here I'll say a and star b, and I can say, I don't know, return a plus the length of b.
+ Now I can say t-u-q of 4, 5, 6, 7, 8, 9, 10, and it'll return, oh, that was a bad example.
+ Let's try it again. T-u-q of 4, 0, minus 1, 3, 200.
+ 8, because it took the number of arguments that I had after the 4, which is four arguments, and added that to 4, and I got 8.
+ It's just a tuple and you can use it like any tuple that you would want to have. Yes?
+ You don't pass any, the extra arguments that you pass to the function, Python automatically packages up as a tuple for you.
+ And if you don't pass any extra arguments, it gives you the empty tuple, right? So if I call tup with nothing, it'll give me the empty tuple.
+ All right?
+ Now, there's another feature that Python uses. I mean, what we're saying here is that this is sort of an extra feature of functions in which tuples are sort of part of the behavior of a function call.
+ If you use this syntax, then the Python interpreter will create tuples for you automatically, even though there's no tuples in the source code.
+ There's another part of Python syntax which is even fancier than this, and it has to do with the following problem.
+ Suppose you're defining the arctangent function.
+ And a common form of the arctangent function takes two arguments, x and y.
+ You guys all remember your trigonometry, right? You had to learn trigonometry for, like, weeks, months, right?
+ And you can tell me why arctan ought to have two arguments rather than one. Why?
+ That is, it's not the same as just the pure inverse of the tangent function, because did all that trig go out the window?
+ You tried to forget it as quickly as you could, right?
+ Why is it nice to have two arguments to the arctangent function? Oh, this is cool. High school algebra, yes.
+ To resolve ambiguities when you're looking at which quadrant of the circle that you're computing arctangent of, right?
+ If you have two arguments, you'll know what the right answer is. If you have just one argument, you might give the wrong answer.
+ All right, so it turns out that some people define the arctangent function this way.
+ Not in Python, but in other languages, and other people define it with the equivalent of this way.
+ Because, you know, y should come first. I mean, if you look at it geometrically, it makes sense to say delta y over delta x, that sort of thing, right?
+ And I can never remember whether the Python arctangent function uses the first convention or the second. I just can't remember.
+ But Python gives me a way out. I don't need to remember. I just call arctan this way.
+ If you use this syntax, these kind of look like assignment statements, but they're not.
+ What they're doing is they're telling Python the caller wants the callee's x argument to be this value, and the callee's y argument to be this value.
+ And that's independent of the actual argument order that the callee specifies.
+ So this way, you don't have to remember the argument order. You can just specify the arguments in any order you like, as long as you give them the proper names.
+ Okay? Once we have this idea, there is an idea that's related to this, but works with dictionaries instead of tuples.
+ And it works something like this. We'll call this print g so it has a different name.
+ So here, this star star says we'll take any number of extra keyword arguments that you like, and we'll package them up as a dictionary.
+ So from the callee's point of view, this is a dictionary of unmatched args.
+ Unmatched, because none of them had the name format, f-o-r-m-a-t. They all had other names, right?
+ And in here, we can say args sub width.
+ We can use this as a dictionary with the key being width.
+ And now what the caller can do, the caller can say print g of some string, a-b-c-d-e-m, and say width equals 10.
+ This might mean print this string in a column with a width of 10 characters in it.
+ And now the caller can specify whatever sort of extra things they like. I don't know, width equals 10, adjust equals left.
+ We want to have it left adjusted and all that sort of thing.
+ And the callee can say args width, or it can say args adjust, or whatever.
+ And these will evaluate to 10 and to the string left and do the right thing with it.
+ Question?
+ They have to use the keyword syntax to be put in here.
+ You can combine these. You can say, you can define a function that looks like this, f-a-star-b-star-star-c, oh my goodness.
+ This means that function f takes at least one argument, called a, then any trailing unnamed arguments get packaged up into b,
+ and any trailing sort of unmatched keyword arguments get packaged up into c.
+ So this is kind of a very general sort of function. It'll take pretty much anything you can throw at it.
+ All right. Question?
+ So any arguments that don't have names, if the caller didn't name them, didn't use this syntax, they get thrown into b.
+ If the caller did give it names, they get thrown into c, into here.
+ All right.
+ Question in back, yes?
+ Yeah.
+ If the caller didn't specify a width and you do this, you'll get a runtime error.
+ If you don't want that, you might do something like this, right, args.get(width)
+ and then you'll reliably either get the width that they passed you or not.
+ Question?
+ This one here? Oh, no, here, this idea works even with no star notation at all.
+ We're just matching the names of the formal parameters to the labels used by the caller.
+ Well, in this particular case, there are no defaults, that if I left this out, it'd be an error, right?
+ Because we didn't use the star notation here to say any number of arguments.
+ We said, oh, you've got to have exactly two arguments.
+ Question?
+ Yeah, it's not good practice, but you can intermix them, yeah.
+ I tend to prefer the positional arguments first and then the keyword arguments after that.
+ Right. Question?
+ The one star means it's going to be a tuple, yes, the two stars means it will be a dictionary.
+ One last question on Python, yes?
+ You'll get a runtime error if you just use the subscript notation.
+ People that write code like this typically don't write it this way, they'll do it more carefully.
+ They'll look in the dictionary and say if the width is specified and so forth and so on.
+ All right, well, that's enough about Python.
+ You probably know more about it than you really wanted to know.
+ Let's turn our attention to a different topic, which is character encoding.
+ Basically, I want to spend a good deal of time just talking about how this works in C or in Python or in JavaScript or in other languages like that.
+ You're told that it just works, but I want to say really, really how does it work, and in particular I want to know how it works when you do something like this.
+ All right, because now things are going to get a little bit more interesting.
+ To some extent, what we want to do is we want to represent characters inside a machine.
+ Inside the machine, there are no characters.
+ There are just bits and bytes and words.
+ Everything in there is a number, so really each one of these characters is internally represented by a number.
+ What we need to do is we need to assign numbers to characters.
+ You've already seen one standard way of doing that, which is the ASCII character set, A-S-C-I-I, short for American Standard Code for Information Interchange.
+ This is a seven-bit encoding.
+ But I should mention that it's not the only possible way to encode characters into words or integers or whatever.
+ Before ASCII, it was common to have six-bit encodings.
+ This is like pre-ASCII. ASCII came out in roughly the late 1960s.
+ Why have a six-bit encoding?
+ Now there's only 64 possible characters because it saves memory.
+ Memory was very expensive.
+ We didn't need lowercase letters.
+ You can get by with just uppercase only.
+ 64 six-bit encodings were enough.
+ You would see, say, six-bit encodings and say, I don't know, an 18-bit word.
+ You get three characters per word.
+ One sort of revolutionary computer that also came out in the 1960s and one that made IBM for a while the richest and most powerful computer company in the world was the IBM Model 360, which also came out in the 1960s.
+ It used an eight-bit encoding.
+ They were ready for the future.
+ They wanted to be able to handle more than just 128 characters, and their coding was called EBCDIC.
+ To be honest, I think one of the reasons that they wanted to have this is they wanted it to be not the same as ASCII so that they could take over the world and sort of lock you into the IBM world and that sort of thing.
+ But all of these approaches are very similar in the sense that they take a relatively small character set, even this eight-bit encoding with just 256 possible characters, and say, okay, whenever you write a program, you can pick 256 characters and write your program and have it sort of work that way.
+ Eventually, EBCDIC kind of lost out.
+ Everybody else ganged up on IBM, and surprisingly enough, they actually won.
+ It took decades, but say by the 1980s and early 1990s, ASCII was the winner.
+ But at a price.
+ The price of ASCII, which is the character set I've shown you on the screen in earlier lectures, is that it can do English letters and digits, but you start running out of characters.
+ So you have 52 letters, you have 10 digits, you have 32 sort of control characters, and you only have 128 total -- oh, I'm sorry, 33, right?
+ Because you have the Dell thing at the end, so 33 and 52 is 85, 95, this only gives you 33 special characters, right?
+ Symbols, that sort of thing.
+ So it's a fairly limited character set, and it's impossible to do, I don't know, Danish in ASCII or Italian or French or pretty much most languages in the world.
+ Except English and Hawaiian, right?
+ And maybe a couple others, right?
+ So as a result, people said, "We need to have better character sets to support at least Western European languages and maybe some other languages."
+ So they came up with sort of extended encodings for ASCII that I will call unibyte encodings or unibyte extensions to ASCII.
+ And these became eventually standardized by the International Standardization Organization and the International Electric, whatever it is, and the number is 8859.
+ And there are various different standards here.
+ The most common one is 8859-1.
+ These are 8-bit character sets, right?
+ They still fit in a single byte, and Latin-1 suffices for Western Europe.
+ So you can do French, it has, you know, letters like this, and you can do Icelandic, you can do Spanish and that sort of thing.
+ But eventually you run out of characters, so they had another flavor called 2, which is for Eastern Europe.
+ So you can do, I don't know, Czech, which has this funny letter C with a hatchek over it and that sort of thing.
+ And then you can probably guess what's going on here.
+ Another variant for Southern Europe, and another variant for Northern Europe, and then 5 is Cyrillic, so it works for Russian.
+ And to show you how this turned into a problem, they eventually invented the Euro.
+ People wanted to write down 27 Euros, so they had to invent a new one, 15, which is sort of like Latin-1 but with a Euro.
+ I think that's how you write a Euro symbol.
+ Now, as you can imagine, there's a problem with these unibyte encodings.
+ If you take a file that's generated in Western Europe and try to read it in Eastern Europe, the assignment of characters to numbers differs.
+ What looks like a C with a hatchek over it in Eastern Europe, that same file, if you take it over into Western Europe, will look like an A with an accent grav over it.
+ So this approach only works if there's some sort of meta-information about the file.
+ You have to have some out-of-band sort of method that labels the file and tells you what character encoding it uses in order to be able to process it correctly.
+ This is how the World Wide Web started.
+ When we first started off with HTML, it started off by saying this is the default.
+ If you're going to ship a web page from point A to point B and you don't specify an encoding, we're going to assume it's something that's good for Western Europe.
+ This also happens to cover North America, so Americans lucked out.
+ As you can imagine, it led to problems, even amongst the Europeans.
+ Also, what are people going to do if they live in Taiwan or Japan or China?
+ This sort of thing is going to be a disaster.
+ It's not going to work at all.
+ In order to fix this problem, in order to do what in the technical world is called CJK scripts, that's short for China, Japan, and Korea.
+ These are the ideographic scripts where a single character can look pretty complicated.
+ I hope it's not a swear word, but that's just one character.
+ There's not enough room in 8 bits to represent all of these scripts.
+ In order to attack this problem, what people eventually came up with was two major solutions.
+ The first idea is let's have fatter characters. Let's do 16-bit characters, or maybe even 32.
+ Once you decide that your characters are wider than 8 bits, you can represent all of these other languages.
+ You have to come up with a numbering of all the characters, and people will argue about that.
+ Luckily, there are standardization committees in Korea and in Japan and China.
+ They each came up with a numbering of all of the characters that they thought was suitable for information interchange.
+ There's a problem with this approach in that sometimes people just make up ideographs on the fly because it's their name.
+ If you've got a proper name and there's no ideograph for it, you just make up one.
+ The standardization committee will say, "An ideograph for Eggert? You've got to be kidding me."
+ They won't let you do it, but you'll be stubborn and write down this, "Oh, that's the ideograph for Eggert. Let's make that the ideograph for Eggert."
+ That's going to be my name, and whenever I sign my name, I'll use that, and I'll be upset if the computer prints out something different.
+ That's an issue. Let's ignore that issue for now and just stick with the commonly accepted ideographs that are standardized by these weighty committees.
+ How do we represent these larger character sets? For now, let's assume that there aren't zillions of these.
+ Let's assume that there's maybe 10,000 of them. With 10,000, you can get by in China and Japan and Korea pretty well.
+ Maybe you'll need 20,000, but let's just say 10,000. Assume 10,000.
+ Now you know why people have to spend so much time in school in these countries. They've got to learn all these characters.
+ How can we represent this?
+ Microsoft came up with a technique called shift gist.
+ First off, we can do this. We can have 16 or 32-bit characters, but a problem with this approach is now you still have this same problem that you had over here.
+ You're going to have to decorate a file and say, "This file contains 16-bit characters." It's not 8-bit bytes anymore. It's 16-bit characters.
+ Don't try to interpret it as regular ASCII. Interpret it in this completely different way.
+ A problem with this approach is that, in some sense, it shares the same problem with this approach.
+ We need metadata for each file to say whether it's ASCII or whether it's, say, Japanese, that sort of thing.
+ That's a downside. Another downside, which I guess is obvious, is your files grow.
+ Even if your file is a text file, all it contains is stock market tickers.
+ It's purely text and digits and dots. That's it. Maybe spaces and new lines.
+ The size of your file has now grown by a factor of two because each digit now takes 16 bits to represent rather than just 8 bits.
+ For this reason, people came up with a different approach.
+ Microsoft was actually the first, I think. They invented something called ShiftGIS, which is a 1997 Microsoft.
+ This approach is the second major style here, which are now called multibyte characters.
+ Under this approach, we now have two levels of representation.
+ At the lowest level, we have bytes. We assume bytes are 8 bits.
+ Every machine has 8-bit bytes nowadays.
+ At the next level up, we say, "Well, sometimes you'll have two bytes to represent a character, and sometimes one byte will represent a character."
+ It'll look like this. Here would be some kanji character.
+ Here is the lowercase letter M. Here is a different kanji character.
+ Here is the digit 0, a period, and a slash, and so forth and so on.
+ When you're reading your data left to right, you look to see--
+ Let's say your cursor is now pointing to this byte.
+ You look to see at this byte, and this byte will tell you whether or not it's part of a multibyte sequence, or it's simply an ASCII character.
+ With ShiftGIS, the idea is that it's an extension to ASCII.
+ What that means is, if you parse ShiftGIS, and it only contains ASCII characters in it, it'll mean the same thing that it did before.
+ That's backwards compatible. It's very nice. It's a very nice property of ShiftGIS.
+ But, if the top bit is 1, so if the top bit is 0, of a byte is 0, it's ASCII.
+ That works, because ASCII is a 7-bit encoding.
+ If you look at a byte containing an ASCII character, this can be whatever you like, but the top bit always has to be 0.
+ If the top bit is 0, you treat it as ASCII.
+ If the top bit of a byte is 1, then ShiftGIS says, "Oh, we have a multibyte character.
+ A multibyte character takes two bytes to represent."
+ What we do is, we take something that looks like this.
+ We treat this byte with the top bit of 1, and then there's some payload here.
+ Then this byte, we take 6 bits out of this byte, and then we take these two bits to sequence, and we concatenate them.
+ We'll get 7 bits plus 6 bits. That is a 13-bit, in some sense, a 13-bit payload.
+ This payload, you can use to index into the Japanese international...
+ JIS is short for the Japanese list of characters, to figure out which Japanese characters that you want.
+ This gives you up to 2 to the 13th characters, which is, what, 8,000? Yes?
+ I'm looking at this, and I can't make heads or tails of it.
+ I think it had something to do with Microsoft's file name convention,
+ because they wanted these ShiftGIS representations to work as file names.
+ They wanted to allow some characters here, but not others.
+ For example, they didn't want a backslash to be treated as part of a ShiftGIS character,
+ so they had some extra constraints here that I can't remember now.
+ Yes?
+ The top bit of the first byte is 1, and that tells you, you should now expect 2 bytes.
+ Get the payload out of these 2 bytes. It's actually more complicated than this.
+ You can look up ShiftGIS. It's really complicated because it was matching Microsoft's needs.
+ This lets you represent more than 256 possible characters, because now you have 13 bits of information.
+ No, these are all 8-bit bytes. The bytes are the same as before.
+ What you see in the disk drive or on the communication, your network, is 8-bit bytes.
+ All the bytes are 8 bits, but you're taking part of those bytes
+ and treating them as part of the number to represent the character.
+ The other parts of your bytes, you're ignoring, or you're insisting that they're 1, or something like that.
+ [inaudible]
+ 7 from first and 6 from the second byte, I think, but yes.
+ This approach worked well for IBM.
+ They sold a lot of computers to Japan and all that sort of thing, using, in fact, to this day,
+ they still support ShiftGIS in Japan, but it has a problem.
+ First off, it only works for Japanese. It doesn't work for Chinese or Korean.
+ You could come up with an alternate approach that works for them,
+ but now you're running into the same problem as ISO 8859 was.
+ Second, the problem was some of these second characters here had a top bit of 0.
+ If you wrote something that looked like this,
+ this says, "Find the first slash that you see in this string."
+ That's a function. Just sequentially search through a string, looking for a slash.
+ It might find this byte. It looks like a slash.
+ The top bit is 0. The extra bits here are the same as the ASCII for a slash.
+ It'll find a slash, but that's not what this really represents.
+ There's no slash here.
+ These two bytes together represent a kanji character.
+ ShiftGIS, as you can see, had problems.
+ It's limited to Japan, and it had some ambiguities.
+ After this, plus there was a competing system put out by UNIX called EUC and all that sort of thing,
+ it was widely recognized to be a disaster.
+ A committee formed to rectify the disaster,
+ and this eventually evolved to a system called Unicode.
+ Una, because the idea is we want to have a single assignment of characters
+ for all the world's natural languages, Chinese, Japanese, Korean, English, French, you name it.
+ If it's a language people have actually used and written down,
+ they wanted to have a character assignment for it.
+ It's a single, international agreed upon.
+ There's a lot of problems with that.
+ For example, you might see this character.
+ Again, I'm just making this up, in Japanese.
+ Then this character, in Chinese.
+ They both mean man with a stick or something, right?
+ But the Japanese insist that there can't be a little hook here.
+ The Chinese insist, "Oh, there's got to be a hook there. It looks terrible."
+ There's a lot of arguments like this. There still are arguments like this and still some hard feelings and all that sort of thing.
+ You will see holdouts in China and in Japan and Korea,
+ people who refuse to use Unicode because their characters don't look quite right.
+ I'm going to skip over that because I certainly can't get into those disputes.
+ I think for an outsider, it's sort of like the difference between this English word and this one.
+ They're the same word. They're just different spellings.
+ You can get people who get really upset if you spell it this way, but come on, they're the same word.
+ That's kind of what's going on here as well.
+ We can assume that there is now a Unicode encoding.
+ The current version, it's evolving with time.
+ It evolves only via addition.
+ They're very worried about backwards compatibility, so they don't remove characters.
+ They simply add them.
+ In its current incarnation, it has 149,813 characters,
+ which is enough for most people, although it still won't give you everybody's family name in Japan.
+ At least all the standard things it will cover.
+ We need some way of representing these characters.
+ We have this many integers.
+ They're not assigned in ascending order, by the way.
+ There are gaps because they leave gaps for when you discover some later characters in kanji and that sort of thing.
+ They'll add them and all that sort of thing.
+ The idea here is we need to represent something that won't fit into 8 bits.
+ It won't even fit into 16 bits.
+ It's going to need more.
+ We'll need more than 16.
+ 24 is plenty, but some fairly large number of bits in order to represent characters.
+ One way to do this would be to have 32-bit characters, or 24-bit characters if you wanted to save space.
+ A few people have done that, notably Microsoft, but it hasn't really taken off because of the backwards compatibility issues.
+ Instead, the more common way that this is handled is with a technique called UTF-8.
+ This is an encoding for Unicode.
+ By encoding, what do I mean?
+ You can think of the Unicode characters as having integers that start at 0 and go up to some fairly large number, and that's it.
+ That's all Unicode is.
+ You assign integers to characters.
+ UTF-8 is a byte encoding for Unicode where these bytes have 8 bits.
+ The idea is that for every Unicode character, you can represent it as a sequence of bytes that everybody agrees will stand for that character.
+ Here's how UTF-8 works.
+ First off, it's compatible with ASCII, and I can write that down this way.
+ For the characters U0000, this symbol means it's the Unicode character that's numbered 0. These are hexadecimal digits, by the way, up through U+007F.
+ These are the ASCII characters, and they mean exactly the same thing as ASCII.
+ They are represented by a byte that looks like this.
+ The top bit is 0, and the rest of the bits are payloads.
+ Seven bits of payloads.
+ Any ASCII character represents itself in UTF-8. It's completely upwards compatible with ASCII.
+ Now, if you keep going up and do the next character, U+0080 through U+07FF, you get a 2-byte representation, and it looks like this.
+ 1, 1, 0, and then 5 payload bits, followed by a byte that looks like this, 1, 0, and 6 payload bits.
+ That's 6, and 5 is 11. 11 is enough to represent 7FF. That's an 11-bit number, right?
+ This will let you represent any of the characters in this range.
+ Third one is, everybody in this range, U-800 up to U-FFFF, is represented by 3 bytes.
+ The trailing bytes all have the same pattern as the trailing bytes before.
+ All trailing bytes look like this. They're 1, 0, followed by 6 payload bits.
+ The leading byte looks like this, 1, 1, 1, 0, and then 4 payload bits.
+ So we get 6, and 6 is 12, and 4 is 16 bits. That's enough to represent this guy.
+ You can probably guess. The last one is U-10,000 up to U-10FFF.
+ By definition, this is the last Unicode character. We don't use any more bits than this.
+ There are technical reasons for that, but I'm not going to go into it.
+ The leading byte looks like this, 4, 0, 6, and then the trailing bytes look the same as before.
+ 1, 0, 6, 1, 0, and 1, 0.
+ So, the idea here is that the first byte, it's either asking or it has the number of
+ bytes in this encoding in base one, right?
+ Base one means you just write one one, that means we've got two bytes.
+ One one one, that means you've got three bytes.
+ One one one one, you've got four bytes, right?
+ And then the trailing bytes always have a one zero and have six bits of payload, and
+ the leading bytes have as much payload as you can squeeze into them.
+ So, an advantage of this approach, and a major advantage, and the reason we're kind of using
+ it is it avoids this disaster with shiftjits.
+ Remember the disaster?
+ You're scanning, looking for some ASCII character, and you find it even though it's in the middle
+ of a multibyte character.
+ Can't happen here.
+ Notice that everything down here, the top bit is always one.
+ You'll never see any ASCII bytes there.
+ So all of your existing code that you used in CS31 where you're searching through character
+ strings looking for some ASCII character, they'll still work.
+ That wasn't true for shiftjits, but it is true for UTF-8, all right?
+ And Python does this sort of thing.
+ So if we do a string in Python, strings use unicode characters.
+ So we can say this, and then, I don't know, Latin, small letter A with a Q, right?
+ And then B, right?
+ So that's a unicode string, I'm sorry, yeah, that's a unicode string.
+ So internally, those are unicode characters.
+ We can see how to represent them by doing something like this, s.encode.
+ This data type here with a little B in front of an apostrophe is the Python data type bytes,
+ which I haven't mentioned yet, but I'm mentioning now.
+ It's a sequence type.
+ A bytes object is a sequence of bytes.
+ It's a very low-level object.
+ It's a very simple object.
+ That sequence of bytes, if you decode it this way over here, will be the same as the character
+ string s, and the reverse is true as well, right?
+ If you call this string, this byte string T, right, T equals s.encode, we can now say
+ T.decode, and the decode operator on a bytes object will parse that object left to right,
+ look for patterns that look like this, figure out what unicode characters are being represented,
+ and then give you the string that that represents.
+ This will let you put lots of fun stuff into your strings, right?
+ You can say A equals, I don't know, B and then a bullet, C, right?
+ Or you can put in kanji characters, or whatever kind of characters that you like, and it all
+ works.
+ Now, there's some problems with this, and we'll talk about the problems next time.
+ [BLANK_AUDIO]

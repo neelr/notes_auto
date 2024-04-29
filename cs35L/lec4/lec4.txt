@@ -1,0 +1,1408 @@
+ [ Inaudible ]
+ So, we were talking about our three favorite things, emacs,
+ the shell, and the file system.
+ Today, I think we've done about everything we need
+ to do with the file system, so today I thought I'd finish
+ up with the shell, perhaps I should put that first
+ and then talk about emacs.
+ So, as you know, the shell is both a scripting language
+ and a command language, right, so you can use it as part
+ of a command line interface or CLI, right, or you can use it,
+ in effect, as sort of a programming, but I'll put
+ that in quotes, language as well.
+ In this role, although you can use it like you'd use C++,
+ that's really not the right attitude.
+ The right attitude for the shell is for the shell to do no work
+ and to delegate its work to components that can be written
+ in C++ or any other language, right, so perhaps a better name
+ for it would be maybe an orchestration language.
+ Oh, that sounds very fancy, right,
+ the idea is it doesn't do the work, it just arranges
+ for everybody else to do the work, it delegates the work,
+ right, and this is an important aspect of any kind
+ of software construction.
+ If you're building software, you will find yourself more
+ and more, instead of writing code that operates
+ at the machine level or at a very low level like C++,
+ you're going to be gluing together existing components
+ to get your work done more efficiently
+ than if you wrote the whole thing from scratch, right?
+ So, you know, perhaps another name is we could call it a glue
+ language, although that doesn't sound very dignified, right,
+ it sounds like you're just haphazardly sticking
+ stuff together, but there's some truth to it.
+ So, we have to now think what do we want in a glue language,
+ what do we want out of a language
+ that hooks together other things, right?
+ And to some extent what we want
+ from this language is the same stuff as C++, right,
+ in the sense that we want things like loops and functions and,
+ you know, some sort of variables and all that sort of thing,
+ the stuff that you saw in CS31,
+ and pretty much every language will have that,
+ and I'll talk about that.
+ But the more interesting part of the shell is the part
+ that isn't what's in common with C++ or JavaScript
+ or that sort of thing, it's the other stuff, right?
+ So, this other stuff is
+ where you're configuring other applications, right?
+ And you're trying to set up the proper environment
+ for these other applications to run.
+ You're orchestrating them.
+ You're not actually doing the work,
+ you're just making sure the work gets done right.
+ And a good chunk of this shell is going to be the other stuff,
+ and, you know, we've already seen some of that other stuff
+ in the form of commands that look like this.
+ Right? In which we're calling two subcommands,
+ but we're configuring them.
+ We're arranging their invocations to be
+ such that they are hooked together in the way
+ that they like.
+ The output of cat is set to the input of grep, and, you know,
+ grep's standard error is put somewhere and the arguments
+ and all that sort of thing are all set up right.
+ Right? So, when I talk more about the shell here,
+ I want you to keep in the back of your mind what part
+ of my conversation is the stuff you've seen before
+ and what part is new.
+ I'll talk about both, but, you know,
+ keep your eye out for the new stuff.
+ All right.
+ So, first off, you know, if we want to use it as sort
+ of the language like this, sort of how to get started.
+ And the standard way you can get started with a shell
+ as an orchestration language or a command language is you put a
+ shell script into a file.
+ Okay? Here's our file F. It's contents in the script,
+ but there's a couple of special things about this file
+ that tells the operating system this is a shell script
+ and not just some, you know,
+ nice letter that you're emailing it to your mom
+ or something like that.
+ First thing is this file should be executable.
+ That is, if you do LS minus L on this file F,
+ it should give you something that looks like this.
+ Where the important parts here are the X bits, right?
+ This says that you, that other people in your group,
+ and that anyone else can execute this file.
+ Ordinarily, files are not executable.
+ If you just create a file on your own,
+ those X bits will be off.
+ You're going to have to turn it on because you're wanting
+ to tell the operating system, oh, I want this script
+ to be a program that can be run.
+ Before we jump further into this,
+ I want you to think about why.
+ Why does the operating system have this X bit?
+ Why not just let every file be executable?
+ What's the point of the X bit?
+ Any thoughts?
+ Wouldn't the system be simpler without the X bit, right?
+ Then we'd have less to teach.
+ Simplicity is good.
+ Yes?
+ [ Inaudible ]
+ You could have malware, right?
+ So, okay, in some sense, what the X bit is telling you
+ that are setting the X bit and other people that are looking
+ at the files is watch out, right?
+ This file, because it contains commands that can be run,
+ it's a little bit dangerous, right?
+ You should be cautious about this file.
+ If you run it, it will run with all of your privileges
+ and it can do whatever you can do.
+ And so that X bit, in some sense, is a sign of, you know,
+ let's be careful about this file.
+ If I wander into some random directory and see a bunch
+ of files with the X bit turned on, I get a little cautious, right?
+ I don't execute those programs unless they're from a source
+ that I trust, like I wrote them, that sort of thing, right?
+ So that X bit is there for security or reliability
+ or whatever you want to call it, all right?
+ Notice that for a shell script, though,
+ the R bit also has to be on.
+ Why? Because the shell is a program, it reads your script,
+ figures out what it will do and then executes it.
+ If it can't read your script, it can't run it, all right?
+ So you need both the R and the X bit turned
+ on for a shell script to work.
+ Second thing you need is at the very start,
+ you need to put a little comment at the start of your file
+ in the shell, sharp sign at the start of a word says, okay,
+ here's a comment, everything from here
+ to the new line doesn't count, so here's a comment.
+ And this comment has to look something like this.
+ That is, it has to have an exclamation point right next
+ to the hash mark, and then after that has to be the program
+ that knows how to execute this script.
+ In our case, it's /bin/sh, which is the standard place
+ where you're going to find the shell.
+ On this machine, we can see that /bin/sh is going
+ to be the symbolic link to bash.
+ On some other machines,
+ they might use a different implementation of the shell,
+ but the convention is that that particular file name will be
+ either a regular file or a symbolic link to something
+ that can run shell scripts.
+ Now, you could, if you like, put something else here.
+ You could say, I don't know, /user/bin/python.
+ In that case, this script is going to have
+ to be Python source code rather than shell code, right,
+ because what the operating system will do is it'll take
+ that first line and say, okay, you know, that's going
+ to be the name of the interpreter, and then, you know,
+ it'll run the interpreter, and the interpreter will figure
+ out what to do from there on out, and it will look
+ at the script source code.
+ We're not quite ready for Python,
+ so let's stick with the shell.
+ Okay, we'll go back to bin sh.
+ Now, question?
+ [ Inaudible ]
+ Oh, opinions differ on whether a space is allowed here.
+ Some people like it.
+ I don't, but, you know, it's a style thing, I think.
+ Yes?
+ [ Inaudible ]
+ Yes. It has to start with a slash.
+ Otherwise, the command would be kind of tricky, right?
+ It might use a completely different interpreter
+ if you ran it from a different location.
+ So by convention, it starts with a slash.
+ All right, question?
+ [ Inaudible ]
+ Typically, shell scripts, if they have an extension,
+ it would be .sh, but I usually don't put .sh at the name
+ of -- in my shell script names because then I have
+ to type .sh to run it, right?
+ So I'm lazy, and I just call it f or sort or something like that.
+ Other comments on how to get started?
+ Question?
+ [ Inaudible ]
+ The content -- this is the whole contents of the file, right?
+ All right, so we can, you know, create a shell script here
+ by doing something like -- I'll call mine foo,
+ since I'm not very creative.
+ And, you know, really good programmers write their code
+ with cat.
+ That's what I'm doing here, right?
+ So we can say sort everything on the input,
+ and then what should we do with the result?
+ We'll transliterate all of the lowercase letters
+ to uppercase letters, all right?
+ And then I'm going to type control d here.
+ So now I've written my shell script, right?
+ I can now say cat foo.
+ There it is.
+ But if I do an ls minus l foo, notice it's not executable.
+ So let's make it executable by doing something like this.
+ Chmod is a command that changes the mode
+ or the permissions in a file.
+ So we said please turn on the x bit, and that's what chmod did.
+ And now I can run the command foo by saying something
+ like this, et cetera, password, right?
+ And what's going to happen here is this script will be invoked,
+ and that special variable, dollar sign at sign, in quotes,
+ will turn into the arguments that get passed to the script.
+ So this thing gets expanded to et cetera, password,
+ and it's as if we run the command sort et cetera, password,
+ and then transliterate all lowercase letters
+ to uppercase letters.
+ And that's probably going to give us a lot of output.
+ So let's just take a look at the first five lines
+ of output, something like that, all right?
+ So this is the result of running that command.
+ The original et cetera password had a bunch
+ of lowercase letters.
+ We sorted it, and then we uppercased the result, okay?
+ So notice what happened here in this command is,
+ I invoked a shell script as sort of a subcommand
+ of a larger pipeline.
+ So we nested a command that we wrote
+ in the shell inside the pipeline,
+ and that command turned around and did some more shell stuff.
+ This sort of thing is quite common.
+ You're going to have multiple instances
+ of the shell running at any given time,
+ and each instance is a program, right?
+ So each sort of process has, as I mentioned last time,
+ a working directory, and it has its own idea
+ of what standard input is, standard output,
+ and standard error, and it has some other stuff,
+ but we'll start with these, and one of the things that you do
+ with the shell is you arrange for your subsidiary programs,
+ your subsidiary processes,
+ to have the proper working directories and the proper stand
+ in, stand out, and standard error, that sort of thing.
+ So, for example, if we did something like this, CD, et cetera,
+ and then run sort password, right,
+ and then we'll do the TR business again.
+ Well, this time I'll make it, yeah, why not, Z, and then head.
+ Then notice what happened here is inside those parentheses we ran
+ CD, but everything in the parentheses is run
+ in a subcommand, a subshell,
+ so that sort's working directory was et cetera,
+ but our own working directory is still the same thing
+ that it was before.
+ It hasn't affected the current working shell.
+ We're still in my home directory under the CS35L subdirectory,
+ right, so each process has this, and the shell and subshells,
+ a lot of what they do is to set this stuff up, right,
+ because this is part of the process environment,
+ and because the shell is an orchestration language,
+ a good chunk of the work that it does is setting
+ up the environment for each of the commands that it runs.
+ All right, so any questions about the big picture?
+ Yes?
+ [ Inaudible ]
+ What's after dot slash foo?
+ Oh, so yes, that's command line number 23, right?
+ So what we're doing there is we're calling two commands.
+ The first one is dot slash foo, which is, you know,
+ dot is the working directory, dot slash foo is the file foo
+ in the current working directory.
+ It's the file foo that we just created
+ up there with our cat command.
+ Then we have a vertical bar,
+ and then we're running the head command.
+ The head command is a very simple command.
+ You give it a number of lines, and it reads standard input,
+ that many lines, copies them to standard output,
+ and then it quits, right?
+ So it gives you the first N lines of the input that it saw.
+ All right, so line number 23 runs our foo command,
+ and it also says take all of its output
+ and throw most of it away.
+ Just show me the first five lines.
+ The rest of the output is just discarded.
+ What does foo do?
+ Well, if you look at line, command line number 18,
+ you can see the contents of foo.
+ What it does is it sorts the contents of et cetera password
+ and then transliterates lowercase to uppercase.
+ I mean, we could have done it directly.
+ We could have said something like this, et cetera password,
+ right, and then transliterate and then take head of the result.
+ All right, so that's equivalent except in line 23 we decided
+ to use the foo implementation, you know, foo as a shorthand
+ for sort and transliterate rather than do it all ourselves.
+ Yes?
+ [ Inaudible ]
+ It's just a program.
+ It's not running yet.
+ So creating the script, it's like writing a C++ program.
+ It's not actually running yet.
+ A process is a program in execution.
+ [ Inaudible ]
+ Correct, right.
+ Process only gets created once you start running the program.
+ Yes?
+ [ Inaudible ]
+ So, for example, I could at this point say chmod user minus x foo
+ and now I can't run foo, but everybody else can, right,
+ or we can say chmod g minus x foo.
+ Now, oops, notice that foo is going to be something
+ that anybody that's not me and not in my group can run it,
+ but, you know, my group and I can't run it.
+ So you can, you know, you can even do stuff like this, chmod,
+ I don't know, ug plus wx.
+ This gives write and execute permission to the user
+ and the group and that's it.
+ Right? So when we're done, oh, well, we need to give it,
+ tell it what we want, right?
+ And now notice that I have my permissions back.
+ Question?
+ [ Inaudible ]
+ The dollar sign at.
+ Oh, so dollar sign at expands to all the arguments
+ that were passed to your shell script.
+ And if there's more than one argument,
+ then this basically turns into each argument
+ as a separate word, right?
+ So if we, how shall I say it, so suppose I invoke something
+ like this, then foo would be given three arguments.
+ And so when we run the contents of foo,
+ oh I see we've lost the contents of foo off the screen
+ so we'll put it back again, right?
+ It's as if we typed sort a, b, c, d, e, f, as separate strings.
+ I'll double quote them why not.
+ And notice that, you know, the fact that there's a space
+ in here doesn't mean that it turns into four arguments here,
+ it's still just three.
+ So if you're being very careful about arguments in a script,
+ you typically want to quote them in case they have spaces
+ or any funny characters in them.
+ And if you quote them this way, then you preserve the, you know,
+ the actual number of arguments that you originally had.
+ Yes?
+ [ Inaudible ]
+ No, as far as the script is concerned,
+ this is just a string operation.
+ We, the shell doesn't care whether or not the arguments
+ to the script are file names or options or anything else.
+ This just expands to them all.
+ Okay? Other comments?
+ In back, yes.
+ [ Inaudible ]
+ Why do we need a dash before the dollar sign,
+ oh you mean the double quote?
+ [ Inaudible ]
+ Why don't we put it like a hyphen in front like this?
+ Oh, because, because as far, I mean you could,
+ this is valid shell code, except I would,
+ I would never see it probably, because this means expand
+ to all the arguments that were given me,
+ but I want a minus sign in front of the first one.
+ Normally that's not what I want, I would just want the arguments
+ that were given, given to me as is.
+ Other question?
+ Yes.
+ [ Inaudible ]
+ Yeah, TR is short for transliterate,
+ and so in its simplest form you do something like this,
+ TRAQ, and then every line you type, every A turns into a Q. All right?
+ You can make it more complicated by saying something like this, TRABQR,
+ and then it changes every A to a Q and every B to an R.
+ And by extension you can say something like TRA through E,
+ I don't know, capital A through capital E,
+ and that's equivalent to saying TRABCDE, ABCDE.
+ But at its heart, TR is just a transliteration program.
+ It's very simple.
+ Read a byte, take a look if I should transliterate it.
+ If so, you know, do that, otherwise just output the byte as is.
+ Yes?
+ [ Inaudible ]
+ TR doesn't take file names as input.
+ It only takes operands that tell it how to transliterate.
+ So it always reads from standard input,
+ and it always writes to standard output.
+ So in that way, in that sense, it's less fancy than cat.
+ Other comments about these examples?
+ Yes?
+ [ Inaudible ]
+ Yes, the arguments to TR are, they're not regular expressions.
+ So we'll start with that, right?
+ It's a special syntax used only by TR, and you can think of it
+ as being sort of like the contents of a bracket of expression
+ in a regular expression.
+ That's kind of what they look like.
+ But it's not exactly that as well.
+ If you want to find out exactly what it is,
+ you look at the documentation, right?
+ Info, TR, here we go.
+ Lots of stuff here, or if you prefer it, you can,
+ you don't like this sort of thing, you can type man TR
+ and find the documentation in a different form.
+ There's a bunch of explanation about it, but it's, no,
+ it's not quite the same as regular expressions.
+ It was designed by somebody who wasn't in either
+ of the two camps I talked about last time.
+ Yes?
+ [ Inaudible ]
+ So how does a program know whether it's a shell script?
+ Well, I mean, it's not, the program doesn't know anything.
+ A program is just a program, right?
+ It's how does the operating system know
+ that when it's executing a file, it's executing a shell script
+ as opposed to maybe some executable machine code like,
+ you know, the CAD itself that's written in machine code.
+ The way that it knows is it looks
+ at the first few bytes of the file.
+ If they look like this, it's a shell script, right?
+ If they look like this except Python, it's a Python script.
+ If it's machine code, there is a different byte pattern
+ at the very start of the file
+ that tells the operating system I'm machine code,
+ that sort of thing.
+ And that's something that maybe CS33 will talk about,
+ but I don't talk about.
+ Question?
+ [ Inaudible ]
+ Right. Will be a shell script.
+ Yes?
+ [ Inaudible ]
+ You wanted to run the script several times?
+ >> Yeah.
+ >> Oh, well, you can, we can do that here, right?
+ We can say dot slash foo a and then dot slash foo b, right?
+ That is, or we can even do something like this.
+ Dot slash foo of, I don't know, et cetera, password,
+ and then pipe it into dot slash foo, right?
+ So, foo is a program.
+ It can be run as many times as you want.
+ And in this last example, we're running two instances
+ of foo in parallel.
+ They each have their own process.
+ It's the same program, but two different processes are running
+ it, and they might behave differently because of that.
+ [ Inaudible ]
+ It's the name of the what?
+ [ Inaudible ]
+ So, you're saying where did tr come from, that sort of thing?
+ Or?
+ [ Inaudible ]
+ Oh, yeah. So, so, well, here,
+ I would say I'm not really running a script.
+ I mean, I'm just using the shell
+ as a command line interface in line 38.
+ I'm saying please run the tr command,
+ and use it, give it these arguments.
+ Tr reads from standard input.
+ I typed standard input, and then typed control d.
+ So, I'm just running commands.
+ And I don't, when I'm running them,
+ I don't care whether tr is written
+ in machine code or shell script.
+ From my point of view, it works either way.
+ Yes?
+ [ Inaudible ]
+ Well, here's foo, right, and so if I type 44,
+ it's equivalent to saying this, right, sort, et cetera,
+ password, and then pipe the result through tr a through z,
+ a through z, and then pipe the result through foo again.
+ Well, that's sort piped through tr of a through z, a through z.
+ This is not a command that is really all that useful, right,
+ because it's kind of transliterating twice
+ and all that sort of thing, but it does work.
+ So, yeah, I could run foo and pipe its output
+ into foo, and that will work.
+ [ Inaudible ]
+ How did I get here?
+ [ Inaudible ]
+ This very last one?
+ Oh, because what I was trying to do is I was trying
+ to explain how foo would work if you said dot slash foo,
+ et cetera, password, right, and then pipe the result
+ through dot slash foo, and if, oh,
+ I didn't mean to run that, sorry.
+ And then if you cat foo, you'll see what foo does,
+ and so you can mentally expand.
+ Every time you see a foo as a command, it turns into this,
+ so I had mentally expanded it twice, and I gave you the two,
+ sort of the longer pipeline with four subcommands in it
+ as equivalent to being the shorter one with two.
+ All right, other comments about that?
+ Yes? Louder, please.
+ [ Inaudible ]
+ Because I was just trying to explain this line 47,
+ which is it's not a very useful line.
+ It's a toy example, and you're right.
+ It's running sort twice, and what's the point, right?
+ It's just going to give the same output, but I was merely trying
+ to explain what line 47 does.
+ All right, other comments?
+ All right, so we've talked about sort of orchestration,
+ and now I wanted to talk about sort of a bit of shell syntax.
+ We started that last time when I talked about tokens,
+ and I hope you remember everything there is to remember
+ about tokens and quoting and all that sort of thing.
+ As an aside, quoting is a big deal.
+ In every language, you'd better know how things are quoted
+ because quoting is what basically tells you what's program
+ and what's data.
+ The stuff inside the quotes is data.
+ The stuff outside the stuff, you know, the quotes is program.
+ You need to know the difference, but now that we've gotten
+ that difference, what can we do with it?
+ We have in the shell some reserved words.
+ They act a little bit like the keywords in C++, but they're not
+ as reserved as they are in C++.
+ They're reserved only in the sense that you can't have a command whose
+ name is the same as one of these reserved words, right?
+ And so here are some of the reserved words, just exclamation point.
+ All right, so if I start a command with an exclamation point,
+ that basically says -- I can put something in here.
+ I can say grep x, right?
+ Put anything in here I like.
+ But if I put an exclamation point followed by a space,
+ what this says is I want this bigger command to succeed
+ if grep fails and to fail if grep succeeds.
+ This is the negation operator on shell commands.
+ Now, in order to explain that, I need to talk about exit status and success.
+ If you look inside a machine language program, something written
+ in C++ and all that sort of thing, you'll see something that looks
+ like this, and maybe inside here you'll see a return 27,
+ or maybe you'll see a return zero, or you can even see an exit five,
+ something like that, and any of these, at least if it's called
+ from main, says basically I want the program to terminate,
+ and its exit status will tell the invoker whether this program
+ was successful.
+ By convention, exit status zero means success,
+ and all other exit statuses mean failure.
+ So, it's like Tolstoy's comment about families, right?
+ He once wrote every happy family is alike,
+ and every unhappy family is different, right?
+ So, in the operating system, every exit status
+ of zero is the happy family,
+ and then the unhappy families can exit with lots
+ of different statuses.
+ Yes, question?
+ >> So, the integer that may return is the exit status?
+ >> Correct.
+ For technical reasons, this integer has to be
+ in the range zero through 255.
+ You don't have a whole bunch of choices of exit statuses,
+ but usually it's fairly common to just basically exit status zero is
+ success, exit status one is failure.
+ There are some commands that have more than two exit statuses.
+ In particular, grep, if you say grep x,
+ exit status zero means it found an x, right?
+ It means you successfully searched for x. Exit status one means you
+ didn't find anything.
+ And exit status two means you ran into some trouble.
+ For example, you couldn't open a file that you were asked to read,
+ so you don't know whether there's an x in there or not, right?
+ Or maybe grep ran out of memory or something else bad happened,
+ right?
+ So, some programs will have multiple exit statuses,
+ different ways to fail.
+ But cat, for example, it'll either exit with status zero
+ or one, depending on whether it's success or failure.
+ The shell cares about exit statuses a lot.
+ The reason is because you're trying to figure
+ out whether this command succeeded
+ in your script before you can decide what to do next.
+ So, it's very common to see shell code that looks like this, right?
+ If grep egret, et cetera, password, right?
+ If egret's in the password file, then, you know, echo okay
+ or something like that.
+ Else, oh, you don't need a semicolon here, echo ouch, right?
+ This is the shell way of doing if then else.
+ We don't use the curly brackets of c for the then
+ and the else parts, we just have keywords, if and then and else.
+ There's a semicolon here.
+ This is the way that I write it.
+ If you don't like semicolons, you can say put the then over here.
+ It works either way.
+ For this kind of thing to work, these four words have to be reserved
+ because they're part of the control structure of the shell.
+ They're not sort of individual commands.
+ So, among the reserved words of the shell are if then,
+ else and fee, right?
+ Fee is if backwards, you can think of this as being
+ like an opening paren and this is like a closing paren.
+ It's sort of backwards from the opening, right?
+ And it's also short for finish, if you like.
+ Yes?
+ [ Inaudible ]
+ If the pattern is so simple
+ that it doesn't have any shell meta characters in it,
+ then you don't need to bother to quote it.
+ Quoting won't hurt, but it's not necessary.
+ That's true for every argument to every command, right?
+ The reason I didn't have to quote et cetera password is
+ because there's no shell meta characters in here, right?
+ Slash isn't a meta character and lowercase letters are not.
+ All right?
+ So, if I had put this here, that's an exclamation point followed
+ by a space, then I would have inverted the sense of the grep, right?
+ Because that's sort of negating the sense of the grep
+ and now will echo okay if I'm not in the password file
+ and it will echo ouch if I'm in it.
+ Question?
+ [ Inaudible ]
+ When do I use it?
+ I use it when I want to put several commands on the same line.
+ That's the only time you really need to use it.
+ Here, some people like, and in fact, I kind of like having sort
+ of the then over here, but in order to do that,
+ I'm going to need a semicolon here.
+ If I left the semicolon out and just wrote then,
+ then the shell would think oh, I'm calling grep
+ with three arguments, egert, et cetera, password, and then, all right?
+ In order to tell the shell no, no, no, that's the end of the command.
+ I have to put a semicolon here.
+ So, one way to put it is that in the shell,
+ reserved words are recognized only at the start of a command.
+ They're not sort of reserved words everywhere.
+ They're only reserved at the start of the command, and you know,
+ once you have a semicolon, then this is going to be the start
+ of the new command, and it will look at that and say oh,
+ this is the then keyword.
+ It's reserved.
+ Yes?
+ [ Inaudible ]
+ That's, oh yes, I should have been much more jumping up and down.
+ So, here, I'm going to jump up and down.
+ Zero means true here.
+ It's really counterintuitive, and,
+ but that's because we've decided zero means success.
+ Success means hey, it worked.
+ In the shell, if it worked, that means we go, you know,
+ work means successful, true, right?
+ So, a zero exit status to the shell means true.
+ A non-zero exit status to the shell means false.
+ And this is true not just of the shell.
+ It's true pretty much of any program that invokes any command.
+ It'll treat zero and say hey, it worked, good, true,
+ and non-zero is false.
+ It's backwards of every place else in software construction.
+ Sorry about that.
+ Yes?
+ [ Inaudible ]
+ Oh, yeah, this acts like the exclamation point operator in C,
+ so it turns any non-zero exit status into zero,
+ and it turns a zero exit status into one.
+ All right?
+ So, I guess that means I should, you know,
+ I'll list exclamation point as one of my reserved words,
+ because it is.
+ It's used by the shell.
+ All right, let's try some more.
+ There's also the case statement.
+ If you're used to C++, it's a little backwards.
+ You start the case statement with case, and you end it
+ with the wonderful keyword ESEC, which is case backwards.
+ It's following the same pattern, sort of like an opening paren
+ and a closing paren.
+ And the thing that you're casing on has to be a string.
+ So, for example, you can write something that looks like this.
+ Case dollar sign file here.
+ I'm assuming file is a shell variable
+ that contains a file name in.
+ And then your patterns are going to look like this.
+ That's the pattern that matches any file name ending in C.
+ And here, you can say something like echo C source, right?
+ Two semicolons here at the end of the case.
+ And over here, you can say star dot H, echo C header.
+ And then this pattern matches anything, right?
+ So, you can say echo something else, ESEC.
+ So, you commonly use the case statement as a pattern match
+ on shell variables, or this could be, you know,
+ this could be one of the arguments to your script
+ and that sort of thing.
+ And you want to do something different depending
+ on what that string looks like.
+ The patterns here are globbing patterns.
+ So, they work the same way that, you know, star matches file names.
+ Except here, this doesn't necessarily have to be a file name.
+ It's just a string, and we're doing a string pattern matching.
+ Question?
+ [ Inaudible ]
+ Yes. There's always the word in here.
+ It's not exactly a reserved word.
+ It's kind of a noise word, but it's got to be there.
+ Question? Why do I what?
+ [ Inaudible ]
+ I'm sorry, I still couldn't hear.
+ [ Inaudible ]
+ Oh, because we need to know the difference.
+ It could be that something -- and you'll do several lines in here, right?
+ You can say echo C header, and then you can say, I don't know,
+ echo mistake, and then two semicolons, right?
+ So, you can put several statements separated
+ by semicolons in a single case.
+ You know the case is over when you see two semicolons at the end.
+ Yes?
+ [ Inaudible ]
+ Yeah, this says echo C source.
+ That runs the command echo C source, right?
+ I can run it here.
+ Echo C source, right, which just takes its arguments and prints them out.
+ It's not doing anything special here.
+ Okay, other questions about the case statement?
+ Yes?
+ [ Inaudible ]
+ Oh, the shell is sort of like C with respect indentation.
+ It's optional.
+ You don't have to indent if you don't want to, but it's a good idea.
+ I usually maybe indent one or two spaces here.
+ You don't have to indent at all.
+ It kind of lines up either way.
+ It's a style thing.
+ Other questions about case?
+ In back, please.
+ [ Inaudible ]
+ If you like.
+ Yeah, all this stuff could be on one line.
+ I don't recommend it, though.
+ [ Inaudible ]
+ No. Please don't, yeah, don't do that.
+ Oh, that would look ugly.
+ All right.
+ One more, yes, about case.
+ [ Inaudible ]
+ These parens are not required.
+ They're optional.
+ You can write it this way, and it'll still work.
+ It's perfectly portable, and some people prefer this style.
+ I find, though, that when I write this style,
+ my text editor gets confused because the parens don't match,
+ and, you know, and I use Emacs, and I love matching parentheses
+ for reasons we describe later, so I tend to prefer the parentheses.
+ You can write it either way.
+ Also, you can put multiple patterns, if you like, in here separated
+ by or, so you can say something like this, star dot CC,
+ and then say echo, and then say C or C++ or something like that.
+ So you can put in multiple patterns here,
+ and that's fairly common as well.
+ Question?
+ [ Inaudible ]
+ If and fee and case and ESAC are the only examples
+ where they did the backward thing.
+ It was Steve Bourne having fun, having too much beer back
+ in 1976 or something.
+ Yes?
+ [ Inaudible ]
+ No, it doesn't have that horrible misfeature of C++.
+ What a disaster that is.
+ They should take that feature of the language out and shoot it,
+ and Steve Bourne said we're not going to do that in the show.
+ All right?
+ Let's try a loop, okay?
+ So the next thing we can do here is we can write a loop
+ to iterate through things.
+ So here's a fairly common loop, for F in dot F, right?
+ Do, done. And what could we do here?
+ We could say, I don't know, sort F, something like that, right?
+ This loop iterates through everything, you know, after the N.
+ This can contain as many words as you like.
+ If this is in a script, here's one word per argument
+ of the script, and what we're doing here is we're saying
+ for each sort of argument of the script, run the command sort
+ and give it that string as the argument to sort, right?
+ Notice that this differs from this.
+ This says run sort once and give it N arguments, so it's going
+ to read N arguments and give you the sorted output
+ of all the files that it sees.
+ This says run sort N times, one for each input argument,
+ so the output of this for loop won't be sorted, right?
+ Each individual file will be sorted,
+ but it will be the concatenation of the sorts
+ of those individual files,
+ so the resulting concatenation may not be sorted.
+ Yes?
+ [ Inaudible Question ]
+ The shell -- the standard shell does not have arrays.
+ It has only strings, and that's kind of annoying, but there it is.
+ So this is a funny construct that expands to, you know,
+ zero or more strings, zero or more words.
+ It's kind of a special case.
+ Question?
+ [ Inaudible Question ]
+ It takes all of the words that were given
+ to your shell script, all of the arguments.
+ Let's say there's five arguments, and it says, okay,
+ I'll put them here.
+ There'll be five arguments here
+ if your shell command was invoked with five arguments,
+ and it's not going to do any further splitting on them
+ or any processing of it.
+ It'll just give you exactly the arguments that you got.
+ I guess one thing I forgot to mention with if and with case
+ and with for is that these commands nest.
+ So, for example, I can do something like this.
+ I can take the output of this for loop and pipe it
+ into the command tack.
+ Tack is like cat except it outputs its input
+ in reverse order, all right?
+ So, you know, this is kind of a toy example.
+ You would never write code like this, but you can do that.
+ Over here, for example, I can say something like this.
+ This means take the entire case statement,
+ all the stuff that's running in it, and run it in an environment
+ in which standard error is sent to the file ERR, all right?
+ And it works in both directions, right?
+ That is, you can pipe stuff into a case statement.
+ You can pipe stuff into an if statement, and that's not rare.
+ It's fairly common.
+ Everything nests nicely.
+ Yes, in back.
+ [ Inaudible ]
+ Between the first which?
+ [ Inaudible ]
+ Right. So, suppose we have two input files, A and B,
+ and suppose A contains the contents, I don't know, IZ.
+ We're not there yet.
+ And B contains the contents, I don't know, Q and then A, right?
+ What this command will do is it will, if you give sort several files
+ as input, it reads all the files, sorts what it has,
+ and then outputs the result.
+ So, this thing will output A, I, Q, Z, right?
+ Because that's every line that it saw as an input in sorted order.
+ This command, however, ignoring the tack part,
+ is going to run sort twice.
+ Once on our first file and sorting that will output IZ,
+ and once on the second file and sorting that will output A, Q, right?
+ Every individual component of the output is sorted,
+ but the resulting output is not sorted, right?
+ So, it has a different meaning.
+ Yes?
+ [ Inaudible ]
+ This thing here?
+ This has to be an identifier, and then the identifier is set
+ to each word in order, right, in the body of the -- all right?
+ Question?
+ [ Inaudible ]
+ Right, in this case.
+ Question?
+ [ Inaudible ]
+ You can put -- yeah, you can put whatever shell commands you
+ like inside the loop, and they'll be executed, you know,
+ once for each iteration of the loop.
+ Question?
+ [ Inaudible ]
+ Oh, if I leave the dollar sign out, then this is just --
+ there's nothing special here.
+ So, this will -- this loop will execute just once.
+ F will be set to the character string at sign.
+ So, we'll try to sort a file whose name is at sign,
+ which is probably not what we want.
+ Question?
+ [ Inaudible ]
+ Explain the which?
+ [ Inaudible ]
+ Oh, yes. So, remember last time you can say something like this?
+ Echo foo two greater than error.
+ This means send standard output of this command --
+ I'm sorry, standard error.
+ That's file descriptor two of this command to the file ERR.
+ That's all I'm doing here, except here I'm saying I want
+ that to be for the entire case statement.
+ That means all these subsidiary commands are run in an
+ environment where standard error is being sent to ERR.
+ And so, it's easier to write it this way.
+ I mean, I could have put two greater than error to the here
+ and here and here, but it's easier to just do it once.
+ Question?
+ [ Inaudible ]
+ The key word done is --
+ I suppose this should have been spelled OD, odd,
+ but that was just too odd for people.
+ So, Steve Bourne decided to spell it as done.
+ It's the end of the for loop.
+ Yes?
+ [ Inaudible ]
+ It's sent to a file?
+ Well, because later on you want to sort
+ of do some further processing on the file or maybe the guy likes
+ that his error message is in a file rather than on the screen.
+ It's totally up to whoever wrote the script.
+ [ Inaudible ]
+ This just arranges for error messages to be sent to ERR.
+ It does not affect standard output.
+ We could also, you know, put standard output.
+ Oh, I see.
+ Oh, well, these echo statements, they're going
+ to be sending it to standard output.
+ You're right.
+ Probably makes more sense to do that.
+ Okay, other comments?
+ Let's -- oh, yes, in back.
+ [ Inaudible ]
+ Can we -- you'd like to put like a line
+ between each component or something?
+ [ Inaudible ]
+ Can you modify a shell script while it's running?
+ Oh, that's a tricky one.
+ The short answer is don't do that.
+ If you try to modify an executable
+ in Linux while it's running, it depends on the kernel, I think.
+ Some kernels will let you do it, others won't.
+ It's a dangerous thing to do, obviously.
+ The idea of having code that changes
+ as you execute it should send shivers down your spine,
+ right, because that's trouble.
+ Attackers love to have programs that do
+ that because it gives them a much bigger attack surface.
+ So fundamentally, the rule is if you like edit the script while
+ it's running, who knows what's going to happen.
+ Don't do that.
+ In practice, the shell might have read the first half
+ of the script from the old version of your program
+ and the second half from the new version of your program
+ and glued them together, and then who knows what it'll do.
+ So try to avoid that.
+ Yes?
+ [ Inaudible ]
+ Will you be -- will this be on the exam?
+ The answer to that question in this class is always correct.
+ All right?
+ Other comments?
+ Just as an aside, here's one method I use to come
+ up with exam questions.
+ This exam -- this lecture,
+ like all the lectures are being recorded.
+ I have a random number generator that I keep secret.
+ I pick a spot at random in one of the lectures and say, "Oh,
+ that was a cool thing I said," and I ask a question about it.
+ Except usually I have to do it twice because I want
+ to ask a single question that covers multiple topics, right?
+ So if I've said it, it's on the exam, maybe.
+ Question?
+ [ Inaudible ]
+ Well, so if I invoke foo this way, what it's going
+ to do is it's going to find every file whose name starts
+ with C and ends with D. This might generate three arguments,
+ let's say, and then it'll give foo one, two, three, four, five,
+ six arguments, all right?
+ And so dollar sign, at sign, inside double quotes,
+ will expand into six separate words.
+ Yes?
+ [ Inaudible ]
+ Each time the loop body is executed,
+ F is set to the next word in this list.
+ I haven't got to shell functions yet.
+ I think we ought to take a break before we get there, all right?
+ So let's start up again in seven minutes.
+ We're talking again, we have another announcement.
+ Okay. Hi, everyone.
+ My name is Celia.
+ I have a quick announcement.
+ ACM ICPC is running interview track this quarter,
+ and we're having our first workshop
+ on dynamic programming tomorrow, 6 to 8 p.m.,
+ in engineering 6 to 89.
+ So once again, 6 to 8 p.m. tomorrow on Thursdays,
+ engineering 6 to 89.
+ Thank you.
+ Thanks.
+ >> Is it okay if I write it somewhere?
+ >> Yeah. How about if you write it up here, and here you go.
+ >> Thank you.
+ >> And.
+ >> And.
+ [ Background noise ]
+ [ Background noise ]
+ >> All right.
+ Sure. All right, let's start up again.
+ There's another kind of loop in the shell that looks like this.
+ [ Background noise ]
+ >> Well, let's write it this way.
+ While s do t dot.
+ This is a while loop, and it keeps iterating as long
+ as this statement succeeds, right?
+ Every shell command has an exit status.
+ It will either succeed or fail.
+ And so if this succeeds, it goes and does this statement,
+ and then it loops around and comes again.
+ If this statement fails, then it exits.
+ These things all nest, so you can say something like this.
+ While if, you know, I don't know, dollar sign 1 is equal
+ to x, then cat a, else sort b, b, right?
+ That's a long statement, right?
+ And I could have put this on multiple lines if I wanted.
+ And then here we can say do something else.
+ Sort q dot, right?
+ So you can put as many things in s and t as you like.
+ And so you can write, you know, fairly nice loops,
+ if you want to do that.
+ There's also a variant of this, which I see rarely used,
+ but I'll mention it.
+ You can say until instead of while.
+ That's the same as saying while not.
+ I kind of think that's hard to read, and I prefer the while loop.
+ So you've got loops in the shell that look a lot
+ like the loops in C++.
+ Question?
+ [ Inaudible ]
+ This, there's spaces here.
+ This is a command.
+ There's a built-in command in the shell called open square brackets.
+ And it takes a bunch of arguments,
+ and then it throws away the closed square bracket,
+ and it treats everything in the middle as an expression.
+ And it uses single equals to stand for string comparison.
+ All right.
+ Other comments about this example?
+ Yes?
+ [ Inaudible ]
+ No. Yes?
+ [ Inaudible ]
+ Yeah, we, the two bracket stuff I think is fancier,
+ and I'm not going to get into that.
+ So single brackets I think are going to be tough enough.
+ Yes?
+ [ Inaudible ]
+ Oh, so dollar one is going to be the first argument of your command.
+ And of course you can probably guess dollar two as the second argument
+ and so forth and so on.
+ And then dollar star stands for all the arguments.
+ And it's got a variant called dollar at sign,
+ which means sort of the same thing, except if you have it in double quotes,
+ it has that special meaning that we talked about.
+ Yes?
+ [ Inaudible ]
+ Oh, a variable assignment in the shell is you write the identifier,
+ an equal sign, no spaces, and then a value.
+ So this takes, this assigns the value v, just a single character v string to s.
+ So all shell variables are string variables.
+ There are no other types in the shell.
+ Everything is a string, and every assignment is a string assignment.
+ Question?
+ [ Inaudible ]
+ Context, and also you've got to put spaces around the equal sign here.
+ But it's mostly context.
+ Question?
+ [ Inaudible ]
+ This says while this long if statement succeeds, do the sort.
+ What does the if statement do?
+ It says if this string is equal, the contents of the, you know,
+ the first argument is just the string x, then run the command cat a.
+ Otherwise, run the command sort b.
+ If cat a fails, you exit the loop.
+ If you get to the sort b instead and it fails, you exit the loop.
+ But if these guys succeed, which they probably will, you're going to loop.
+ Why would cat fail?
+ Well, it might fail if the file a doesn't exist.
+ Or you might loop around several times.
+ In the meantime, somebody else removed the file a, and then cat starts failing.
+ So that would be, I mean, this is kind of a weird example.
+ I just made it up.
+ It's not very practical.
+ There's another reason cat might fail, which is something like
+ This, et cetera, password.
+ And send the output to dev full.
+ Dev full is a special file that's always out of space.
+ It's full.
+ You can't output anything to it, right?
+ If you output just a single byte, dev full will say, i'm sorry, there's no room here.
+ So if i run cat, et cetera, password, i'll get an error message.
+ And the exit status, which is always in the special variable
+ Question mark, will be non-zero.
+ That cat failed.
+ Because it couldn't write to dev full.
+ Yes?
+ Like if you wanted this to -- if you wanted to iterate through the arguments.
+ Well, yeah, so it would be finite if somebody else removed a, right?
+ Otherwise it'll keep going.
+ It's not a particularly useful one.
+ You would probably write something more interesting here.
+ You would use a shell variable that's contents change in the body of the loop.
+ Yes?
+ The exit status of an if is the exit status of its then part or its else part, whichever got executed.
+ Then you go and execute the else part, and you see what it exits with.
+ By the way, this idea of using if as an expression is very common.
+ You've seen it in C++, right?
+ In C++, you can write something like this.
+ This is an if expression.
+ You evaluate a.
+ If it's true, you evaluate b, yield whatever it yields, and otherwise you evaluate c.
+ Same thing's happening here.
+ C++ also has this notion, right, which in C++ is equivalent to this, right?
+ They mean the same thing.
+ Similarly, the shell has this notation.
+ In the shell, this is equivalent to if a then b else false.
+ False is a built-in shell command that always fails.
+ It always has non-zero exit status.
+ You can write shorthands like this in the shell just like you can in C++.
+ You can probably guess what this means.
+ This means run the command a.
+ If it succeeds, you're done.
+ If it fails, run the command b, and then yield whatever b's exit status is.
+ Yes?
+ [inaudible]
+ Yeah.
+ One of these things has to fail.
+ Either the cat has to fail or the sword has to fail.
+ Otherwise, this loop will keep going.
+ Yes?
+ [inaudible]
+ That's $? is the exit status of the last command.
+ Other questions or comments about these shell constructs?
+ All right.
+ I guess I should talk more about variables.
+ We've talked about most of them already.
+ Let's do a few more.
+ $# expands to the number of arguments that you have.
+ You can use it in a shell command to make sure that you got past the proper number of arguments.
+ $0 expands to your 0th argument, which by convention in Linux is the name of the command.
+ This is your command name.
+ This is how a script can find out its own name.
+ It just used $0.
+ You commonly see that used in diagnostics.
+ You'll see something like this, echo $0, missing argument, something like this, and send that to standard error.
+ So that's kind of a standard thing you might see in the shell.
+ A diagnostic sends a standard error, but you say the name of the command so that the user knows where it came from.
+ There's a bunch of other sort of things you can do with variables.
+ So to some extent, let's talk about variable expansion.
+ And by variable expansion, I mean if you want to refer to the contents of a variable or to see whether a variable has been set or not, use different syntaxes to do that.
+ The simplest one, of course, is you do this.
+ This expands to the value of the variable xyz.
+ If xyz hasn't been set, it's an uninitialized variable.
+ You've never talked about it before.
+ That expands to the empty string.
+ It's not an error.
+ The shell is very forgiving there, maybe a little bit too forgiving.
+ Now, you can do something like this.
+ This expands to the variable, the contents of the variable xyz. If it's set, and if xyz has never been set, it's uninitialized, it expands to this string.
+ D-E-F-A-U-L-T.
+ You can put any string here you like.
+ This way you can provide a default value for a variable that's not the empty string.
+ In some sense, this first notation here is equivalent to saying this.
+ Except this is a lot easier to read than this.
+ They both mean the same thing.
+ You can also say this.
+ This expands to the string set if this variable is set and to the empty string otherwise.
+ You can use this to find out exactly whether the variable is set or not.
+ You can also do this.
+ This expands to the value of x if it's set.
+ If it's not set, it expands to the string D-E-F-A-U-L-T.
+ And as a side effect, it modifies x to be the default.
+ After you execute any command mentioning the variable this way, you know that x will have a value of some sort.
+ This expands to the value of xyz if it's set and makes the shell error out otherwise.
+ So you use this syntax if you don't like the idea that variables have default values, you just want it to be a mistake in your program, that sort of thing.
+ This is the closest to the rule that you would get in C++.
+ Part of what's going on here is the shell is designed for informal programs where we want it to keep going when you make a dumb mistake and maybe it will guess right as to what you intended.
+ In other words, it's not really intended for super reliable programs, and that's sort of what I hope you're getting a sense for here.
+ You can also do something like this.
+ This makes the value of xyz be unset.
+ It's now initialized again.
+ That's not something you can do in C++, but it's helpful in the shell.
+ You can also do this command.
+ This puts xyz into the environment.
+ I'll put a little sort of thing up here, environment variables.
+ Associated with every process, that is, with every running command, there's an environment.
+ That environment contains a bunch of environment variables that are basically name value pairs where the names and values are strings.
+ You can see what your environment looks like by typing the built -- the Linux command env.
+ That just basically prints out all of the environment.
+ I have a lot of stuff in my environment.
+ Oh, my goodness.
+ Let's see if we can be a shorter version of this.
+ I'll pipe it into less -- here we go.
+ So, for example, in my environment, there's an environment variable named shell in all caps.
+ And the value of that environment variable is user local cs bin bash because I'm using the bash that's there rather than the one that's in user bin.
+ There's another environment variable called less.
+ Its values are cinsr because those are the default options I use when I run the less command and so forth and so on.
+ A very interesting environment variable is about halfway down the screen here.
+ It's called pwd.
+ And that's the name of the directory that I'm currently in.
+ In some sense, the output of what pwd would print if I typed the pwd command and so forth and so on.
+ When you type export xyz, you add it to your environment.
+ So if I said something like this, xyz equals hello world.
+ And then I type env and I grep for xyz.
+ Oh, I have to export it.
+ And then we'll do that env again.
+ We'll see that now any subcommand will see that hello world is the value of this environment variable.
+ Question.
+ It can affect your subsidiary programs in ways that you like.
+ That's the basic idea here.
+ You're configuring their environment.
+ One environment variable I hope you already know about because it was in assignment one towards the start.
+ And i'll show you the value of my environment variable path.
+ Or i guess i could just -- oh, i have a lot of path environment variables.
+ Let's just look at dollar sign path.
+ The path environment variable is a list of directories, directory names separated by colon.
+ Whenever you type a command in the shell where the command name doesn't have a slash in it, it's just something
+ Like sort or cat or something like that.
+ It looks in all those directories to see, you know, is there one there called cat or sort or that sort of thing.
+ So, for example, i could do something like this for dn echo path.
+ And then let's transliterate colon space.
+ Do ls minus l d cat done.
+ All right. So what i'm doing here is i'm looking
+ For every program named cat that's somewhere in my path.
+ I'm taking the path, i'm turning all the colons to spaces and
+ Then i'll iterate through all the resulting words that i get.
+ And let's see what we got when we're done.
+ We see there's no cat in the first directory.
+ There is a cat in user local cs bin.
+ That's the cat that i'm actually going to run when i type cat.
+ It's going to be user local cs bin cat which is a symbolic link to some core utils 5 95 cat.
+ If user local cs bin cat weren't there, i'd eventually find the one in user bin.
+ So path is a very important environment variable because you can use it to fiddle with your shell script's brain.
+ All right. You've got this shell script that calls sort.
+ It thinks it's sorting stuff.
+ But you can put a sort at the start of your path that doesn't sort.
+ Instead it, i don't know, shuffles instead. All of a sudden your shell script will do something completely different than what you thought it would do.
+ And i hope that sort of impresses on you the importance of getting the path environment variable right and in general getting your environment variables right.
+ They're important ways of making sure your programs do what you want them to do.
+ All right. Any questions on the environment variable, that sort of thing?
+ Yes.
+ This does not affect the value of xyz later.
+ It just says use default now but xyz remains unset.
+ This modifies -- oh, i guess this should have been xyz.
+ This modifies xyz to be this string default.
+ So later on if you say dollar sign xyz you'll get def a ult.
+ Here you wouldn't. If you later say xyz you'll say oh, it's the empty string again.
+ Where is the what defined?
+ Why would you like to do this instead of this?
+ Because you're trying to be very careful. You don't want to change any variables at all because you're trying to be -- you don't want your script to sort of mess with the variables or that sort of thing.
+ But you do want to have a default value that's not the empty string.
+ In that case you use this.
+ Here if this is a variable that you're in total control of it, you never want it to be empty, all that sort of thing, you'd probably use this flavor.
+ Question?
+ Yes.
+ So here i used it. I said give me the value of abcdef, there isn't any such value.
+ So it said oh, well, then i'll just substitute that.
+ And now notice if i now echo abcdef, there's still nothing there.
+ I haven't set the variable.
+ So that's the difference between the minus sign and the equal sign.
+ Well, the hello thing, these are just strings here.
+ I'm not actually running any commands here other than echo.
+ When you're talking about shell variables, you're only talking about strings.
+ You're not talking about commands in general.
+ Question?
+ The curly braces here are part of the -- once you say dollar sign open curly brace, you're using one of these syntaxes.
+ And that's what curly brace means in this particular context.
+ In other contexts curly braces mean other completely different things.
+ Dollar sign in front of something kind of means a variable expansion.
+ Unless it's an opening paren. Yes?
+ Every shell script has its own set of shell variables.
+ They start off being nothing there, right?
+ Except it starts off with the environment set, right?
+ It inherits the environment from its parent.
+ Whenever you run a command, it starts off with the same environment that you had.
+ And then it can start fiddling with its own environment.
+ Question?
+ This expands to nothing if xyz is unset and it expands to the string set if it is set.
+ It's an unusual combination.
+ Yes?
+ It modifies its own environment.
+ The environment will be inherited by subcommands.
+ They'll get a copy of that environment and they can start fiddling with their copies.
+ But it won't affect anybody else.
+ Another question in front? No.
+ All right. So let's do -- let's see.
+ Tilde expansion. Sure, why not?
+ So far we've talked about variable expansion.
+ And in some sense, variable expansion, you can think of it as happening kind of first.
+ Well, first off, we do tokenization, right?
+ Tokenization.
+ Then we do variable expansion.
+ And then after that, we do tilde expansion.
+ And what that means is if the shell sees a word in your command that starts with a tilde, it treats that as either the name of your home directory,
+ if it's just a plain tilde or a tilde following -- followed by a slash.
+ Or if you see something that looks like this, it treats it as Eggert's home directory if you see a word that looks like this or maybe a word that looks like this,
+ followed by a slash, followed by some other stuff, right?
+ Tilde expansion occurs after variable expansion.
+ So if you do something that looks like this, v equals tilde, right?
+ If i now say, okay, what's v?
+ Well, v is a tilde.
+ It looks like that, right?
+ We did the variable expansion followed by the tilde expansion.
+ All right. Next comes command substitution.
+ We've already talked about that.
+ That's if you have a construct that looks like this, someone in your script or like this, although this is an uglier variant.
+ This means run this as this command, take its output, treat it as a bunch of words, and then keep going.
+ You do command substitution after you do all those other things.
+ The next one is arithmetic expansion.
+ This uses this syntax, two parens instead of one.
+ And what happens is inside here you can say something like this.
+ And all the identifiers you see inside these double parens are treated as names of shell variables.
+ So this looks up the value of x, and it better be an integer.
+ It subtracts one from the integer and it expands to the string that's basically one less than the string that x was.
+ It's a simple way of doing arithmetic.
+ I don't recommend it for high-performance arithmetic.
+ I hardly ever use arithmetic expansion to be obvious, to be honest, because the shell really isn't designed to do arithmetic.
+ And if you're doing arithmetic in it, you're using the wrong tool.
+ After this, we do field splitting.
+ The idea here is that if you look at the expansion of a variable, you can split it at this point.
+ So, for example, if you do something like this, and then you do cat dollar sign v.
+ The way the shell works is first it does variable expansion, so this turns into cat a, b, c, right?
+ And then it does field splitting.
+ It takes these spaces and says, oh, well, we now have three words.
+ So cat will now see three arguments, not one.
+ Your source code makes it look like, oh, well, cat just gets one file name, you know, v is a file name.
+ But since v had spaces in it, the shell says, oh, we really meant to have three file names here and not just one file name.
+ If you don't want field splitting, you need to quote, right?
+ If you do this, that's the equivalent of saying this.
+ But oftentimes you do want to have multiple file names in the shell variable.
+ In that case, field splitting is your friend.
+ After we do field splitting, we do path name expansion, sometimes called globbing.
+ Here the shell looks for unquoted special characters in your words and uses them to pattern match off of file names.
+ The special characters are as follows.
+ Star matches zero or more characters.
+ Question mark matches exactly one character.
+ And the square bracket notation that you know and love from regular expressions also works here, right, it's like regular expressions.
+ It matches one character with one glitch, and the glitch is that instead of using this to mean negate the character set, the shell likes to use an exclamation point, and that's because the two committees couldn't agree.
+ So, for example, we can say something like this, echo user bin question mark a through e, t through z, right?
+ And this is doing globbing, we're finding every command in user bin that has any character, I don't care what it is, followed by a character in the range a through e, followed by a character in the range t through z, oh, well, that's good enough.
+ And there they all are.
+ All right? cat, lex, mev, pax, raw, irst, rev, and xev, and if you know what all those commands do, you know more than i do.
+ All right?
+ Any questions on globbing?
+ Yes?
+ >> When you have the square brackets, you said it matches one character.
+ >> This will only match one character, correct.
+ Other questions on globbing? yes?
+ If you want to match two or more characters, there's no operator like the star, like dot star or a through z star, that does not work with globbing.
+ Globbing has a star, which matches zero more characters, but there's no way to take an existing pattern and repeat it one or more times or anything like that.
+ Yeah, this looks for every directory entry and user bin that has three characters, the first character can be anything, the second character has to be in the range a through e, and the third character has to be in the range t through z.
+ All right?
+ And then after path name expansion, we do redirection.
+ Which we already talked about last time.
+ That's the less than, greater than stuff, you know, with all the file names there.
+ Yes?
+ Regular expressions are only used with commands like grep.
+ There are other commands that use regular expressions.
+ E max is one of them, it loves regular expressions, but globbing is -- you can think of globbing as being sort of a stripped down subset of regular expressions, it's not as powerful, but it's more convenient for files.
+ All right, well, speaking of emacs, we should run a little bit of emacs, why not?
+ All right, so i'm running emacs here, and let's visit my home directory, so i'll type tilde slash maybe cs35l, there we go.
+ And i'm typing control xd, and i am going into directory edit mode on this directory.
+ Now, this sort of brings up the topic of modes, so let me talk about modes in the context of emacs.
+ Emacs is a modeful editor, and here we're talking about sort of user interaction design.
+ And by modeful editor, i mean what it will do in response to a command depends on what mode it's in, right?
+ The mode of this editor specifies how it will respond to a command.
+ And commands in emacs are keystrokes, right?
+ So here we have two buffers. At the top, we have sort of the scratch buffer, and at the bottom, we have the cs35l buffer.
+ If i type, say, control xo, which means -- well, not control o, control xo, that means switch to the other buffer.
+ I will go from this buffer for cs35l to the scratch buffer.
+ Here, if i type a d, the scratch buffer, like most text buffers, if you type d, that means please insert the character d, right?
+ It's the insert character command.
+ And if i type an e, it means insert the character e and that sort of thing.
+ But if i type control xo and go over to here in the cs35l directory and then say type d here, notice i typed d, but we didn't insert the character d.
+ We're in directory edit mode in which the commands that you type mean something completely different.
+ We're still trying in some sense to edit this directory, but editing directories is so much different from editing files that the set of commands that you do and the set of responses that you want will be so totally different that emacs says, no, no, they're different modes.
+ And d here means, oh, you'd like to delete a file, whereas d up in a text mode means, oh, you want to sort of put the character d here in the text.
+ Completely different actions.
+ So i typed d, it put a d next to the file name.
+ In directory edit mode, it's different from editing text files.
+ You tell emacs what you want to do, and it sort of saves it up, right?
+ And in the end, you say, oh, well, i'd like to actually execute these commands, so i'll type an x here, and it will say, oh, do you really want to delete the root?
+ And here i have to type yes or no, so i'll type yes.
+ Hey, look, it's just a symbolic link, right?
+ It's just root is a symbolic link to dot, dot, slash, dot, dot, slash, dot, dot, dot, right?
+ And it just goes all the way up, and i hope that eventually hits the root.
+ And you don't mind if i delete it, right?
+ It's okay.
+ So i typed yes, and i typed enter, and we have now edited this directory.
+ So emacs, in some sense, you can use it to edit directories, and you can use it to edit text files and that sort of thing.
+ But the only way that that actually works is it keeps different modes for the different things you're trying to edit.
+ Emacs uses the same idea when you want to edit source code.
+ So if i go here and i want to edit, i don't know, foo.C, it now has put me into C mode.
+ There's a little C right here.
+ It's a little hard to read because it's grayed out.
+ But in C mode, emacs will now treat commands that would otherwise just do normally as something different.
+ If i type something like this, notice it's coloring things as i type.
+ And then here, i just typed return, and it decided, oh, well, you're inside a function, so i'll indent for you, right?
+ If i'd just been editing a text file and typed return, i just would have got a new line.
+ But here, i got a new line and a couple of spaces because i was in C mode rather than in ordinary text mode.
+ In order to understand how this works, you have to know what the commands are and what's going to happen when you execute them.
+ To find out what the commands are, there is a command called control xb -- whoops, i'm sorry, control x, control b.
+ Oh, we'll get there. No, no, no, that's buffers.
+ We want control xk. We'll get there.
+ Control x, control k. What am i doing wrong?
+ Help. That's the problem.
+ The help button in emacs is control h.
+ If you type control h, that means please give me some help.
+ If i type control hk, then you can type a keystroke at emacs, and emacs will tell you what it's going to do if you type this keystroke, right?
+ So you type control hk, and then whatever character you like, maybe a capital q.
+ And this means tell me what q will do without actually doing it, all right?
+ So what's going on here is that emacs is not only modeful, it's also self-documenting.
+ It wants to tell you how it will work.
+ It's part of sort of the open source philosophy.
+ It's being very open about what it does, all right?
+ So i will type, i don't know, control -- no, i'll just type j. That's a very simple command.
+ So j, if i type j, sitting here when i'm editing this c program, it says, well, that just means you're going to run the self-insert command.
+ The self-insert command just takes the character that you typed and says i want to insert that into the buffer.
+ That one's kind of boring, so let's try another one, control h, k, enter, all right?
+ Enter or return, which is spelled r-e-t up there, says, oh, that runs the command newline.
+ And newline says insert a newline and move to the left margin and then do some indenting, which is what happened here, all right?
+ If i'm interested more in what this command does, i can go up here and find the source code to the newline command, all right?
+ I'll just type return here. Here's the source code to the newline command.
+ This source code is written in emacs's main implementation language, which is lisp or emacs lisp or elisp for short.
+ Lisp has a bunch of parentheses and all that sort of thing. The details don't matter here yet.
+ I'll get more into the details later, but essentially what we're looking at here is the source code to emacs.
+ The architecture for emacs is it's a program running under linux, all right?
+ So you have sort of the hardware down here.
+ You have the linux kernel running here. You have sort of the C libraries and that sort of thing here. The emacs interpreter is here.
+ This is really what you see in the emacs executable.
+ And this emacs interpreter is written in C, so it's a bunch of C files that got compiled.
+ But most of emacs is written in lisp. There's a whole bunch of lisp code sitting up here.
+ And this is in emacs list files. And the bulk of emacs is written in this higher level language, which is the language that you will use most likely if you want to tailor emacs into doing something else.
+ The reason i'm sort of going into the all this is i want you to have the attitude when you're looking at any particular program that you need to use like chrome or something else like that.
+ I want you to have the ability and the confidence to go look at the source code to see how it works.
+ Now chrome is a pretty complicated program emacs is pretty simple by comparison. It's an all singing all dancing IDE.
+ But it's one of the simplest ones out there. And so next time what we're going to do is we're going to look at some of this list code and see how it works.
+ See how you type Q. You jump into here in the list code and it figures out what to do with that Q and then it puts something up on the screen.

@@ -1,0 +1,1781 @@
+ [END PLAYBACK]
+ So I'd like to take a step back from--
+ I mean, we were talking about Emacs last time
+ and spent quite some time, or at least some time,
+ talking about Emacs Lisp and all that sort of thing.
+ But I want to take a step back a little bit.
+ So we've talked about Elis, which is the scripting
+ language for Emacs.
+ We've also talked about the shell,
+ which is an even more stripped down scripting language.
+ I mean, even in Elis, you can add numbers pretty effectively,
+ but the shell addition is not very much.
+ So with the shell, it's really the shell plus utilities.
+ This is really at some extreme of the scripting language.
+ It's a scripting language so simple
+ you can't do much with it.
+ You really have to use extensions.
+ So this is the extreme end of a little languages approach,
+ where you take a big problem, you split it down
+ into subproblems, and maybe use a different programming
+ language for each of the subproblems.
+ Elis takes another approach.
+ They basically says, do everything in Emacs.
+ This is the extension languages model.
+ For an application.
+ So under this approach, you have an application
+ like a web browser or a text editor.
+ And the way that you tailor it or extend it or turn it
+ into a somewhat different application
+ is you use its extension language, which in some sense
+ uses the core part of Emacs the same way
+ that the shell uses utilities like cat and sword.
+ These are not the only two scripting languages, obviously.
+ There's a bunch of others out there.
+ Some include things like Perl and PHP.
+ The one we'll talk about, the other P scripting language,
+ is Python.
+ By some measures, Python is now the world's most popular
+ programming language of any sort.
+ Scripting, conventional, you name it.
+ It's used a lot.
+ My assumption is that many of you
+ have been exposed to Python already.
+ Let's test that.
+ If you've written some Python code, raise your hand.
+ Oh, good.
+ All right.
+ Not everybody raised their hand.
+ So I will do a quick introduction to Python.
+ By the end of this lecture, you'll all be Python experts.
+ OK.
+ Wait, most of you are Python experts anyway.
+ So I have a problem here, right?
+ I have to talk about a scripting language that most of you know.
+ And I have to talk about it in a way
+ that pretty much anybody who doesn't know Python
+ could understand.
+ And I still have to say something interesting.
+ This is going to be a challenge.
+ Anyhow, well, one other scripting language,
+ before we jump into Python that I should mention,
+ is JavaScript.
+ You can think of JavaScript as behaving inside your browser
+ as Elisk behaves inside Emacs.
+ It's an extension language for Chrome
+ or for whatever your favorite browser is
+ and all that sort of thing.
+ So these two are kind of very similar models, right?
+ Extension language for an app.
+ The shell is sort of off on its own planet.
+ These guys are all roughly similar in that the attitude
+ here is that you really program in these languages.
+ You can get useful work done without anything else, right?
+ These are standalone languages.
+ And lots of people write useful code
+ that will work just with these languages.
+ However, it's safe to say that even
+ with these standalone scripting languages,
+ it's fairly common to have plug-in modules.
+ And these plug-ins will be written in C++ or C
+ or some other low-level language that
+ will give you extra performance compared
+ to writing code in Python.
+ Python code, even though we've tried to make Python go fast
+ and there's various strategies for making it go even faster,
+ it's just not going to be as fast as well-tuned assembly
+ language or C++ code.
+ So the plug-ins are a fairly important part
+ of using Python for doing big computations.
+ In your assignment, you don't need
+ to worry about the plug-ins.
+ You're just using it as a standalone language.
+ For those of you that know Python well,
+ I suppose it's a warm-up.
+ For those of you that don't know Python,
+ we'll sort of be learning as we go.
+ All right, so let's do a little Python.
+ I just started up a Python thing here.
+ And let's assume that I'm interested in trading
+ in the stock market.
+ And I just found the quote for Google stock-- alphabet,
+ I suppose it's called.
+ And I get a line out of my web browser,
+ or I'm screen scraping, or I get some other data source
+ that looks like this.
+ So line is a top-level variable in this Python code.
+ I'm just typing using Python interactively here.
+ So I can ask it questions like, what's the value of line?
+ If I just do something like this,
+ it's the same as saying 2 plus 3, right?
+ It just gives you the answer.
+ So we're in a normal redevelopment loop,
+ sort of like the EMAC scratch buffer, where you type Control
+ J, and it evaluates for you.
+ But suppose I want to do something with this line.
+ I want to analyze it.
+ I want to get the data out of it.
+ Fairly common approach, a fairly common task for Python apps
+ is to take, perhaps, somewhat messy data from some data
+ source and convert it into some internal clean data format.
+ So what I can do with this thing is
+ do something like the following.
+ I'm going to say, OK, the types of the data in this text string--
+ this is just an ordinary character string--
+ are the following.
+ Goog is the stock market label.
+ So the Python data type for that is
+ string, which is spelled S-T-R. The number 100
+ is the number of shares of alphabet stock that I have.
+ So that's going to be an integer.
+ And then the third value here is the price
+ of the stock, which is a decimal number.
+ It always has-- oh, did I mess up?
+ That's supposed to be 0.88.
+ We'll have to go fix that.
+ But we'll model that as a floating point number.
+ And I'm going to go fix the line again here.
+ Line equals goog 100, 156.88.
+ So what I'd like to do here is scrape the data out
+ of that character string, but interpret each field
+ as I go according to the types that I've written down here.
+ And notice, types is just another value.
+ It's a Python list.
+ And it's components of the list.
+ It's got three items.
+ Each item in the list is a class.
+ That is a data type.
+ And so what we've done here is we have a list of types.
+ This is not something you can do in C++, right?
+ In C++, you can have lists of things,
+ but types are not runtime objects.
+ Python takes quite a different attitude.
+ As a scripting language, it doesn't
+ mind having everything available at runtime.
+ So if you have a data type, that data type
+ is just another object in Python, right?
+ If you type int, that's an identifier.
+ Its value is an object.
+ This object happens to be a class or a type,
+ but it's the same thing as-- in some sense,
+ it's the same thing as line as a string.
+ OK, int is a class.
+ All right, so let's do this.
+ What I'm going to do is I'm going to take that line--
+ it's not lines-- and I'm going to split it, right?
+ So Python has a built-in method for strings called split.
+ You give that method an argument that
+ specifies the separator that you want to split that string on.
+ And what it's going to do is it's going to give you
+ a list of strings, one for each field
+ that it found separated by the separator, right?
+ So let's call that ls.
+ And ls, thus, is now a list of strings.
+ Each string is the component that we wanted, all right?
+ Now, what we can do here is we can do something like this.
+ For i in ls, we can print i, right?
+ And what print does is it's a standard Python function.
+ It just prints out its argument.
+ We've iterated through that list.
+ And for each item in the list, we've
+ printed out the string that we found.
+ We can also do that with our list of types.
+ So we can say for i in types, print i, same thing.
+ Now, it's fairly common when you have two lists
+ and you want to sort of take the elements pairwise
+ and do something with them to zip them up, all right?
+ So a zip, there's a function in Python called zip, right?
+ And what zip does is you give it two lists,
+ you know, a, b, c, d, e, and another list, 9, 7, 2, 1, 0.
+ Here are two lists.
+ When you zip them together, it's like a zipper
+ that sort of runs through the elements of each
+ of these lists.
+ And every time you ask the zipper,
+ can you kind of give me another pair,
+ it gives you the next pair.
+ So you can think of this as sort of doing this, right?
+ It just does a pairwise zip up of the two and then e0,
+ where these things are pairs.
+ They're tuples with two items in them.
+ We have a list of pairs.
+ And what we've done is we've just done a pairwise zip up.
+ It's like the way the zipper works
+ and the tines sort of intertwine and all that sort of thing.
+ All right, question?
+ >> Does zip still run if you use two arrays and they're not
+ of the-- not of each other?
+ >> If one list is shorter than the other,
+ it stops at the shorter one.
+ There's no error.
+ It just says, ah, you've got a zipper where, you know--
+ has that ever happened to you?
+ The zipper gets misaligned, and then one
+ is longer than the other.
+ And it just zip ups as far as it goes, and then it stops.
+ All right?
+ So let's use that function.
+ And we'll put the result in the local variable z.
+ So we'll do zip-- z equals zip of types.
+ And what was it?
+ LS, right?
+ So we've now created something like this.
+ But I did a little bit of hand waving
+ there because what we have here, if I just type out and say,
+ hey, what's a z?
+ We actually don't have a list of pairs.
+ We have something called a zip object.
+ A zip object kind of acts like a zip list of pairs,
+ except it's kind of lazy.
+ It doesn't actually construct the pairs until you ask it to.
+ One way you can ask it to is you can iterate through a zip
+ object, right?
+ So you can say for i in z, you can print i.
+ And what it's going to do here is
+ it's going to print each pair in that zip object
+ as you compute it.
+ And then we'll be done when we're
+ done iterating through it.
+ OK.
+ So far, so good, right?
+ Now, what I want to do in order to analyze this character
+ string that I've split up, and I've now
+ told Python which type to apply to each of these,
+ is I'd like to convert that string 158.88, which
+ is a character string.
+ I want to actually know the number.
+ I want to convert it to float.
+ And I want to convert that character string 100
+ to the integer 100.
+ Goog is already a string.
+ I'll just want to leave it as a string.
+ Luckily for me, Python classes have constructors.
+ And you can do something like this.
+ Float is a class, it's a type.
+ But you can give it a character string.
+ I keep hitting my thing.
+ All right, so let's try it again, 3.14, right?
+ And then it will convert that character string
+ to a floating point number, the closest float approximation
+ to 3.14.
+ So what I'd like to do is I'd like to treat float, my class
+ float, as a function and apply that to the character
+ string 158.88.
+ I'd like to treat integer as a function,
+ and so forth and so on.
+ So one way I can do that is I can say,
+ let's do something like this.
+ This is what's called a list comprehension in Python.
+ And what we're doing here is we have this little kind of for
+ loop inside the square brackets that says,
+ I'd like to iterate through z.
+ And each time I iterate through z, I know I'll get a pair.
+ And I'd like to call the first item in that pair t
+ and the second item in that pair v.
+ So the first time I iterate, t will be the class str,
+ and v will be the string goog.
+ And then what I want to do is compute t of v.
+ I'll call t, with v being its argument.
+ So the first time through the iteration,
+ I will get the string goog, because str is a no op.
+ When you give it a string, it says, oh,
+ that's already a string.
+ I'll just give it to you.
+ The second time through the loop,
+ I will call the class int with the string argument 100.
+ It'll give me the integer 100.
+ And the third time it iterates, I'll call float.
+ Question.
+ [INAUDIBLE]
+ The zip object doesn't actually construct the pair,
+ so I'm just going to call them.
+ So I was assuming that when you have the first z,
+ then that object is constructed, but not iterable,
+ or it's always iterable as soon as you call a loop.
+ Right.
+ This is something that you can iterate through.
+ Yeah, the Python-ish terminology for that is iterable.
+ So it is iterable, but unless you call a [INAUDIBLE]
+ or any sort of iterator, then you cannot get [INAUDIBLE]
+ Right.
+ Well, I don't know.
+ Can you do something like this?
+ It's not working.
+ What did I do wrong?
+ Z is a zip object.
+ I have-- so this is types.
+ This is ls.
+ And I thought I could do something like this.
+ Ty, tv, being for tv in zip, types, I don't know,
+ line.split, colon, comma, like that, right?
+ And then that, and then that.
+ Oh, there we go.
+ It worked.
+ So the idea here is I did the zip.
+ The zip gave me a zip object.
+ I iterated through that object.
+ Each time through that iteration,
+ I called t of v, because t was first bound to str,
+ v was first bound to goog.
+ And then this list comprehension basically
+ gives me the list of all the results
+ I got by calling t of v each time.
+ Question?
+ [INAUDIBLE]
+ The very last thing, it's called a list comprehension.
+ It's almost like, in set theory, you can say something
+ like this, x squared such that 0 is less than or equal to x
+ is less than 10, and x is an integer.
+ So this constructs the list of all the squares
+ of all the integers from 0 up through 9, right?
+ And this notation here tries to mimic
+ that sort of mathematical notation,
+ except here we're not talking about sets.
+ We're talking about lists.
+ Question?
+ Why does the zip not work?
+ I don't know.
+ That's what's mystifying me.
+ That is, we got some empty lists there.
+ And what-- oh, oh, I know what happened.
+ What a stupid thing.
+ Oh, oh, I should be re-educated.
+ What happened was that first loop for i in z,
+ it iterated through z.
+ Now z has been iterated through.
+ If you try to keep going, it'll say, I'm sorry.
+ I'm all out of entries, right?
+ So an iterator remembers where it is.
+ And if you try to iterate through an entire iterator
+ and then say, oh, I'd like to iterate through that iterator
+ again, it'll say, I'm sorry.
+ There's no more.
+ So that's why it gave me the empty string.
+ My apologies.
+ So the reason it worked at the end is I called zip again.
+ And I called-- it gave me a new fresh iterator.
+ And then I could use it the way I wanted to.
+ Yes?
+ [INAUDIBLE]
+ Louder, please.
+ [INAUDIBLE]
+ So--
+ [INAUDIBLE]
+ So I created an iterator sort of like a quarter of a way
+ down a string thing when I called zip, right?
+ And then I used it in that for i in z.
+ And each time you sort of use an iterator,
+ you can just ask an iterator, give me the next guy, right?
+ And then it'll advance one.
+ And then you can ask it, give me the next-- it'll advance one.
+ The for loop, that for i in z loop about midway through,
+ went through the entire iterator.
+ It chewed up every sort of pair the iterator
+ was willing to give it.
+ And so at that point, if you go to the iterator and say,
+ I'd like some more, it says, I'm sorry.
+ I'm the empty iterator now.
+ Question?
+ Is there a way to reset the iterator without--
+ Not in general.
+ Some iterators, you can do it.
+ Some you can't.
+ Let's not go that way, all right?
+ Because part of the problem is the iterators
+ that try to be efficient try to sort of discard information
+ as quickly as they can.
+ So they won't, in general, be something that you can reset.
+ Question?
+ Do you know why, if you just make a list of hints,
+ you could iterate it through multiple times?
+ Was this just on your point that you were talking about?
+ Well, yeah.
+ You can use a for loop to go through a list, right?
+ Each time you do that, and in effect, it
+ creates a new iterator to go through that list
+ that particular time, right?
+ So lists can be iterated through because it just
+ constructs an iterator for that particular for loop.
+ So I get the sense that even though a good chunk
+ of the class knew Python before walking in,
+ they didn't see this little introductory thing.
+ I was supposed to just give you three lines of Python code
+ to warm up.
+ And we've already explored parts of Python
+ that perhaps are new to some of you, right?
+ Part of what's going on here is it's a big ecosystem, right?
+ I don't know all of Python.
+ Nobody in this room knows all of Python, right?
+ We have to be careful here.
+ In such a large system, you can't
+ assume you know everything.
+ The goal in sort of building software in these large systems
+ is to figure out what makes them tick
+ and to get that central model of computation working, right?
+ And once you do that, you can treat that central model
+ as something you understand.
+ And there'll be stuff out in the periphery that's optional.
+ And you can ignore it and not use it
+ if you don't care and all that sort of thing.
+ But you really have to have that central model nailed down.
+ So to some extent, what I wanted to do in this lecture
+ is cover what I think the central model is.
+ Now, other people might disagree.
+ I don't claim to be a Python expert, right?
+ I don't think I'm an expert in a programming language
+ until I've written 10,000 or 20,000 lines of code.
+ And I've written Python code, but not that much.
+ Is there anybody here who's a Python expert?
+ Oh, boy.
+ I certainly intimidated people with that, right?
+ All right.
+ So that's fine.
+ The point here is you have to know what the core is.
+ You have to know how to come up to speed in any particular sub
+ area of Python that you need to learn.
+ And you need to sort of gain that expertise
+ in coming up to speed.
+ All right.
+ Anyhow, enough of a sales pitch.
+ I hope I've convinced you that Python is worth learning.
+ And also, it might be a little trickier than we thought.
+ Is there a question in the back?
+ OK.
+ All right, so before jumping into more details,
+ let's do a little bit of history.
+ And I want to talk about history partly because I was there
+ and partly because I want to sort of show you
+ part of the motivation for this programming language.
+ And the motivation helps explain many of its features
+ and many of its non-features.
+ So we can start off with a shell.
+ And the shell, you know, plus utilities.
+ And what people found when they wrote the utilities
+ is they needed to do stuff with files and all that sort of thing.
+ But in particular, there were text utilities, like awk and sed,
+ that I haven't said much about.
+ Because nowadays, people typically write this stuff in Python, right?
+ But awk and sed and other commands like that were programs.
+ Basically, you fed them text on standard input.
+ And they output different text on standard output.
+ So they were text processing utilities.
+ And you can write sort of arbitrarily complicated programs here.
+ This fits into the model of little languages.
+ And this stuff was all written in the 1970s.
+ So in the 1980s, in a guarded building in Santa Monica,
+ there was a fellow named Larry Wall who knew all this stuff
+ and used these utilities and couldn't stand them.
+ And the reason he couldn't stand them, he said,
+ I've got to learn five programming languages
+ just to do this sort cleanup table thing.
+ You've got to be kidding me, right?
+ What we need is we need to have a single program that
+ can do the combination of what the shell can do
+ and what all these text utilities could do,
+ and do it all in sort of one integrated language, right?
+ Full time, he was working on network security.
+ I happen to know this because I worked down the hall from him,
+ except between him and me, there was an armed guard, right?
+ So this is very hush, hush, top secret stuff.
+ But in his spare time, he wrote a scripting language called Perl.
+ And what Perl did was all of this stuff, but in one notation
+ so that you didn't have to learn five languages,
+ you could just learn Perl.
+ Now Larry Wall was a North Campus type, so linguistics background.
+ And because he had a linguistics background,
+ he was used to sort of thinking about natural languages like English.
+ So the motto sort of--
+ I'm not going to tell you much about Perl code and all that sort of thing.
+ But the motto of Perl was there's more than one way to do it.
+ And by that, he meant in English, you often
+ have multiple ways to say the same thing.
+ And I want to mimic the flexibility and naturalness of English, right?
+ So for example, in Perl, you can say, if x is less than y, call f.
+ You need more punctuation than this, but fine, it's sort of like that.
+ Or you can say, call f if x is less than y.
+ Either notation works because either sentence works in English, right?
+ And why should you be forced to say things in the wrong order
+ in a programming language, in an order that's unnatural in English?
+ And that also-- he got steamed when he saw it.
+ So he added lots of different ways of doing it.
+ OK, Perl is still quite widely used, but it's
+ safe to say that its heyday was in the 1980s and 1990s.
+ It competed with a bunch of other scripting languages, like PHP,
+ and in some sense won out over them.
+ And I wrote Perl code.
+ I actually have published papers in computer science journals
+ with Perl code in the appendix and all that sort of thing.
+ Because hey, I worked with a guy.
+ Why not, right?
+ But there is a problem with Perl.
+ And that problem basically boils down to its internal motivation.
+ There's more than one way to do it.
+ What that means is if you go read somebody's Perl code,
+ you have to understand the way that person likes to write Perl, right?
+ If they write it one way and you're used to the other way,
+ you'll have to sort of contort your head around it.
+ It's like if I listen to someone reciting poetry in Brooklyn,
+ I have to sort of deal with a Brooklyn accent,
+ and I can't make out half the words, all right?
+ So in the 1980s and 1990s, there was a completely different sort
+ of thing going on, a project at the Center for Something, Something,
+ Something-- this is Dutch--
+ in Amsterdam, the leading computer science--
+ Amsterdam, right?
+ The leading computer science research institute in the Netherlands, right?
+ And here was their problem.
+ Their incoming students all knew BASIC because that's
+ what they learned in high school.
+ It's sort of like you guys know Java or Python because that's
+ what you studied in high school.
+ But they didn't want to teach in BASIC because BASIC
+ is a terrible programming language, right?
+ It's one of the world's worst.
+ It's better than C++, but that's about all I can say about it, all right?
+ So what they wanted to do was to encourage high schools in the Netherlands
+ to have a decent programming language so that you
+ didn't have to deal with the horrible features of BASIC, all right?
+ So they came up with their own alternative for BASIC.
+ And since it was a teaching language, it was called ABC, right?
+ And this is 1980s, late 1980s, and that sort of thing.
+ So the basic idea of ABC is as follows.
+ First off, let's not force people to learn really low level data
+ structures like arrays, and then teach them how to sort arrays,
+ and all that sort of thing.
+ So idea number one of ABC is we want--
+ of course, we want to have arrays, but we want to have not just arrays.
+ We want to have things like sets, and dictionaries,
+ and all that sort of thing.
+ We want to have high level data structures.
+ We don't want students to waste time learning how to do quicksort.
+ I mean, what a waste of time.
+ Just call the sort function, right?
+ It already knows how to sort, right?
+ That was their attitude.
+ Second idea, they really hated grading student work written in BASIC,
+ because what the students would do is they would just
+ write a bunch of stuff down.
+ It would be so poorly formatted and indented,
+ you couldn't even make out heads or tails of it, right?
+ So they said, we're having to waste like two lectures on how
+ to properly indent.
+ What a waste of time.
+ We're going to have our programming language enforce good indentation.
+ So the second idea here was the ABC requires good indentation.
+ If your program isn't properly indented, the ABC compiler
+ would basically give you an F and not run your code, right?
+ So they built something along these lines.
+ The technology at the time was like they
+ had to use like stone knives and bear skins and floppy disks, right?
+ And they sent out floppy disks to all the high schools in the Netherlands
+ and had people try it out.
+ And what they found was the high school teachers had trouble learning ABC.
+ And the high school students said, why should we learn ABC?
+ All the jobs ask for basic, right?
+ So the project flopped.
+ And it would just be a footnote in computer science
+ now, except some of these researchers took this idea
+ and said, we want to have the good stuff from this research project.
+ And we also want to take Perl as a negative example, I should say.
+ We don't want this philosophy.
+ We want to teach you how to program the right way, all right?
+ So what they came up with, which is called Python,
+ named after Monty Python, if the story is to believe, has the motto,
+ there's one good way to do it.
+ Python does not follow this syntactic philosophy at all.
+ It basically wants you to indent the right way.
+ Perl doesn't care about indenting.
+ You can do it any way you like.
+ But Python cares, and so forth, and so on.
+ And one of the reasons Python has been successful in the last 20 years
+ is because it's designed to be simple, easy to teach.
+ And there's only one way to do things, which
+ means when you read other people's Python code,
+ you have a good chance of understanding it better
+ than if you read other people's C++ or Perl code, all right?
+ So that's kind of the motivation.
+ Now, obviously, there's a lot of details here.
+ Any questions about the background?
+ Yes.
+ What were you doing in your office next to that?
+ I cannot tell you.
+ Well, I can tell you where we were.
+ We were working in the offices of System Development Corporation, which
+ was the first software company ever to exist in the world, founded 1955,
+ the first pure software company.
+ And we were doing--
+ what can I say?
+ I was doing theorem proving.
+ I can say that.
+ We were doing research for the government.
+ How's that?
+ How does that sound?
+ Good enough?
+ [INAUDIBLE]
+ All right.
+ The armed guards, yes.
+ They were for real, yes.
+ [INAUDIBLE]
+ Wall was not paid to do this, not at all.
+ He was paid to do other stuff.
+ This was a side gig for him.
+ And yeah, I mean, eventually, he quit SDC,
+ and he wrote a book, and all that sort of thing.
+ But no, he didn't do this for money.
+ You're not going to get rich doing this, trust me, all right?
+ Other comments on the background?
+ All right, so let's see.
+ I guess I've talked about--
+ all right, we can talk about quick things about Python syntax.
+ Why not?
+ So those of you expert in Python will probably think, oh, well,
+ we can go to sleep now.
+ I'll try to keep you awake.
+ First off, you don't need semicolons.
+ Semicolons are for wimps, right?
+ If you have three statements, just write three lines.
+ Now, occasionally, for whatever reason,
+ you might want to put three statements on the same line.
+ In that case, you can use semicolons.
+ But normally, you don't need them, right?
+ So that's one thing.
+ And that's designed to make it easier
+ to teach and all that sort of thing,
+ because they didn't want to waste their time teaching students
+ about semicolons.
+ We use indentation instead of curly braces,
+ so no curly braces.
+ So you write something like this.
+ If x is less than y, you've got to put a colon here.
+ Otherwise, it's not right.
+ And the rule is constructs that have substatements
+ have colon at the end of the line.
+ And then you indent as much as you like,
+ but you have to indent consistently.
+ I like two spaces.
+ Some people like four.
+ Some people like eight.
+ Try to be consistent, right?
+ And then here, you can say a equals b and c equals d
+ and print x and all that sort of thing.
+ And you saw me do it in the example code, where
+ I would write a for loop.
+ And there'd be a colon at the end.
+ And then I would indent a little bit
+ before I typed the next line.
+ I was doing that indentation.
+ Yeah?
+ So if you indent two form spaces,
+ you have to indent two spaces for every single--
+ That's the idea.
+ Actually, what happens if you don't?
+ Let's try it.
+ For i in-- do we have ls?
+ We can say print i.
+ And then we can say print ouch.
+ And it says, nope, I'm sorry, you can't do that.
+ Now, there is an issue with indentation.
+ If you type a tab character, how much indentation is that?
+ The longstanding tradition in Unix and Linux
+ is tab stops are every eight characters.
+ The longstanding tradition elsewhere
+ is four and so forth and so on.
+ One way to avoid the issue is never use tabs.
+ But if you're going to use tabs, my suggestion
+ is go with the Linux rule, which is a tab
+ stop at every eight characters.
+ So you can do semicolons instead.
+ So I could have written it this way.
+ If x is less than y, a equals b, c equals d.
+ So if you want to, you don't have
+ to put the stuff down here.
+ You can put it after the colon.
+ I suggest not using this style at least at first.
+ Just use the standard style.
+ I mean, this can be helpful sometimes
+ if the code is really cramped otherwise.
+ But otherwise, I wouldn't bother with it.
+ Character strings in Python look like this or like this.
+ You get your choice as to whether you're
+ going to use apostrophe or double quote.
+ And in some sense, it kind of doesn't matter.
+ And you can tell Python was designed in the Netherlands,
+ where they're halfway between people that like double quotes
+ and halfway between people who like single quotes.
+ But there are a few other little goodies
+ about character strings which you really
+ got to know if you're going to be reading
+ a bunch of other people's code.
+ First thing, you can put new lines in character strings
+ simply by typing return as long as you write the character
+ string this way.
+ This is three single quotes right next to each other.
+ And then you can say, this is a long string.
+ And it ends when you type three apostrophes
+ right next to each other.
+ So I could do something like this.
+ SSS equals-- I think I can even do this.
+ And then SSS is-- I could have written it this way
+ with backslash n in it and all that sort of thing.
+ But you don't have to.
+ You can just have an actual new line there.
+ And this sort of convention is used commonly
+ when you're printing out a long message or that sort of thing.
+ Double quotes are the same way.
+ You have three double quotes right next to each other.
+ You're starting off a long string
+ that can cross line boundaries.
+ And the string ends when you have three double quotes again.
+ There are also times when you may
+ have a long string that has a lot of backslashes
+ or special characters in them.
+ You can write it this way if you like.
+ You can say A, backslash B, backslash backslash C, D.
+ You can do it that way if you want.
+ But instead, you can do it this way.
+ And what did I do wrong?
+ Unterminated-- well, let's try that again.
+ A backslash A backslash B backslash slash SC.
+ Let's try that again.
+ Like that.
+ So notice what happened here.
+ A raw string does not have character escapes treated
+ in it.
+ So that first backslash between the A and the B
+ is just one backslash.
+ And then there's two backslashes between B and C.
+ It's not an escaped backslash.
+ And you can see that in the resulting string
+ that got printed out.
+ Python normally prints out cooked strings, not raw strings.
+ And in the cooked string, you have to put two backslashes
+ where you want one backslash.
+ And you need four when you want to.
+ All right.
+ Any questions about raw versus cooked strings?
+ This is all quoting, but you've got to get quoting right.
+ Yes?
+ So in the cooked one, it seems like it's giving you
+ the right number of backslashes you gave it.
+ But for the raw one, it's double.
+ Well, so let's put it this way.
+ If I type this, A backslash B, that's the same as typing this.
+ Those two strings are the same string.
+ It's just different notations for the same string.
+ So putting R, jamming R right in front of a string
+ says, please don't interpret backslashes here.
+ I just want the characters as is.
+ You said escaping versus not escaping.
+ I don't think any of it is escaping any of the backslashes.
+ Well, in that last line that I typed,
+ I typed two ends in A backslash backslash B.
+ There, one backslash escapes the other one.
+ So both of those strings are three character strings.
+ Question?
+ I still don't understand.
+ Why does having the R in the front
+ make the backslash double?
+ Because, well, Python's convention
+ is that putting R right in front of a string means I don't want--
+ well, let's try two of them, right?
+ If I type this, then I just typed in something
+ that caused Python to compute a four character string.
+ That string has A, then backslash, then backslash,
+ then B. And it printed out that four character string
+ using this apostrophe A, four slashes, and B apostrophe.
+ You read that, and you say, oh, that's a four character string.
+ So R in front of a string just changes
+ how Python interpreter reads that quoted string
+ in order for it to figure out what string we're talking about.
+ Yes?
+ A raw string can only be used for single quotes?
+ Well, the raw notation is just a notation
+ for entering the string, right?
+ Once you have the string, it's not raw or cooked.
+ Raw is just part of the syntax.
+ It's not part of the actual objects that you create.
+ Once you have the string, it's just a string.
+ Yes?
+ So when you print it out, it just prints--
+ It normally prints strings in cooked form
+ using a cooked syntax.
+ Yes?
+ Yes?
+ Does putting R before the string help
+ to avoid all escape sequences or just the backslash?
+ What other escape is--
+ I think--
+ When you did backslash N, would it then print--
+ Oh, yeah.
+ So if we did something like R backslash A backslash N B,
+ right?
+ That's simply an A followed by a backslash followed by an N--
+ all the backslashes turn into ordinary characters.
+ All right.
+ Other questions about strings?
+ One other thing I should mention about strings
+ is that there's a fairly handy operator called percent.
+ Now, when you apply it to numbers,
+ it works like percent does in C, right?
+ 100 remainder 9 is going to give you 1, right?
+ Because you divide 100 by 9, you get 11 with a remainder of 1.
+ But it also applies to strings this way.
+ You can think of it as doing like what printf does in C.
+ So you can say D and then S and G, right?
+ So these are the three printf formats.
+ And you can apply this printf format to the tuple 45 and goog
+ and 19.27, let's say.
+ And it returns the string, which is the result
+ that you would have gotten if you use printf
+ with that string format and then these extra trailing arguments.
+ So the percent operator can be very
+ helpful for generating formatted strings.
+ And then you can print them out later if you want.
+ All right.
+ Question?
+ [INAUDIBLE]
+ It'll normally print in cooked format, yes.
+ [INAUDIBLE]
+ Well, first off, your decision to use
+ a single quote or a double quote doesn't
+ affect whether the result is a string or not.
+ It's going to be a string either way.
+ And once you have a string, it doesn't
+ matter whether you typed it raw, cooked, or with single quote
+ or double quote.
+ It's still the same string with the same character thing.
+ So the fact that I used single quotes here
+ doesn't affect what string I got.
+ But what happened was is I applied the percent operator.
+ It's a binary operator.
+ Its left operand is a format.
+ And its right operand is the stuff you want formatted.
+ In this case, it's a triple containing the three arguments
+ that the format string refers to.
+ So the output of this will always be a string.
+ It'll always be a string.
+ The result of the percent used this way is always a string.
+ Question?
+ [INAUDIBLE]
+ Am I going to require you to memorize
+ all the format specifiers?
+ No, no.
+ Plus it's an open book exam, so you can just document it.
+ Print out the manual, right?
+ It'll be all right.
+ OK, other questions?
+ Yes?
+ [INAUDIBLE]
+ R with a backslash at the end.
+ So R-- I think there's a special case for something like this.
+ It doesn't like it.
+ Let's see what happens.
+ Enter.
+ It says, unterminated string literal.
+ And why is that unterminated?
+ Let's try this.
+ So even in a raw string, you can quote the character
+ that starts the string.
+ That's kind of an exception to the general rule
+ for raw string.
+ So that backslash prevented the raw string from ending,
+ even though it was also part of the raw string.
+ Sort of a special case.
+ OK, why don't we take a break, and we'll start up again
+ at roughly the hour.
+ All right, let's start up again.
+ So in Python, you compute with values.
+ And every Python value is an object.
+ It's an object-oriented language in that sense.
+ So even if I type, I don't know, 1 or 11, that's an object.
+ It happens to be an integer and all that sort of thing.
+ So each object has three things.
+ First off, it has an identity.
+ An identity is a unique value.
+ Every object has its own identity.
+ And you can test-- well, you can find out
+ the identity of an object by calling the built-in function
+ id, so id of any object.
+ So here we go, hello.
+ Well, all right, I didn't spell hello right, but whatever.
+ There's its identity.
+ It's a big integer.
+ One way to think about it, if you're used to C++,
+ is that the identity of an object
+ is that object's machine address.
+ We are running on a machine where the addresses
+ can get kind of big, but that's all right.
+ And if I ask some other string, hey, what's your identity?
+ It'll give me a different address, right?
+ Because it has to be a different object.
+ Now, notice if we do something like this,
+ we have two strings with the same value.
+ They're both SSSS, but they have different identities.
+ And if you're used to C++, you can say, oh, yeah,
+ that's reasonable.
+ We have two different pieces of memory.
+ And the first SSSS is stored in the first piece of memory,
+ and the second one is stored in the second one.
+ Question?
+ So when we do id on a variable that we haven't initialized,
+ we initialize it, and then we return its machine address?
+ Well, let's take a variable here that I haven't mentioned before.
+ It'll say, there's no variable by this name.
+ But if I assign something to this variable,
+ then I can ask, and I will find out its identity.
+ I'll find out the identity of the string
+ that I created by saying x, y, z.
+ Yes?
+ Why is the first thing we did id below have the same id
+ as the second [INAUDIBLE]
+ Oh, that's very good.
+ Oh, I didn't expect that.
+ Oh, that's very cool.
+ How did that happen?
+ Any suggestions?
+ Because I said, no two objects have the same identity, right?
+ And then yet there, we see what seems to be two objects
+ with the same identity.
+ What happened?
+ [INAUDIBLE]
+ Correct.
+ Python will delete objects if you don't need them anymore.
+ And if all we did with that H-L-L-O string is ask,
+ hey, what's your identity?
+ Python noticed, oh, you don't need this string anymore,
+ and it threw it away.
+ And therefore, later on, when we allocated a new string,
+ it just happened to have the same identity as the old one.
+ Question?
+ Does this happen really often?
+ Yes.
+ OK.
+ Python is really good about finding unused objects
+ and discarding them for you.
+ There's no delete or free operation in Python.
+ Delete and free are trouble, right?
+ What happens in C++ when you delete an object
+ and then try to use it later?
+ Your program crashes if you're lucky.
+ And if you're unlucky, it does completely bogus things.
+ Python, that problem can't happen.
+ Yes?
+ [INAUDIBLE]
+ Oh, correct.
+ That is, this ID is valid only for this program.
+ And in fact, it's valid only for the current state
+ of the program, right, because the IDs can be reused.
+ But yes, if I were to run the same Python again
+ and give it exactly the same input,
+ it might give me different IDs.
+ That's perfectly allowed.
+ Yes?
+ When I run ID with the same string over and over again,
+ it gives me the same ID.
+ But when you run it with the two S's,
+ it gives me different IDs.
+ Both answers are correct.
+ Is there no guarantee?
+ There's no guarantee, right?
+ All you're guaranteed is that if you have two objects
+ and they both exist, then they'll have different IDs.
+ But if one doesn't exist anymore and you
+ don't have fine-grained control over whether they exist,
+ then watch out.
+ All right?
+ So every object has an identity.
+ Every object also has a type.
+ And you can find out what the type of an object
+ is by using the built-in function type.
+ So we can say, oh, what's the type--
+ let's go back down here.
+ What's the type of ABCD?
+ Well, it's a string.
+ What's the type of 11?
+ It's an int.
+ So you should be able to now tell me
+ what will happen if I do this.
+ The type of type is, of course, type.
+ And you should also be able to tell me
+ what happens if I do this.
+ [SIDE CONVERSATION]
+ Trust me, it all makes sense.
+ It all hangs together.
+ And now you should be able to tell me what will happen if I do ID of type
+ or type of ID.
+ OK.
+ So let's try a few other things.
+ Oh, every object also has--
+ I almost forgot this-- a value.
+ So if you're used to C++, one way of thinking about it is the following.
+ You can think of a Python object as being represented
+ by a pointer to a piece of storage.
+ This is the ID.
+ It's that big, long integer.
+ It's just a machine address.
+ At the start of the machine representation of the object,
+ there's a little flag that says, hey, what's my type?
+ This is the type field.
+ That way, the interpreter, when it's handed some random objects
+ from someone ever, can go look at the type field
+ and figure out what the type of the object is.
+ And then the interesting part of the object is over here.
+ It's the value.
+ So a string object is represented like this when this first part says,
+ I'm a string.
+ And then this is H-E-L-L-O, newline, or something like that.
+ Right?
+ Now, once you have this idea, a lot of things about Python become easier.
+ But there's one thing I should mention.
+ These two things never change.
+ Once you have an object, its ID is not going to change.
+ Well, maybe the object will go away, but all right.
+ But as long as the object's around, its identity will be the same,
+ and its type will be the same, right?
+ The Python terminology for this sort of thing is it's immutable, right?
+ It's unchangeable.
+ The value of the object, however, might be mutable, and it might not be.
+ So this one is a little special, right?
+ This can be immutable, and it can be mutable.
+ Whether it's immutable depends on the type.
+ Lists are mutable.
+ If you have a list, you can go change its value.
+ Strings are immutable.
+ If you have a string, you cannot go and edit the contents of a string, right?
+ So this would be string, and this would be list.
+ Ints are immutable.
+ If you have an integer 27, there it is.
+ It's 27.
+ You can't change it to be 28.
+ It's always going to be 27.
+ Now, you may be thinking, wait a second.
+ If that's true, how can I do something like this, right?
+ I'm going to set i to be 27.
+ And now I'm going to set i to be i plus 1.
+ Haven't I changed that integer to be 28?
+ And the answer is no.
+ That 27 is still 27.
+ All you've done by this assignment statement, i equals i plus 1,
+ is you've computed a new object, 28.
+ And you've assigned that object, that reference to that new object, to i.
+ This is the standard way many--
+ in fact, I would say most scripting languages work.
+ They're object-oriented, and this is how they act.
+ This is how Elisp works, too.
+ I just didn't go into this much detail.
+ So it's a different feel from C++.
+ Any questions about the basic component here of Python?
+ Yes?
+ So what is C++ doing in this position and what do you do?
+ What does C++ do?
+ Well, I'm the worst person to ask about C++,
+ because the last time I wrote C++ code was in 1992.
+ And I ran away from it screaming.
+ It was the worst software project I've ever done in commercial life.
+ But C, you can ask me about C. So in C, typically, you just create stuff,
+ and you can go scribble over it all that you want to.
+ There are a few exceptions.
+ You can create constant objects in C that are immutable.
+ But if you're at the C level, you can go and scribble on this,
+ and there's not a problem.
+ Also, with C, you can see the pointer, right?
+ You have values of type char star that are distinct from the strings
+ that they point at.
+ You don't see that in Python.
+ In Python, there are no pointers in Python.
+ All you see are objects.
+ This is the way they're implemented internally,
+ but you never see the pointers to them.
+ Yes?
+ So when you increment i, you're, in fact, creating a formal object?
+ Correct.
+ Absolutely, right?
+ And Python actually internally has efficient ways
+ to represent small integers, so it's cheaper than it might sound.
+ But in principle, you're creating a new object.
+ Yes?
+ If Python has no pointers, how do you do stuff like pass by reference?
+ In Python, you pass objects to functions.
+ And I guess, from a C or C++ point of view,
+ that means you're passing everything by reference.
+ But you don't see the references in Python, so it doesn't matter.
+ Yes?
+ So there's plus and plus and plus plus, are they the same thing?
+ Yeah.
+ I just spelt it out the long way.
+ It's the same basic idea.
+ Question?
+ I'm a little confused.
+ So is the identity a pointer or a machine storage address,
+ or is it-- what exactly is the identity?
+ Well, you can think of the identity as being like the address of an object
+ in C or C++.
+ The difference is that once you have the identity, it's an integer,
+ and that's all you can do with it.
+ You can print it out.
+ You can compare it to other integers.
+ You can do arithmetic with it.
+ But you can't go from that integer back to the storage that it's pointing to.
+ You can't dereference the integer.
+ So that's why ID, which sort of acts like convert a char star to an int
+ and that sort of thing.
+ So it's a low-level operation.
+ It acts like that, but it's not dangerous the way it is in C++.
+ In C++, if you screw up with pointers, your program
+ will crash or do weird stuff here.
+ You can't crash because you can't get at the pointer.
+ All you can do is print it out.
+ All right.
+ Other comments about this core stuff?
+ All right, so let's see what we have else.
+ Oh, also, associated with objects, every object has this.
+ But most objects have something else.
+ They have attributes.
+ If you have an object O, then you can find out
+ what the value of its attribute called A is by using this notation.
+ This says, give me the attribute named A of the object O.
+ You can print it out.
+ And you can also assign to it.
+ You can say something like that.
+ This says, take the object O and make its A attribute to be 27.
+ Most objects also have methods.
+ If you have an object O, and you want to call a method on behalf
+ of that object, you do something like this.
+ This means call the method M for the object O,
+ and give that method the arguments x and y.
+ All right, so let's see if we can do a couple of things here.
+ I should mention-- OK, so let's see.
+ I should mention a couple of standard sort of expressions.
+ When you write this, is is an infix operator in Python.
+ And A is B is true when A and B are the same object.
+ This can be arbitrary expressions.
+ This could be something really long.
+ And it could be something really calm.
+ But the point is, we evaluate this expression.
+ We evaluate this expression.
+ And A is B yields true if they're the same object,
+ and false otherwise.
+ So we can do something like this, A, B, C, D. What's that?
+ Oh, that's our string x, y, z.
+ We can say A, B, C, D is A, B, C, D.
+ And that's going to be true.
+ Yes?
+ Is this the same as comparing their ID?
+ Correct.
+ You can think of it as shorthand for ID
+ of x equal equal ID of y.
+ Conversely, you can write a complicated expression
+ like this, and use equals equals.
+ And now it's complicated.
+ This compares the contents of the objects,
+ not their addresses.
+ That's a value comparison, as opposed to being a reference
+ comparison.
+ Yes?
+ Is there a way we--
+ sorry.
+ Let me rephrase my question.
+ Is there a specific default iterator we have in Python,
+ or is it based on the object we're using?
+ When you're comparing two objects?
+ Or for example, when you talked about iterators
+ earlier with our zip object, does the zip object
+ have its own specific iterator object?
+ Yes, it does.
+ But that's going far beyond what we've been talking about here.
+ Yes?
+ But you said no two objects have the same ID.
+ What's the point of having this then?
+ Well, I just showed you how it could be true.
+ So the point of having is is you want
+ to make sure that you have exactly the same object
+ on both sides of the is.
+ Because you're some method that gets
+ called in some complicated way.
+ And you're worried that the two arguments
+ happen to be the same object.
+ And in that case, you want to act differently
+ than if they're different objects.
+ That would be the argument for is.
+ Another argument for is, which is maybe less compelling,
+ is it's fast.
+ Is is fast, because it's just pointer comparison, right?
+ It's a single machine instruction plus interpreter
+ overhead.
+ Equals equals is not necessarily fast.
+ If you're comparing two really long strings,
+ equals equals can take some time.
+ So this is order one.
+ This is order n.
+ And for that reason, you might prefer to use is
+ if you know is is all you need.
+ All right, question?
+ I just tried [INAUDIBLE] interactive show.
+ I just tried a equals aaa and b equals aaa.
+ And I tried is on that.
+ I tried a is b, and then I tried to trip.
+ Wait, you tried a is b?
+ No, no, no.
+ I defined the variable a as a equals a is b.
+ All right.
+ Yeah, yeah.
+ And then I tried b to do the same literal [INAUDIBLE]
+ Oh, oh, how did that happen?
+ Oh, my goodness, yes.
+ I think it's basically because a and b
+ is having the same object, and this same object [INAUDIBLE]
+ They are the same object.
+ What Python has done is it's seen two instances
+ of the same character literal, and it's
+ decided to use the same object for both, which
+ it is allowed to do, because it's a constant.
+ And so it's doing constant sharing.
+ Yes?
+ Is this like with x86 or like assembly
+ where it could see two names with the same value,
+ and it seems like the same behavior occurring?
+ Yeah, the same sort of optimization
+ can occur in C++, right?
+ That is, in C++, if you write this in C--
+ let's make it C even simpler.
+ Whoops.
+ And see, this might return true, and it might return false.
+ It'll return true if the compiler looks at these two
+ constants and decides to allocate the same storage
+ for both of them, which it can do.
+ They're constants.
+ It'll return false if the compiler is lazy
+ and doesn't do that and allocates two copies.
+ Yes?
+ If the compiler is [INAUDIBLE] the two different things,
+ what really is the difference between is and equals?
+ If the components are the same, the compiler
+ is supposed to give them the same idea.
+ Because you can't trust the compiler to always do that.
+ And it could be something that you call read, say,
+ and it reads some string from a file or somewhere,
+ and it happens to be four As.
+ Will it then figure out that that's the same string
+ that you already have somewhere else?
+ Probably not.
+ All right.
+ Other question.
+ Yes?
+ So you said it did it because the string is [INAUDIBLE]
+ Yes.
+ But I think string is mutable, right?
+ Like, you can just say a bracket 2, but you can reassign--
+ You can say a bracket 2.
+ We haven't got to this yet, but all right.
+ But can you say a bracket 2 equals x?
+ The answer is no.
+ Strings are immutable in Python.
+ Yes?
+ If it did the same thing with a list instead of a string,
+ it would be false.
+ That's right.
+ It would have to be false because lists are mutable,
+ and you can't call us lists because they happen
+ to be the same value now.
+ Good comment.
+ All right.
+ Any other comments on these examples?
+ All right.
+ So one reason Python won and Perl lost,
+ and the other scripting languages have sort of lost,
+ is Python has a very good set of built-in data types.
+ You can define your own, of course.
+ But part of the motivation for Python, as I indicated earlier,
+ is that they didn't want you to have
+ to go through the hassle of defining all of your own types
+ and implementing your own quicksort
+ and all that sort of thing.
+ What a waste of time.
+ So all the standard sort of things
+ that you might want to have in CS31
+ are already built-in in Python.
+ So I'm going to take a quick tour through the Python types.
+ There's too many to cover them all,
+ but you should at least have a feeling
+ for the overview of at least the basic types that are out there.
+ The first type is the type of None.
+ There is a special value in Python called None,
+ and you can think of this as being sort of like the null
+ pointer in C.
+ So there's only one object of this type, and it's None.
+ It's the standard way in Python that you
+ indicate that there's not anything there of interest.
+ The second major category of data types in Python
+ are numbers.
+ There are several different kinds of numbers in Python.
+ The ones that you tend to run into the most often
+ are, of course, int and float.
+ Float really corresponds more to what in C or C++
+ is called double, but it's floating point numbers.
+ You also have Boolean.
+ Bool values, which are false and true, count as numbers.
+ False counts as zero, true counts as one.
+ So in that sense, Bool is sort of like the Boolean data type
+ of C or C++.
+ We also have complex numbers.
+ So you can write something like 3 plus 9j.
+ They use electrical engineering notation.
+ That's a single number, 3 plus 9j,
+ and all the electrical engineers in the audience
+ will know exactly what it means.
+ OK.
+ Any questions about numbers?
+ Numbers are immutable, and they should
+ be relatively straightforward.
+ The next major category of types in Python are sequences.
+ These are finite sequences of objects.
+ And some of the sequences are specialized.
+ Some are more general.
+ Some examples of sequence types that we've already seen
+ are string.
+ A string is a sequence of characters.
+ There is no character type built into Python
+ because we don't need one.
+ A string of length 1 is a perfectly good character,
+ so you don't need a special type for character.
+ It's just strings of length 1.
+ If you want to have strings of length 1, go to it.
+ We also have lists.
+ Strings are sequences where the components are all characters.
+ Lists are sequences where the components
+ can be whatever you want.
+ There's no requirement in Python that every value in a list
+ has to be the same type.
+ In fact, the very first example I gave you of a list in Python
+ was the one where we had an integer and a string
+ and a float all in the same list, right?
+ So you don't have to worry about the lists all having
+ to be homogeneous types.
+ We also have tuples.
+ Tuples are a lot like lists, except they
+ use a different syntax.
+ You write a list this way.
+ You write a tuple this way.
+ And tuples are immutable, whereas lists are mutable.
+ It's a big difference.
+ You can take a list.
+ You can change elements in the list.
+ You can grow the list.
+ You can shrink the list.
+ But a tuple, it's stuck.
+ Whatever it is, it is.
+ You can't make it bigger.
+ You can't make it smaller.
+ You can't change any of its elements, right?
+ The tuple is what it is.
+ Now, it could be that the tuple contains an object,
+ and that object itself is mutable.
+ That's OK.
+ But you can't change the fact that this tuple contains
+ that object.
+ That part is immutable.
+ Let's see, what else have we got?
+ We have other types.
+ I'll mention one other, buffers.
+ A buffer is basically, it's like a string, but it's mutable.
+ And you use buffers if you're not quite sure
+ what string you want, and you can fool around
+ with the buffer for a while, blah, blah, blah.
+ And eventually, you can convert the buffer
+ to a string pretty easily just by passing it
+ to the string constructor.
+ That's a fairly common pattern in Python.
+ There are other sequence types, but that should give you
+ a feeling for them.
+ Next major category are mappings.
+ Mappings are, in some sense, they're like hash tables.
+ Another way of thinking of a mapping
+ is it's sort of like a sequence, except its indexes are not
+ integers.
+ They're whatever character string that you like.
+ And the classic Python type that's a mapping
+ is a dictionary.
+ And I'll talk more about dictionaries later.
+ Question?
+ Is the buffer type in Python 3?
+ Did they yank it?
+ I think that's Python 2 only.
+ Oh, shoot.
+ That was one of my favorites.
+ What did they replace it with?
+ I don't know.
+ I was thinking about it.
+ They have a unique--
+ I liked buffer.
+ All right, forget about buffer.
+ I wasn't going to have you program it with it anyway.
+ But part of the problem here, though, is fundamentally
+ strings, you want to be able to mutate strings, right?
+ So a common way to do that is you just
+ have a list of characters.
+ And you can mutate the list of characters.
+ The problem with having lists of characters is it's too slow.
+ And that's why they used to have buffers in Python 2.
+ And I guess they have something more complicated in Python 3.
+ Yes?
+ [INAUDIBLE]
+ So mappings-- how should I say it?
+ You can think of sequences as being sort of functions
+ from integers to objects, right?
+ Mappings are functions that map from objects to objects.
+ So they're like sequences.
+ But instead of using integers to index them,
+ you use arbitrary objects.
+ But for dictionaries, which is the kind of mappings
+ most people use, there's a strong rule about that.
+ And we'll get to that later.
+ These objects have to be immutable.
+ They're mappings from immutable objects
+ to possibly mutable objects.
+ And I'll talk more about the mappings later.
+ Then the next major category of Python types
+ are the callables.
+ Callable values act like functions, right?
+ So if you have a callable value f, the way--
+ I mean, you can use it like any other object.
+ You can stick it in a list.
+ You can assign it to a variable, all that stuff.
+ But the way you sort of put it into action is you call it
+ and maybe give it some arguments, that sort of thing.
+ So anything that can appear here in a Python expression
+ is a callable.
+ So obviously, examples of callables
+ include functions and then methods.
+ A function is like a function in C or C++.
+ A method is a function that can be bound to an object.
+ And you can then use this sort of syntax to call it here.
+ We're calling this method, right?
+ Method, left paren, a bunch of arguments.
+ Classes, a class is a callable.
+ So if I-- I don't know.
+ I already did that here, right?
+ This means call the constructor for int.
+ Pass it this string as an-- ooh, that's not going to work.
+ Pass it this string as its argument,
+ and then the constructor for int will build you an int that
+ happens to be the integer 392.
+ So classes are callables.
+ We have others, generators, and that sort of thing.
+ There's lots more where this came from.
+ But this is the basic idea.
+ There are other forms of data types in Python,
+ but these are the major categories
+ that I'd like us to turn our attention to.
+ So you know about none, or at least you know now.
+ And you know numbers pretty well.
+ You know how they work.
+ What I'd like to next talk about is sequences.
+ And there's lots of different sequences,
+ but sequences all can support a certain set of operations.
+ So here are the sequence operations.
+ The simplest one is if you have any sequence s,
+ you can index it.
+ And sequences, since this is a computer science language,
+ you start indexing them at zero.
+ None of this start at one business.
+ That's for North Campus wimps.
+ We start sequences at zero.
+ So if you have a sequence of length n,
+ here is the zeroth entry, the first entry.
+ Here is the n minus first entry.
+ And of s sub i yields the i-th element of the sequence.
+ But there's an extra little goodie here
+ that you don't get in C++.
+ You're also allowed to index from the back end
+ of the sequence by using just minus one here.
+ And this is the minus second entry here, n minus two,
+ and so forth, and that's like that.
+ And then this would be the minus n-th entry.
+ And this is the one minus n-th entry.
+ Did I get that right?
+ Something like that.
+ So you can index backwards off a sequence.
+ And you'll often see in Python code
+ that looks like this when you want
+ to get the last element of a list
+ or the last element of a tuple.
+ That's very common.
+ So the rule for sequences here is
+ that i has to be less than the length of s
+ because we started numbering at zero.
+ And it has to be greater than or equal to minus the length of s.
+ Oh, and I guess I forgot to tell you.
+ There's an operation called length on a sequence.
+ It's built in, and it tells you the number
+ of items in the sequence.
+ Let's try something a little bit more complicated.
+ You can also do this.
+ This gives you a subsequence of the original sequence.
+ So if you think of the sequence as looking like this,
+ here's the i-th element.
+ Over here is the j-th element.
+ You get this subsequence.
+ Everything's starting with i and going up to but not including
+ j.
+ So i and j have to have the same sort of--
+ they have to fall in this range.
+ i should be less than or equal to j
+ if they're both non-negative, all that good stuff.
+ And the length of this value is obviously j minus i.
+ And we get that because we're insisting on zero origin
+ indexing all the time.
+ When you do this, when you compute this,
+ you compute a subsequence.
+ So it's as if you get a nice little subsequence.
+ All the values get copied into here.
+ Here is your subsequence.
+ And it's numbered up from zero through j minus i minus 1.
+ So just as a--
+ what does this do?
+ What does that expression do for you?
+ Yes?
+ I cut off the first character in the last.
+ Yeah, you get the subsequence by chopping off
+ the first and the last elements of the original sequence.
+ When is this an error?
+ If your sequence is empty, it's an error.
+ And if it has only one element in it, is it an error?
+ Yeah?
+ Let's try that.
+ So we try s equals 23.
+ And we say s of 1 minus 1.
+ We chopped off the first and last element of s.
+ And they happen to be the same elements.
+ OK?
+ So you can get empty sequences this way.
+ Yes?
+ [INAUDIBLE]
+ It includes i.
+ It excludes j.
+ But you can get empty subsequences
+ as a result of all this.
+ There's also this shorthand and this shorthand.
+ This means start at element i and go on
+ to the end of the sequence.
+ So it's as if you put length of s here.
+ This means start at the start of the sequence
+ and just go up to but not including j.
+ So it's as if you put a 0 here.
+ All right?
+ Other things that work on sequences are this operator.
+ This tells you the minimum element of the sequence.
+ If you have a sequence of numbers,
+ it will tell you the smallest number in that sequence.
+ And you can probably guess what this does.
+ That gives you the maximum element of the sequence.
+ Also, a fairly common operation that you
+ can apply to sequences-- in some sense,
+ this is something else, but that's all right--
+ is you can pass any sequence to the list constructor.
+ And it will give you a copy of that sequence in list format
+ as opposed to the original format.
+ So we can say something like this, list of A, B, C, D, E.
+ And that gives you a list of characters.
+ So far, I've talked about operations
+ that work on any sequence.
+ But there are some operations that work on mutable sequences,
+ only on mutable sequences.
+ And the basic one here, of course, is this one.
+ This changes the i-th value of the sequence s to be v.
+ It's just simple assignments.
+ It's like array assignment in C++.
+ Question?
+ Would min s and max s return none for an empty sequence?
+ Let's try it.
+ It says, there's no value here that would work,
+ so I'm going to report an error.
+ And also, if you give it a sequence full of things
+ that can't be compared, it'll throw an error as well.
+ You have to give it something that makes sense.
+ So this is the basic thing here.
+ And all the things we talked about over here work here.
+ So you can put a minus 1 here, and that
+ will change the last element of the sequence.
+ Obviously, if the sequence is empty,
+ it's going to be an error, all that good stuff.
+ You can also say this.
+ This changes a subsequence of i to be the sequence t.
+ So this is a more general operation than you might think.
+ What happens is, here's s, and you've
+ got i here and j there.
+ Over here is t, which is a different sequence, possibly
+ of a different length than this length.
+ When you're done, if this looks like aaa, bbbbcc,
+ and this is ddddd, the result looks like this.
+ s points to something where you still have the initial part.
+ And then here, instead of what you used to have,
+ you have ddddd, and then following that, you get cc.
+ So notice that the resulting s can change in length.
+ The length of s has changed to be
+ whatever it used to be plus the length of t minus j minus i.
+ So you can grow s or shrink s using this notation.
+ There are some commonly used variants of this.
+ You can say this, which is equivalent to the earlier
+ statement, except here, if you put the empty sequence here,
+ then you'd just be deleting everything.
+ Well, this just says, I just want to delete it.
+ I don't want to have to tell you that it's the empty sequence.
+ Also, this will probably run a little bit faster
+ than this will.
+ And as a special and important case, you can say this.
+ That simply deletes the i-th element of the sequence.
+ All right, question?
+ If you call the list operator on the sequence that
+ happens to be a list, does that spit out the same list?
+ It'll spit out a copy of the list.
+ But yes.
+ So then you can operate on the copy
+ without changing the original.
+ Yes?
+ Is there a restriction [INAUDIBLE]
+ Is there a restriction?
+ Well, so lists are mutable.
+ So you can do this stuff with lists.
+ Tuples are not mutable.
+ So you cannot do this with tuples.
+ It's not allowed.
+ Other comments on mutable sequence operations?
+ All right.
+ We have some more operations here that are lists only.
+ So even other mutable sequences don't necessarily
+ support these operations.
+ The simplest one here is append.
+ Append grows the list by one and puts
+ v at the new end of the list.
+ So no matter how long the list used to be, it'll grow by one
+ and v's value will be sitting here.
+ Now, you may say, well, that's just a shorthand way
+ of doing something that we could have
+ done with our other operators.
+ And I suppose we could.
+ But the key thing to note about this operation
+ is that it's fast.
+ How fast?
+ Usually, it's order one.
+ OK?
+ Occasionally, it'll get longer.
+ I mean, the way lists work internally in Python
+ is here's the list implementation.
+ You have an object here that basically says,
+ here are the values.
+ This is in use.
+ And then here's the size or the length.
+ But then you also keep track of how much is in allocated.
+ So the way append works on a list
+ is it just bumps the in use counter by one,
+ stores the value, done.
+ The only problem can be is if you run off
+ the end of the list.
+ You keep calling append and append and append.
+ And eventually, you run out of space.
+ In that case, we grow the amount of memory
+ that we have allocated.
+ We copy all the stuff across.
+ And then we grow it by one.
+ So occasionally, you'll get a hiccup.
+ This is important if you're using
+ Python to do applications where performance is really important.
+ You'll have to know about those hiccups.
+ But if you do the calculations, this actually
+ is a pretty good way to go in general, despite the hiccups.
+ You also have s.extend t, where t is another sequence.
+ This grows the list by the length of t
+ and then copies all the elements of t
+ into the newly allocated space in the list.
+ And it's going to be faster to call extend than to do
+ a for loop through that list t.
+ You can also do an s.countv.
+ This counts the number of instances of v and s.
+ So it returns a value somewhere between 0 and the length of s,
+ depending on how many matches that it found.
+ You can type s.indexv.
+ This searches sequentially through s for v.
+ And the first instance that it finds,
+ it returns the index of that value.
+ Or it returns a value error if it doesn't find it.
+ You can type s.insertiv.
+ This inserts v before the ith element of the list s.
+ So it's a more efficient way of doing stuff
+ that we've already seen how to do.
+ You can also do this.
+ s.pop(i), this returns the value of s.i.
+ And it deletes it at the same time.
+ So think of this as being delete s of i,
+ and then tell me what you deleted.
+ And this i is optional.
+ So you can just say s.pop, and the default value for i
+ is minus 1.
+ So this returns the last item in the list and removes it.
+ Now, a little bit of thinking may
+ help you to see this operation is always
+ going to be order one.
+ This is cheap.
+ And it's called pop because you're
+ treating the list like a stack.
+ You're treating the end of the list like the stack top.
+ And here you're popping the item off the stack
+ and telling me what the item is.
+ Where's the push operation?
+ This is push.
+ In fact, I would have called it push,
+ but it's too late to change the name now, and that's pop.
+ All right, well, let's see what else have we got.
+ We have s.reverse.
+ You can probably tell what that does.
+ That reverses the list in place.
+ And last but not least, we have the sort method.
+ This is what makes half of CS31 obsolete.
+ Yes?
+ [INAUDIBLE]
+ Well, if we have a list like-- when you say assignment,
+ here's 3, 9, 7.
+ What do you want to assign?
+ You want to replace something in it?
+ [INAUDIBLE]
+ Well, the easiest way is you do something like this.
+ x equals s, s equals t, t equals s.
+ [INAUDIBLE]
+ But notice, what I did not do here
+ is I didn't change any lists.
+ These assignments don't change any lists.
+ All they do is they change some local variables.
+ The lists are just sitting there saying, I'm not doing anything.
+ Now, if you wanted to actually pull everything out
+ of this list and put it into this one
+ and pull everything out of this list and put it into this one,
+ you're going to need something more complicated.
+ All right, question?
+ [INAUDIBLE]
+ How does this not return?
+ S.pop returns a value.
+ It returns the value that it popped.
+ So this is an expression that returns a value.
+ This thing doesn't return a value.
+ [INAUDIBLE]
+ They both return values, absolutely.
+ Other questions about lists?
+ Now, one other set of operators that I
+ don't have time to cover, because we've about
+ run out of time, are string operations, right?
+ You've already seen one in this lecture, s.split, right?
+ You can do something like this.
+ It uses this as a separator.
+ You apply it to a string.
+ It gives you a list of strings.
+ Question?
+ [INAUDIBLE]
+ This will error out the same way that min and max will error out
+ if you have items that are not comparable.
+ So we have a whole bunch of other operators for strings,
+ split, index, join, replace.
+ Look them up, because you'll probably
+ end up wanting to use them if you do serious Python
+ programming.
+ But they're all fairly straightforward string ops.
+ And next time, I guess we get to talk about mappings.
+ [BLANK_AUDIO]

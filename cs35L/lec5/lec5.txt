@@ -1,0 +1,856 @@
+ So today we're going to do Emacs, and kind of the theme here is sort of self-modifying code.
+ Or another way to put it is we've got an IDE that we can change.
+ IDE is short for Integrated Development Environment and Emacs is one of the oldest and simplest ones out there, so it's worthy of study.
+ If we're lucky, we'll also talk about things like character encoding. I'm not sure we'll have time for that.
+ So to recap, Emacs is an application, that is it's a single program that runs on Linux, it also runs on Mac OS, it runs on Windows and a bunch of other things like that.
+ So from one point of view, you have an Emacs app, it's sitting here.
+ And this app talks to you, that is it displays to a screen.
+ So here's your screen.
+ And you also talk to it. You send it keyboard and other inputs.
+ Mouse movements, etc, trackpad, all that sort of thing.
+ So you send it stuff and it sends you stuff back.
+ But it also talks to the rest of the world, not just to you.
+ This is you.
+ It also talks to files, that is pieces of persistent storage.
+ And it both reads and writes these files.
+ And it can also talk to other things. For example, it can talk to the network.
+ To some extent, it's a Swiss Army knife. It can do whatever you'd like it to do. There's a web server built into Emacs somewhere.
+ You can run it with meta x e w w u for Emacs World Wide Web or something like that.
+ And that web -- not web server, sorry, web client, it's not as good as Chrome or Firefox or that sort of thing, but it can do that stuff too.
+ So it's not particularly good at any single thing it does.
+ For example, I used to use Emacs to read my mail.
+ All right? And I quit because it wasn't as good as Thunderbird and other ways to read mail.
+ But if you want to, you can use it to read your mail, right?
+ So its strength is more that it's configurable and it can sort of be mutated to do whatever you want.
+ If you have a task that needs to be done, there's no existing app to do it.
+ Oftentimes it'll be easier to write a little bit of Emacs code to get Emacs to do it rather than to write your own app from scratch.
+ And for that reason, it's, you know, still somewhat popular amongst toolsmith aficionados.
+ All right. Now, that's what it looks like to the user.
+ And we'll talk about that for a while.
+ This is sort of the user's view. But I also want to talk at least briefly today about the implementer's view.
+ Because Emacs to some extent is not all that great a system to use unless you can hack on it and make it do something different.
+ That is, you become an implementer. And in this sense, it's a little bit different from many similar applications like, you know, browsers kind of do all this stuff, too.
+ But not too many people will reach into the source code of Chromium and change it to make Chrome work the way they like.
+ That's more common with a simpler and more configurable tool like Emacs.
+ From the insiders point of view. We have sort of the Emacs core, which I mentioned last time.
+ It's written in C.
+ Maybe a few other languages like Objective C and all that sort of thing. But for now, let's pretend it's written in C.
+ OK. And it's a relatively small part of the source code.
+ What it supplies, as I mentioned last time to the rest of the system, is it supplies a LISP interpreter.
+ This is a program that can read source code written in LISP and can execute it as if there were a compiler and all that sort of thing, except there doesn't necessarily have to be one.
+ So most of Emacs is written in E-LISP. E-LISP is an extension language for Emacs.
+ The whole point of an extension language is you have a software system that's very simple, doesn't necessarily do what you want,
+ but it provides a hopefully simple, easy to use programming language that will let you extend it in any direction that you like.
+ So if you look at the source code for Emacs, right, there is some stuff in here, you know, main.c and all that sort of thing and search.c.
+ Right. These are the low level primitives.
+ And because they're written in C, they will run pretty fast. Right. C code is about as close to machine code speed as you can get.
+ Right. And then there's a whole bunch of other source code here that is sort of higher level code.
+ That's written in E-LISP. So they will be, I don't know, sort of incremental search dot EL where EL is short for Emacs list.
+ So these are pieces of source code. And this is what you'll look at when you're editing Emacs, either directly or making your own module that you'll then plug into Emacs.
+ I should mention, though, that it's not as simple as looking at source code. That's certainly true for C. Right.
+ So for C or C++ or Objective-C or something like that, you're going to compile this in domain.o and search.o.
+ These are object files.
+ They're binary. They contain machine code and symbol tables and stuff like that.
+ It's eventually linked into the Emacs executable.
+ Something similar can happen for Emacs list, although it's an interpreted language. So in that sense, it's sort of like JavaScript. Like JavaScript, it has some optimization strategies that involve not only having sort of E-LISP code, but also what's called byte compiled code.
+ So you'll see something like this, isearch.elc. This is byte code.
+ What byte code is, is a machine independent representation of your LISP program, but done in a very compact and easy to interpret way.
+ So the source code might look like this. Define pi to be 3.14159 or something.
+ The byte code would maybe contain some bytes that look like this, you know, 42, 39, and then some representation of this number that's sort of an 8-byte quantity, right. So it'll be binary code that is more easy to interpret than the source code.
+ The idea being that you have a byte compiler, which of course is written in Emacs LISP, and you give it Emacs LISP source code, and it will generate byte compiled code suitable for your machine.
+ And then, you know, when you're loading this code and executing it, it'll run faster than if you did it from the original source.
+ Furthermore, recent versions of Emacs will go one step beyond that. They'll generate machine code from the byte code.
+ Perhaps on the flop. Just put it into memory. You won't modify the executable, but when the Emacs process runs, it will figure out what machine code is equivalent to the LISP code that you read.
+ The idea here is that we want our LISP code to run at maybe not as fast as C, but we want it to be not 10 times slower than C. We want it to be competitive.
+ So what's the point of having the intermediate form here? Why not just go straight from here to here?
+ Oh, well, the idea is that this is going to be even faster than byte code.
+ With byte code, it's a bunch of bytes, and, you know, the Emacs interpreter knows this means add and this means multiply, but the way that works is it has to load this byte, you know, it has a C program, part of its C program.
+ We'll load that byte and say, oh, we need to add the top two elements of the stack and push the result. And the problem is that, you know, in effect, you're doing instruction decoding in software, and that's going to be slower than having your ARM or x86 chip hardware do it for you.
+ And so although the byte code is going to be faster than interpreting the source code directly, it's not going to be as fast as machine code.
+ The advantage of this is speed. An advantage of this approach, though, is that it's portable.
+ The same byte codes will run on ARM, will run on x86-64, will run on RISC-V.
+ Whatever sort of hardware platform you care about, these byte codes will run because the program that interprets them is, you know, maybe written in C and has to be compiled for your machine, but it can read that byte code no matter what platform you're running on.
+ Right? So we get portability here, both source code and byte code, and our speed goes up as we head in this direction.
+ This is a fairly common pattern. So Emacs does this. Java does this. JavaScript does this. If you're running Chrome, Chrome will do this internally. It'll read JavaScript from the network.
+ It will compile, it will translate it into an internal byte code form. And then if you run your program often enough, it will translate that to machine code on the fly sitting in the browser.
+ Fairly normal way that software is built nowadays in scripting languages. I won't say every scripting language does this, but the high performance ones do. Yes?
+ What's the difference between -- oh, so this Emacs executable was built out of .C files. So this part is hardwired, right? It's not going to change as you're running.
+ So you get this from GNU central or wherever, right? Or from Red Hat or something like this. So in some sense, the executable, at least for any particular version of Emacs, you can think of it as being frozen.
+ Okay? And it's written in C, and it's like the C++ programs that you wrote in CS31. Whereas this stuff is more flexible, right? Because you can download code on the fly.
+ These .ELC files don't even have to exist when Emacs starts. You can create an ELC file later and then load it into a running Emacs, and you will be changing how it behaves. And that's just a normal thing to do.
+ This is how browsers work as well. Browsers are constantly downloading JavaScript code off the net and then executing it inside your browser. So there's a very similar approach here. Question?
+ Well, it's free software so you can make changes and recompile it yourself. I do that, but hardly anybody else does. It's uncommon, and most people won't expect you to do it.
+ Yes. It's just like if I say, well, you have to build a special version of Chrome. Well, you can do it, but nobody will want to do it. Yes?
+ Well, that's an interesting question. Let's take a look at the dependencies for the Emacs executable on my machine. There's a command called LDD. Have we told you about LDD?
+ Oh, well, all right. LDD is a cool program. So we'll start another whiteboard here. First off, there's a built-in command in Emacs, meta x exclamation point.
+ Here we go. Oh, no, no, no, no. What am I talking about? Meta exclamation point. We'll get there.
+ This says run a shell command, and you can type in whatever shell command you like here. So I can say, I don't know, echo foo. It's a silly one to write, and it will put the output of that shell command into the mini buffer at the bottom of the screen.
+ If the shell command has got more stuff than that, like, I don't know, cat, et cetera, OS release, or why not do tack instead?
+ Then it'll say, oh, it doesn't fit into the mini buffer. It'll create a shell command output buffer and put that to you.
+ Now, I'm going to run LDD this way, and let's run LDD on bin sh.
+ So this, in some sense, is the set of libraries, machine code libraries, that the shell depends on.
+ It depends on libc. That's the third line. That's the c library. That's actually the biggest library that it depends on.
+ It also depends on another library called libtinfo, which is short for terminal info. This is how the shell figures out what kind of terminal you have when you do editing commands.
+ And then it does a lib64ldlinux that says I want access to the dynamic linker. The shell might want to dynamically load some other stuff.
+ And then vdso, we'll save that for cs111. So here, in some sense, are all the machine code dependencies that the shell depends on.
+ Let's try the same thing for emacs. LDD user bin emacs.
+ And as you can see, it's a much longer list. These are all the -- how many lines is that? 169 lines.
+ So emacs is a bigger program. It has a whole bunch of stuff that it can do.
+ It can do stuff with, I don't know, pango kyro, which is a graphics library that was originally, I think, developed by apple but is now running on linux.
+ It has all sorts of other -- libz. That's the compression library. Emacs knows how to compress stuff, right?
+ So ldd will tell you for an executable what sort of machine code libraries this executable will need in order to start up.
+ And emacs needs a ton. That was kind of an aside, but hopefully a useful one.
+ Other comments about this architecture? yes?
+ Oh, yes. In fact, ldd will not output a line if the library is missing.
+ It actually goes and checks to make sure that they're there.
+ If one of those libraries is missing, emacs won't start up.
+ You'll try to run it and you'll get some sort of initialization error, blah, blah, blah.
+ It will basically refuse to run your program. All those libraries have to be there.
+ So if you install emacs, your package manager has to make sure that the prerequisite libraries, which there are, you know, 160 some of them, are all installed.
+ All right. So that was a bit of an aside, but that's all right.
+ Did I tell you about this one?
+ So this is sort of run a shell command.
+ You can say any command you like here and then type return.
+ There's a couple of variants of here. First off is you can type control U meta exclamation point.
+ And that acts similarly, except it takes the output of the shell and inserts it in the current buffer.
+ Whatever buffer you're currently in, it'll put it there.
+ So if we do go back to, say, our top level buffer.
+ This is the scratch buffer, right? I can type control U meta exclamation point.
+ And then here we can say, i don't know, cat os release or et cetera os release, right?
+ And it will have inserted the output of that cat command into the current buffer.
+ There's a related command called meta pipe or meta vertical bar.
+ You type it's the same syntax as before, except here the input to the command is specified by the current region of the buffer.
+ Right? So in effect, this means sort of apply this shell command with the current region as standard input.
+ And in order to understand how this command works, we have to do another aside talking about the region.
+ Every buffer, when you go visit it in your Emacs, there'll be a bunch of text like this.
+ Right? A buffer contains, you know, a series of characters. And in some sense, you can think of the buffer as just being a big long sequence of characters.
+ The most important place in the buffer is where is your cursor?
+ So you may be highlighting this character right here on your screen.
+ This is the character, I don't know, C. And this location is called point.
+ Point is the position of the cursor.
+ To be absolutely precise about it, point is right here, just in front of the character that the cursor is highlighting.
+ The second most important place in the buffer is one that is not necessarily highlighted on your screen.
+ It's called mark. Mark is some other place in the buffer.
+ That you've marked in the buffer. And by mark, I don't mean that you've actually gone and, I don't know, scribbled on your screen or anything like that.
+ All I mean is that you've told Emacs, hey, here's where I want the mark to be. Right?
+ So if this is where the cursor is and this is where point is, perhaps mark is down here because we've marked this spot.
+ Right? In that case, everywhere between point and mark is called the region.
+ So all these characters, all these characters, and all the characters up to here are the region.
+ So we can do that here by saying, okay, here's where point is, I'm going to make it, I don't know, this underscore between antsy and color.
+ I can set the mark with control at sign.
+ Sometimes control space is an easier way of doing it. At sign and space do the same thing when you press the control key.
+ This is really the same character. I mean, technically, it's this character in C.
+ It's the character or byte with all bits off. It's character zero.
+ It's the character that you use to null terminate a string. You can type it at a standard keyboard and use it using either this or this.
+ All right? And so I will type it. We'll do a control space here. And notice it says mark set.
+ So I've now put the mark right in front of that underscore.
+ Now, when I move the point, depending on how you've configured your emacs, you will see it will highlight the region, that is, everything between mark and point.
+ If you put point before the mark, well, it's still everything between mark and point.
+ Question?
+ They are equivalent. All right? Now, one way to think about it is the following.
+ The ASCII characters each have an internal code in the range 0 through 127, decimal. Or if we're doing it in octal, they will be 000 up to 377.
+ What the control key does, when you hold down the control key on your keyboard, you can think of that as being roughly equivalent to ending whatever the character code that you were going to send with this number.
+ Let's say and of 17. Is that right? I'm thinking hexadecimal. Sorry. It should be 37.
+ You take whatever character you were going to type and you make the top bits all 0.
+ Now, it turns out that space is equivalent to 040, right? Octal.
+ So when you take 040 and end it with 37, well, 040 looks like this. 037 looks like this.
+ When you end them, you get, of course, all zeros.
+ So when you type control space, you're sending a null byte to your application.
+ There was a question. Yes, go ahead.
+ How do I do what?
+ Oh, how do I clear the mark?
+ I think what I can do is I can say control space and then control space again.
+ So if I say control space, control space, then there's no mark anymore.
+ Yes.
+ Okay, so right now the cursor is at that underscore inversion ID, which means point is just before that underscore.
+ It's after the end and it's before the underscore.
+ Yes.
+ Well, let's take a random ASCII character.
+ What's exclamation point, right?
+ I will put an exclamation point up at the top line here.
+ And type control -- whoops, that's not what I wanted.
+ Control x equals. Let's write that one down, too.
+ Control x equals means display what character immediately follows point, right?
+ Display info about the character at point.
+ And by that point, I mean the one immediately following point.
+ So it's displaying information about the character exclamation point, which is octal 41.
+ So if you type control exclamation point, you'll get the character 1, right?
+ 41 ended with 37 is going to give you a 1, which is equivalent to control A. Why?
+ Because if we look and see what an A looks like --
+ oh, I did too much there, so control x equals -- character A is octal 101, right?
+ And if you take 101, octal, binary, that's 00100001.
+ You end that with 37, you get this character, right?
+ Character 1, the character with binary code 1, which in C you can write it this way, right?
+ That's the ASCII character with value 1. Yes?
+ 37 is just -- to some extent it's just in your head.
+ Or another way of putting it is you can think of it as when you hold down the control key,
+ the electronics in your keyboard will apply this mask to whatever character that works next.
+ Actually it doesn't work that way. It's more complicated than that.
+ But implicitly that's what it's doing.
+ It just changes the meaning of all the characters that you type to ignore their high order bits.
+ They're all zero. It just sends zeros instead.
+ [ Inaudible question ]
+ All right. In order to type any character into a buffer,
+ including the characters that would normally be commands, you can type control q and some character.
+ That means insert character no matter what.
+ So I can type here, I'll go to the start of the buffer, I'll type control q, control a.
+ And what Emacs has done here is it's put a control a into the buffer.
+ It represents that single character with two characters.
+ The caret followed by an a. It puts it into a funny color to remind you or to inform you that, hey, hey,
+ this isn't two characters, caret followed by a.
+ It's a single character, control a, with code one.
+ And we can go put point on it like this.
+ And I can type control x equals.
+ And notice it says, hey, this character is a control a.
+ And its decimal value is one, its octave value is one, and its hexadecimal value is one.
+ Question?
+ [ Inaudible question ]
+ Oh.
+ This means run the shell command, take whatever output it generates, and insert it into the buffer at the current location.
+ So i can run it, say, here at the start of second line, i'll type control u, meta, exclamation point, and say, i don't know,
+ print f, percent s equals percent d, something like this, xxx, 27, right?
+ And it will take the output of that print f command, which is xxx equals 27, and insert it into the buffer at the current spot.
+ Question?
+ [ Inaudible question ]
+ Control -- oh, control x equals, you mean?
+ So control x equals basically asks emacs to tell you what the current character is.
+ And by current character, i mean the character at point, the character right after point.
+ So we can pick any character here, we'll move point to it.
+ Why don't we pick, i don't know, the double quote character, right?
+ And type control x equals, and it will say, oh, that's the character, double quote, and it's decimal 34, octal 42, hexadecimal 22.
+ Question?
+ [ Inaudible question ]
+ Oh, well, yeah, that -- so here's what i'm going to do.
+ I'm going to start up a shell, all right?
+ So here's an interactive shell.
+ I used meta x shell to get it.
+ I'm running a shell under emacs.
+ I can put any command i want in here, and one command that's in the shell, the shell has a print f thing, so you can say something like this.
+ Let's try something else, right?
+ And then we can say some string, abcdef, and some number 1.9999, something like that, right?
+ And so what it does is it acts like the c or z++ print function.
+ It formats that string.
+ Every time it sees percent something, it picks another argument later on and places it into the string, and then it prints the result.
+ In this case, percent expanded to abcdef, the percent g says, oh, please print a floating point number, but, you know, only to six digits of precision or something.
+ So it said, okay, i'll print 2.
+ And here i'm doing it in the shell, but i can run, you know, this escape -- i'm sorry, control u meta exclamation point and do that basically inside any buffer and update that buffer accordingly.
+ It just takes the output of whatever command i put here.
+ You have to type a command here and then return.
+ So it takes the output of this command and inserts it into the current buffer.
+ Now, there are other ways to do that, right?
+ That is, you can run the command, put the output into a file, go edit that file, cut and paste out of that file, and all that sort of thing, but this is a lot more convenient.
+ Question?
+ I was trying to describe in some sense what the control key means.
+ And if we -- i don't know, if you were trying to implement a keyboard from scratch using diodes and transistors or whatever, right, you could actually do it that way.
+ You hold down the control key and it ands, you know, whatever the other keys are saying, it says, no, no, no, i'm going to put out zeros for everything but the bottom five bits, right?
+ And that's what control means.
+ Yes?
+ What emacs does is it records all of your keystrokes and stuffs them into the dribble file.
+ If you did a keystroke that involved some weird control sequence, it can put that control sequence into the dribble file, yes.
+ Other question?
+ Yes?
+ Well, we have to be careful. If i just type control x here, right, then i've told emacs i want to do a command, right, because control x starts a command in emacs, right?
+ If i want to actually put a control x into that shell buffer, i'm going to have to do something else.
+ So here i'm going to type control g, control g basically says, give me out of here, and now i'll type control q, control x, and now i've typed a control x at my shell.
+ What bash is going to do with that control x is it's probably going to yell at me, it'll say, there's no command called control x, what are you trying to pull, right?
+ But, you know, i can do this if i really want to.
+ Yes?
+ Why not?
+ No, that's -- all right. So let's see if we can find -- i think i have an ascii table here somewhere.
+ There we go. All right. So here's a table of all the ascii characters.
+ The -- every character has two values here. The one on the left is the -- it's octal value, and the one on the right is what it looks like when you print them, right?
+ At the top of the screen we have octal, at the bottom of the screen we have hexadecimal, but i'll just focus on octal.
+ Now notice, there's an interesting pattern here. The first quarter of the characters in ascii are not something that you will see on your keyboard, probably.
+ Those are the control characters. The first four rows are control characters.
+ That is, the first -- there's eight characters per row -- the first 32 characters in ascii are control characters.
+ I can go down each one of those control characters and tell you what it means, right? 000 is the null byte. You already know about that.
+ Control A, which is 001, is the SOH ascii character, which stands for start of header, and you really don't want to know what a header is, and so forth and so on.
+ Character 040, octal, which is 32 decimal, is the space character. Very common character. It's kind of halfway between a control character and something else, right?
+ And then there's one other control character, 177, at the very end. That's all bits 1.
+ Well, the bottom 7 bits, ascii is a 7-bit code, is just 1.
+ And the del character stands for delete, all right?
+ So when you hold down the control key, whatever other key you type basically just migrates up to the appropriate sort of doppelganger in the first four rows, right?
+ So you can see, for example, control A. A is 101. You hold down the control key, it turns to a 1.
+ B is 102. You hold down the control key, it turns into a 2.
+ Square bracket. Where is square bracket?
+ It's 133. You hold it down, and it turns into 033, which is escape.
+ So control open square bracket is equivalent to typing escape.
+ Most keyboards have an escape key, but if you have a keyboard that doesn't have an escape key, you can still type escape by holding control open square bracket.
+ All right. Now I hope you can see why control space is the same as control at sign, all right?
+ Look at the bit patterns. You take space, you hand out everything, you get a null byte.
+ If you do an at sign, which is 100, and you hand out the top bit, you still get a null byte.
+ It's also the same as control accent grav, 140.
+ Yes? I have a file in my junk directory called ASCII.
+ No, I mean, the ASCII table, you can look it up on the net, right?
+ Go to Wikipedia and look up ASCII, you'll find this table there somewhere.
+ It's a standard. It's been standardized for decades, and this is what the characters mean.
+ All right. Other questions about characters? Yes?
+ Meta key turns on the top bit, right?
+ And that means the character is no longer an ASCII character because ASCII characters are only zero through 127.
+ Oh, did I say 377? That's a mistake.
+ Go back in your notes. Change that to a one.
+ Oh, boy, I would take points off for making a mistake like that in exam.
+ All right. So other comments about this?
+ To some extent, I feel like I'm giving a different lecture than I intended to.
+ But there's lots more where this came from. I don't know.
+ Here's what I think we should do. We should go back talking about Emacs, and then there's a lot more to say about characters other than this stuff.
+ All right. So where were we?
+ Let's see. I think I've told you about control X what, two, right?
+ If you say control X two, that means split the buffer horizontally.
+ So that gives you more room. And you can also say control X one, which says just give me one buffer.
+ Or you can say control X three and split your window vertically.
+ And, you know, both of these both of these are pointing to the same buffer.
+ I'm just displaying the buffer in two different frames here.
+ So, you know, if I edit this, notice that both copies are being edited.
+ And if I type control X two here, and, you know, it's just there's only one buffer.
+ There's only one sequence of bytes that I'm looking at. I'm just looking at it with different sort of windows.
+ And I can type control V to page down here without affecting the other views.
+ All right. Now I'm going to type control slash, which is the undo key.
+ Oh, very important. Probably haven't mentioned that. Undo.
+ And you can, you know, look at our table to figure out what control slash really is.
+ All right. Let's see what else do we want.
+ Oh, sometimes you might want to say, you know, let's get rid of the window that we're currently in.
+ So control X zero made that window go away.
+ The buffer is still there. Control X zero doesn't affect what you have in your files or your buffers.
+ It just affects what you see on the screen. Yes.
+ Well, if we look here, control X.
+ Oh, there's various ways you can undo, but I find control undo is so common there.
+ You can, you know, there's like three or four different keystrokes to get it, but I find control slash to be the easiest thing on my keyboard.
+ Other comments. All right. So let's do a few more of these.
+ So let's see. We did control X zero.
+ Through control X three, I think we did, and they all sort of affect what you see on your screen.
+ You can also do.
+ Let's see, control.
+ X control B.
+ And I'm now going to do a control X zero.
+ Control X control B lists your buffers.
+ And the idea here is that, you know, we've only been using a max for just a few minutes here.
+ But once you've been using it for a while, you'll be visiting lots of files and running lots of commands.
+ And eventually you'll get a whole bunch of buffers, maybe more than you really want.
+ You'll lose track of what you've got. Well, you can use this sort of control X B thing in order to figure out what your buffers are and what to do about them.
+ And notice that we are now in buffer list mode.
+ As I mentioned last time, Emax is a mode full editor.
+ So here, if we start typing, we're going to be issuing commands in which we are editing the list of buffers that Emax has.
+ All right. So in effect, we're reaching into Emax's brain and we're editing the brain. We're changing what buffers are available.
+ So, for example, if I say, oh, I don't need any more help here, I can say typed K, which says I'd like to kill that off that buffer.
+ And at the end, I type X and it makes all the edits that I wanted to do actually happen.
+ I've deleted that particular buffer. There's lots of other commands you can do in this mode.
+ To find out more about the mode, you can type control H M, which means, you know, help about this mode.
+ So when we're in buffer list mode, if we type control H M, it says, oh, you're in buffer menu mode and here's a whole bunch of stuff you can do.
+ And it goes on and on and on. If we go to that other buffer control XO type VVVV, it will tell you what it's up to.
+ The basic idea here is that Emax is almost too eager to tell you how it's implemented.
+ It really wants you to know what its insides look like and it wants it to make it easy for you to edit what it's about.
+ Right. And that's part of the theme of having a single IDE that's easily tailored.
+ All right. What else do we have?
+ I don't know. I can type control X K, which is short for kill this buffer.
+ This is good for just deleting a buffer that you're currently at without having to go into buffer edit mode.
+ So if I just type control X K because I figured I don't need the help and so now the help buffer has gone away.
+ What is the what?
+ So the mode is the way Emax will interpret the keystrokes and commands that you type.
+ Right. Since it's a mode full editor, if I, you know, in a normal buffer, if I type K, I'll insert a character K here.
+ Right. It's just a text buffer. But here, if I type K, that means mark the completions buffer for deletion.
+ You plan to kill this buffer.
+ So the mode basically tells Emax how to interpret commands that you type or mouse movements that you make and that sort of thing.
+ And every window can have a different mode or every buffer can have a different mode, I should say.
+ Question.
+ Yeah, but here the idea here is you can kill off a whole bunch of them.
+ Right. So I've marked three buffers for deletions here and I can change my mind.
+ So, for example, if I am here and I type backspace, I can say, oh, I don't didn't really want to delete that.
+ So I can think about the deletions I want to do or the other things I want to do with buffers before I actually do them.
+ And then when I'm ready to actually do them, then I type X and all the things are actually done.
+ So it's not an instant edit. It's sort of plan the things that you want to do.
+ Question.
+ Unfortunately, not undo works for text, but it doesn't work for major things like deleting buffers or deleting files, that sort of thing.
+ Good question. Be a nice feature to add. Yes.
+ Control X three takes the current window and splits it vertically.
+ So you see the same thing in both halves of the split. But now you can scroll around in one without affecting the other.
+ All right. I'm going to type control X one so that we just have our one one one window of visible.
+ Let's see what other things do we have? Let's go and edit a file here.
+ So control X, control F and we'll go into the C S 35 L directory and we'll edit a file sample dot text.
+ I wondered if there was a sample dot text, so I type tab and it said there wasn't.
+ And now we can type control X I which says insert a file.
+ So we could, in effect, Emacs will read the contents of any file we like and put it into this buffer.
+ So I'll read the password file. Why not?
+ All right. So here's the password file for this machine which lists all the users that are allowed to use the machine and then some meta information about each machine.
+ It doesn't actually contain the passwords.
+ There's a little X where the passwords would what it used to be because that was kind of a security hole to have the passwords actually sit in the password file.
+ But we can now do I don't know I can type control X control Q.
+ Control X control Q basically says make the current buffer read only or actually more specifically it says toggle read only mode.
+ What that means is now if I try to edit this buffer they'll say I'm sorry this buffer is read only.
+ It doesn't mean the file that I'm editing is read only just means the buffer is.
+ So you can do this to a buffer if you want to protect yourself against inadvertently modifying it which is something that I find that I tend to do with Emacs and other systems a lot.
+ I'll type a straight character into a buffer I didn't mean to but that means I've now edited it you can make the thing read only and if you want to make it read right again you can type control X control Q.
+ Now we've disabled read only mode.
+ You can even do this to a file of the contents of a file that you don't have permissions to so I'm now going to type control X control F et cetera password.
+ This is a file that's owned and jealously guarded by root.
+ So if I visited which I just did you might still say you know this file is right protected you can't edit it right and if I try to edit it now.
+ You know I want to you know give a root permissions right so let's try to delete this it'll say I'm sorry you can't delete any characters I typed control D to delete the R and nothing happened.
+ But I can type control X can control Q now.
+ And now it says read only mode disabled in current buffer.
+ And now I can edit the password file contents right so I can change this route to be a good.
+ And then I'll go down to a good and change it to be.
+ A good origin or something like that right.
+ So I've now edited the buffers copy of the password file.
+ But I haven't actually changed the file because I haven't saved my work right when you're editing a buffer it's just sitting any Max Ram.
+ So now when I save my work.
+ And type control X control S to save.
+ It'll say wait a second.
+ That password is right protected.
+ You want me to try to break into the system.
+ All right.
+ So I'll type yes.
+ And it'll say no no this one it's too hard I can't really do it.
+ Now how could Emacs right to a right protected file owned by somebody else.
+ So can't change the permissions.
+ Any thoughts about how you actually do that yes.
+ Yes but then I'll need the root password here.
+ So that you know anything there is there are some times when you can do it.
+ For example yes.
+ Your process if you are a process your process ID is stuck to you.
+ The only way that you can sort of execute code in a different process is run a different command.
+ Your process is stuck yes.
+ Well we can for example take this buffer and copy it into a file somewhere else and save it ourselves and so that will work.
+ What I was thinking of one more suggestion yes.
+ I was thinking of the following.
+ We take et cetera password.
+ We rename it to et cetera password old.
+ And then we create a new file et cetera password that we own and then write to that.
+ Wouldn't that be cool.
+ Now why if you tried to do that on cease net don't but if you did.
+ What do you think would happen.
+ It wouldn't work.
+ Because in order to do this you need right permission on et cetera.
+ To rename a file or to create a file in a directory you need right permission in that directory.
+ And if we go look at the et cetera directory.
+ I'll type control x d et cetera right.
+ And we look at the permissions on the et cetera directory.
+ So this is the directory listing for et cetera the first line for dot is the permissions on et cetera itself.
+ Notice that it's owned by root.
+ Root can write to it that w there says root can write to it nobody else can.
+ And since I'm not root I can't write to et cetera so I can't play that trick that I was suggesting.
+ Yes.
+ Yes to move a file from directory a to directory b you need to write a because you're removing the directory entry there.
+ You also need to write to directory b because you're adding a directory entry there.
+ Yes.
+ No you just need to be able to read the file in that case.
+ But then the point is that the system looks in et cetera password to figure out who you know who can log in and who can't.
+ So if I write its information somewhere else that's not going to help me break into the system.
+ At least not directly.
+ All right any other questions one more question then we'll take a break. Yes.
+ Yeah if it's your own file it will start playing those games because you have the ability to change the permissions on your own file.
+ All right let's take a break and we'll start up again in seven minutes or so.
+ All right let's start up again. I wanted to talk a little bit more about the region.
+ OK so you know I can sort of type.
+ Control space here.
+ And then move the cursor around like this.
+ And I have a region here. This is the et cetera directory. I'm in DURED mode which means if I type a regular character like X or K or something I won't be editing this file in the usual way.
+ But what I can do is I can in effect copy and paste out of this buffer and into another buffer and the mark and the region is the sort of standard way that you can do copy and paste.
+ So to review you can type control at sign to do a mark. This sort of marks wherever you are or control space they're the same character.
+ But another thing that you can do is you can type meta W.
+ This means copy the region.
+ Into you can almost think of it as being like a clipboard except in emacs the emacs ease for clipboard is the kill ring.
+ It is a basically a ring of separate pieces of text that you've copied or killed in the past and you can access that ring later on if you like.
+ So what I'm going to do here is I'm going to type meta W.
+ And now I'm going to type control XB switch to another buffer XXX and type control Y.
+ Which is short for yank.
+ This yanks the most recent thing that you've copied into the current buffer.
+ And you know I can type control Y again and I'll be yanking multiple copies of that thing off the kill ring.
+ I thought it would actually delete it from the kill ring. It doesn't.
+ It just it yanks it basically doesn't change the kill ring but it puts a copy of the first thing on the kill ring into the current buffer.
+ All right so this is a way you can do copy and paste without using your mouse or your trackpad or that sort of thing.
+ And with practice it's actually faster than using a mouse because you don't have to lift your fingers off the keyboard you can just let your fingers do the walking.
+ There are other ways to do this sort of thing. You can use the mouse and then you know you can mix and match. You can use the mouse to cut and paste.
+ You can use the mouse to copy and you can use control Y to yank and all that sort of thing. So there's lots more where this came from.
+ You can also say here's the region in this buffer and now I can print the delete key. Ordinarily the delete key just deletes the character that you're on.
+ But if you're if you've sort of created a region the delete key will actually just delete that whole that whole region.
+ Let's see what else. If you're wondering what you just did and that occasionally happens to me.
+ I'll put my elbow on the keyboard or something like that. You can type meta x view lossage.
+ And this outputs all the puts all the commands that you've executed into the help buffer so you can see all the stuff that we've done in this.
+ This instance of the max all the way back to when we started it up. Yes.
+ All right. So if i do command control k you mean.
+ So here let's do a control k.
+ And i'll do it right here. Oh this is a read only buffer. Let's go back to our other buffer.
+ And I'll go right to this three here. I'll type control k control k says kill to the end of the current line.
+ So it doesn't care what the region is. It just deletes all the characters from point to the next new line.
+ And those characters are put into the kill ring. So I type control k there.
+ I can go down to here and I can type control y and I can recover the characters that I just killed.
+ You can also delete words delete lines delete paragraphs. There are commands for all that as well. Yes.
+ Louder please.
+ Yes. So what you can do and I'll go to the start of the buffer here so you can see it.
+ Is you can type control y and then if that's not the thing that you wanted to grab you can type meta y to get the previous thing.
+ And meta y again to get the previous previous thing and so forth and so on. So if you keep typing meta y over and over again you'll go backwards and backwards in the kill ring until you get the thing that you actually wanted to insert here.
+ Yes.
+ Well you can try that out. I'll just go down here and type y control y and you can see that we've gone backwards in history.
+ Question.
+ It's somewhat similar. It oars the top bit.
+ Right. So it turns the most significant bit in the byte on.
+ Right. And this explains why you can do something like meta control space.
+ What character is that. Well control space is all bit 0 meta says no make the top bit on so meta control space is one followed by seven zeros which is you know one hundred and twenty eight and that's.
+ Question.
+ Oh that's an interesting philosophical question.
+ Right. Are characters signed values.
+ Right. Or are they unsigned.
+ Right. So suppose you want to do something like this. There's
+ there's a built in constant in C called min care which you can get by including limits dot h.
+ And there's another one called Max care.
+ So the question is is this value minus one twenty eight and this value one twenty seven or is this value zero and this value is two fifty five.
+ Different implementations have different opinions on this question.
+ So if you want to write portable C code your code has to work regardless of how it answers that question.
+ So whether the top bit is the sign bit or not depends on the implementation on cease net.
+ This is the answer.
+ Right. And in fact that's probably more common it's more popular for characters to be signed but it's not required and there are implementations where it's not true.
+ Right. Other questions about these characters.
+ Yes.
+ It's possible to do that. To be honest I never do it.
+ Why is that.
+ I find it difficult to think of the kill ring in my head I lose track of what's in it.
+ So normally if it's not that like the top two or three things I don't really I don't you know I start putting stuff into temporary buffers instead.
+ But there are ways to do what you said. I just I don't know what they are offhand.
+ There's still a way to get to them. Yes. All right.
+ Let's talk about one other command.
+ Control x h which is short for mark whole buffer.
+ I'll run it here. Control x oops control x h.
+ So what it's done here is it's put mark at the start of the buffer.
+ And it's put point at the end of the buffer because it's fairly common for people to do things like oh let's just delete the whole buffer and I'll put it somewhere else.
+ Well in order to do that mark the whole buffer and then type you know control w to delete it or meta w to copy it right.
+ So this command although it sounds like a fairly sort of you know dumb command to have is one that I use all the time.
+ Now what I'd like to do is take a little tour through this command.
+ That is first off how do I find out more about it. Well one way is you can ask emacs more about any sort of set of keystrokes that do something by typing control h k.
+ This means help ray keystroke.
+ So I can type control h k control x h and this will give me help about what control x h does.
+ So let's try that control h k right and then control x h and it says oh if you type control x h here's how that's implemented it'll run this command mark whole buffer.
+ And here's the documentation for mark whole buffer and this documentation will actually go on for some time at this point I can type say control x zero to make that other buffer go away.
+ And you know we can see a full screen full of sort of advice about what control x h does.
+ Okay and all right we did that right but I want to know more.
+ And the way I'm going to find out more is notice in the line the second line of the help.
+ It not only documents what control x h does it tells you where it's implemented where's the source code.
+ And to be honest I'm not a you know I kind of prefer reading source code the documentation don't you.
+ You're supposed to say yes it's a software construction class right documentation is for wimps.
+ If you really want to understand things read the source code now to some extent I'm joking here and to some extent in fact when you go on to you know I don't know take the software engineering course the professors there will be how saying no no no no pay no attention attention to Dr.
+ Eggert right documentation is really important it's important that it be right and you know they're correct and all that sort of thing but in reality documentation doesn't always exactly match the source code.
+ Because people didn't get around to updating it or they forgot to and that sort of thing and when in doubt you know which thing is actually running it's the source code right so let's go look at the source code.
+ OK and we'll do that by just you know paging over.
+ Mousing over to simple dot el and pressing enter and here's the source code to the command that gets executed when you type control x h.
+ So the idea here is that Emacs commands are implemented either in C code directly or enlist.
+ Most of them are implemented in less than any max list and in particular that's how control x h is implemented so Emacs commands for now let's pretend they're all implemented in less right.
+ So if we want to see how this mark whole buffer command works we've got to look at the list source code so I'll type control x one put this on the screen and then I'll type meta zero control l put it at the top of the screen and here's the source code.
+ From the top of the screen down to maybe two thirds of it the source code for the mark whole buffer command.
+ It's implemented as an Emacs list function and the way you define an Emacs list function is with that funny definition thing right now I could go into all the details here about you know what push mark and interactive mean and all that sort of thing but before I do that.
+ We need to go into a little side session to talk about LISP.
+ LISP is the second oldest programming language that's still in widespread use the oldest is Fortran LISP was invented in the 1950s as well.
+ It was originally invented in order to do symbolic artificial intelligence and it's still used for that reason.
+ People who developed Emacs liked doing AI.
+ And they said why don't we do AI inside our text editor, because it'll be so much more fun that way.
+ I'm joking a little bit but not entirely. But, so to some extent what we're going to do is a little bit of an introduction to, I don't know, symbolic AI technology.
+ And so LISP here is sort of the extension language for Emacs.
+ But it's also built on top of an AI substrate.
+ We're not talking machine learning AI. We're talking symbolic or logical AI but it's still that that sort of feeling about it.
+ And this substrate was originally designed as sort of a scripting language for AI.
+ So you do maybe the very CPU intensive stuff and machine code.
+ But you do sort of the strategizing and planning in LISP.
+ And that's essentially how Emacs is still built right. The CPU intensive stuff is written in C.
+ But the planning or the scripting part is done in in E-LISP.
+ All right. So let's take a brief tour through LISP.
+ LISP is in some sense an object oriented language.
+ When you compute in LISP you're dealing with objects that, you know, are represented in memory by a piece of storage.
+ And then you have a reference to that piece of storage and all that sort of thing.
+ But at the LISP level you don't worry about pointers at all. There's no pointers.
+ Instead every value that you compute internally may be represented by a pointer to a piece of storage but you think of it as just being an object.
+ So we have in LISP objects we've got numbers.
+ And there's two kinds of numbers in Emacs LISP. There's integers
+ and floats.
+ OK. The floats correspond to C doubles.
+ The integers don't correspond to anything that's in C because they are unbounded in length.
+ Right. There's no maximum value.
+ Actually that's not true.
+ If you keep computing larger and larger integers eventually Emacs runs out of memory or runs out of something else.
+ So there is actually a maximum but the maximum possible integer is so big that we don't need to worry about it.
+ So we can compute in Emacs. I'm going to go to our scratch buffer.
+ And let's do a control X H and a control W.
+ So I've now erased everything in the scratch buffer.
+ And you can compute a you know an integer by you can compute anything by just typing it and type control J in the scratch buffer.
+ It will take the preceding expression and tell you what the value was.
+ That was an integer.
+ Here is a really big integer.
+ And you type it type control J and says oh yeah that's a pretty big integer.
+ You can do simple computation this way.
+ Multiply two three four like that.
+ And now I'm typing control J at the end and we get as you see a considerably longer number.
+ It's so long that it didn't fit on the line.
+ So Emacs put a backslash at the end of the line to warn you that that line is actually continued.
+ So no practical limit on integer length.
+ Floats however work pretty much like C double.
+ So they have the same you know rounding problems that you have come to know and learn and know and love in other languages.
+ We also have strings.
+ And a string in Emacs uses a syntax very similar to that in C.
+ So you can say something like this.
+ We have symbols.
+ Symbols in Emacs they're objects remember we're listing an objects but you can think of a symbol as being an atomic object.
+ It's not equal to anything except itself.
+ Yes there is eventually.
+ Right I mean you can say exp t two to the thousand right and I think that works.
+ But if you say that was two to the one thousand.
+ But if you say exp t two to the one thousand.
+ And then we'll do exp t two to that.
+ Now this may take a while.
+ And it said overflow error so eventually there's a limit right I mean but how often have you needed this number anyway I mean be realistic about it.
+ Did I tell you how to get out of the debugger.
+ I guess not let's do that over here.
+ Control close square bracket means exit the debugger.
+ Emacs has a debugger that you can use to debug list code and all that sort of thing.
+ I don't want to talk about it now so I'm going to get out of it.
+ OK.
+ Hopefully you never run into it because you have no bugs in your code.
+ All right.
+ So where are we strings of symbols.
+ You can think of symbols as being unique objects.
+ They're never equal to anything except themselves.
+ And they're uniquely identified by their name.
+ I can sort of you know I can write an expression that computes an integer this way.
+ So here I've computed as a an integer if I wanted to compute a symbol I could do it this way.
+ The leading apostrophe there is quote quote is a very important character in Emacs list.
+ It basically says don't evaluate the next expression.
+ Just give it to me the way it is the way you write down a symbol in Emacs is it looks like an identifier in C except symbols can contain many characters that are not allowed in C.
+ For example minus signs are OK in symbols and that sort of thing.
+ So you know we can say something like this a b c minus d e f right.
+ And that's the single symbol a b c minus d e f.
+ All right. Every symbol has a name and I think you can get it with symbol name.
+ Let's try that.
+ All right. So the name of a symbol is simply the string that is the characters that went into that symbol.
+ All right.
+ So let's try a very important symbol.
+ And that's this symbol.
+ Nil all right nil is a general purpose symbol in Emacs list. It stands for nothing. It's used as when you kind of don't want to pass a value to a function by convention nil means hey there's nothing here.
+ You can treat it as a boolean value nil counts as false. Everything else counts is true. You can treat it as the end of a list. It's sort of the jack of all trades value internally.
+ Nil is implemented as all bits zero.
+ Right. So it's efficient at least in Emacs list.
+ But you don't necessarily have to worry about that efficiency matter when you're writing code. Just know that nil is the jack of all trades. It's it's the closest thing to a null pointer in c plus plus.
+ But it has meanings other than just no pointer.
+ Question.
+ Oh, if I don't put the apostrophe.
+ Well, let's try that. So I'll do this.
+ And I'll try it down here.
+ And I'll type control J. And it'll say, oh, this is a variable that doesn't have a value. So it's an error.
+ Right. So ordinarily, if you just write down an identifier in Emacs list, that means give me the value of this identifier.
+ Right. If you don't want to evaluate the identifier, you just want the symbol put an apostrophe in front of it.
+ Question.
+ Well, the last part is right. The only thing that is equal to nil and by equal here, I mean equal in the sense of pointer comparison is nil itself.
+ Right. So it's it's an object oriented language in the sense that everything is internally represented by pointers or something like pointers.
+ And the there's a built in function called EQ.
+ So I'll type control close square bracket here and you can call the EQ function and you can ask it, you know, is.
+ A, B, C, D, E, F, E, Q to zero.
+ Right. And it'll say no, nil is stands for false.
+ Right. Because those two objects have different addresses.
+ Right. Question.
+ Correct.
+ All right. So we could do something like this. I'll take it down here.
+ I'll just do the same thing over again. I'll type control J here.
+ And what quote in front of an expression means is don't evaluate this expression.
+ I just want it as is without evaluating it.
+ So in some sense, quote is more important to Emacs than the double quote character is in C, because in C, all you can do is quote strings.
+ But an Emacs or an elist, you can quote arbitrary data structures and you can just stick them in your program and it'll work.
+ All right. So that's symbols.
+ The next thing is data structure.
+ A very important data structure is pairs, also called cons.
+ A pair is just an object that contains two other objects.
+ And that's all it is. Right.
+ So you can create a pair by calling the cons function.
+ So I can say cons three four here and I'll get a pair and I would draw it as a picture this way.
+ It's just an object that contains those two numbers. Right.
+ But textually, the way Emacs represents arbitrary pairs is something that looks like this, where X is the first element in the pair and Y is the second element.
+ And there are spaces around the dot. You need spaces, otherwise you might think it's a floating point number or something.
+ Now, the way Emacs builds lists is out of pairs.
+ That's why pairs are such an important data structure. If you want the list, I don't know, ABC, you diagram it this way.
+ Then I suppose we could write it this way.
+ But this is I mean, this is correct. It's just so awkward. Nobody likes to write it in that way.
+ Instead, we use this shorthand.
+ So it's a list of three items. That's what it really is.
+ It's built out of three pairs. Here's the three pairs. You can see the three dots and the parens around them.
+ But we write this abbreviated shorthand to stand for what's really going on.
+ All right. And as one extra generalization, suppose you have something that looks like this. A, B, C.
+ But this thing here is not the empty list. It's a pair that contains something here that's not nil.
+ Well, you can write it this way. All right. These are sometimes called improper lists because they're not really lists.
+ A true list ends in nil, but these improper lists end in something else. But this is entirely equivalent to writing this. A dot B dot C D like that.
+ This is just a shorter way of writing that. Question?
+ Yeah, it's kind of a pain because it represents so many things. So it represents the empty list.
+ It represents false. It represents an object that's not there where you might have expected it.
+ It's sort of like it's like the jack of all trades. There's nothing here object.
+ Right. So if you have a list and it's nil, that means the list is empty.
+ Right. And over here, you know, this I could have written this way, that is nil has another name.
+ These two things are the same. They're entirely equivalent notations.
+ Question. Scheme tries to be simpler and cleaner than LISP. This is kind of messy by comparison.
+ So, for example, in Scheme, this is not true because they think it's just too confusing.
+ But for now, if you want to know more about Scheme, take 131 when I'm teaching and I'll tell you way too much about it.
+ OK. Question.
+ Well, if I just write this right, ABC minus def and type control J, it'll say there's no identifier declared that way.
+ So that's an error. But if I quote it, then it doesn't evaluate it and it gives me the symbol.
+ But I can do something like this with a list as well. Right. Here's ABC.
+ I've quoted it. So this is a program that if you execute the program, you'll get that list ABC.
+ I didn't have to build the list that way. I could have built it this way. Cons A, cons B, cons C, empty list.
+ Like that gives me exactly the same thing because I'm building the same list.
+ So I typed what, three, four, five like this? 105. Oh, that's all right. Yes. So in some sense, numbers and strings are what we call self-quoting.
+ You don't need to put an apostrophe in front of them. They simply evaluate to themselves.
+ So I can type 105 and evaluate it and it'll just give me 105.
+ I can say quote 105 and what's going to happen here?
+ It'll say, oh, take that number 105. Don't evaluate it. Just give it to me.
+ Well, that's also 105. So numbers and strings are self-quoting, but symbols are not and lists are not.
+ Pretty much everything except numbers and strings.
+ You're going to have to quote it if you don't want it to be treated as code to be executed.
+ All right. Question.
+ Three, which, oh, this one here? Yeah.
+ So so, you know, this I can create by calling cons of three, four.
+ Or I could have said apostrophe three, four like that.
+ Either one of these expressions will yield this pair.
+ Well, this is a cons in which it's a pair. The first item in the pair is the symbol A.
+ The second item in the pair is this list. So pairs can contain any objects that you like.
+ This just happens to be a pair which, you know, the first item in the pair is the first item in the list and the second item in the pair is the rest of the list.
+ That's a very common pattern. And this is true not only in Emacs list, but lots of other programming languages do lists this way.
+ Yes. If you don't, let's try it without doing it. Three, four like this and type control J.
+ It'll say, you know, this is an error. It's just not going to work at all.
+ I've never written a program like that. Right. But, you know, there's all sorts of trouble you can get into.
+ Right. Suppose you say this. Fubar.
+ It's going to say, I don't know, what's this function foo? You never defined a function foo, right?
+ So there's, you can, I mean, it's, you know, it's an AI language, but it's not super smart.
+ It's not going to figure out what you meant when you gave it a function that it's never seen before.
+ Question?
+ But why didn't you put an apostrophe for ABC?
+ Oh, here? Oh, because here I was trying to tell you the data that this, this is a piece of data.
+ Right. And if you try to print it out, this is what we'll print.
+ Right. So to some extent, what's going on here is Lisp is using kind of the same notation for data that it uses for code.
+ Right. So, you know, here we have, you know, code. I'm going to multiply, you know, three times 56.
+ Right. And I can execute that. But I can also do this.
+ And I'll get a list with three items in it.
+ You know, the star symbol, so that's a symbol, and then the second item in the list is the number three, and then the third item in the list is 56.
+ So we're using almost the same notation for program as for data.
+ And that's one of the strengths of Lisp, because you can represent code so easily in data.
+ It's easy to write AI style programs that generate more code, because code is just representable as data.
+ And then you can, you know, compile those and run those. And that's a very common technique in, in a Lisp and other Lisp-like languages.
+ Question.
+ So if we wanted to quote the string like this.
+ Not at the top level.
+ There might be some reasons but that would go beyond this. That's a good question.
+ You might want to do that when you're doing macros and that sort of thing, but I don't want to get into macros.
+ Question.
+ All right, so we haven't talked about how to set variables, but at the top level, there is a built in.
+ This is not a function. This is a special form called set_q. You specify the name of a variable.
+ And then the value that you want.
+ All right, and it returns the value of the variable you just set, but afterwards.
+ If you say, I want to know the value of that variable, you get to use it right so you have variables and assignment in Emacs Lisp, just like you do in ordinary languages, and the names of the variables are symbols.
+ You can also, yes, go ahead.
+ If you've slurped in code from your enemy.
+ And then try to execute it, what's going to happen?
+ And in Emacs, the answer is, don't do that.
+ Emacs is fairly simple, and it doesn't have a lot of paranoid, let's check for bad code and all that sort of thing.
+ I mean, it will catch obvious things, but a determined attacker can work its way through it.
+ So you have to trust, to some extent, the code that you run in Emacs.
+ And in that sense, you know, it's like C++. Yes?
+ Can you unset a variable? Yes, I've offhand forgotten how to do that, but there is a way to do that.
+ Yes, you can make them unbound again so that if you try to use them, you'll get an error message again.
+ Now, in addition to this, you can also define your own functions.
+ With syntax that looks like this.
+ So we'll give it two arguments and that sort of thing.
+ So this defines a function with two arguments, and when you call the function, it executes whatever elist code is inside the body of the function.
+ So we'll do something like this.
+ Star of x, star of y, y, right?
+ So this function multiplies x by y squared and gives you the result.
+ So if we execute this, we have now defined the new function, and now we can call f with, you know, numbers like 12 and 10.
+ And it should give us 1200, right? 12 times 10 squared.
+ And that essentially is what's going on when we type control xh.
+ Let's go back to control xh.
+ And control hk control xh, right?
+ And now we'll go to the source code for control xh.
+ So this function is executed whenever you type control xh.
+ The way Emacs works is you type a character and Emacs says, oh, I need to sort of call a function that sort of corresponds to that character or that character sequence.
+ And for this particular character sequence, this is the function that gets executed.
+ Now, there's some extra stuff going on here that I should talk about.
+ First off, notice that the body of the function contains several function calls, not just one.
+ And in elist, that just means you execute the functions in sequential order.
+ So we'll execute the declare, then the interactive, then the push mark, then the push mark, and then the goto character.
+ Second thing, this function takes no arguments.
+ You can tell that by the open paren, close paren in the first line.
+ Third thing, that declare and interactive.
+ All right, what's going on here?
+ First off, interactive tells Emacs this function is a command.
+ Commands are functions that can be executed from keystrokes.
+ Ordinary functions can't be done that way.
+ To some extent, this is for Emacs's own protection.
+ It doesn't want you binding random functions to random keystrokes.
+ It only wants to have functions that you've declared to be sort of things that can be run interactively.
+ All right, next one, that declare thing, that's sort of advice to the Emacs interpreter.
+ It says this function is intended to be run only from the keyboard.
+ Please don't call this function from some other Emacs function.
+ That's what that declaration means.
+ All right, now finally we get to the actual code that it runs.
+ Push mark means take the current value of the mark and push it onto a stack.
+ We can find out what that function does here by just going to that function,
+ typing control H F which says please tell me about a function.
+ You can either type the function name or it figures it out.
+ And then here's what the push mark function does.
+ It's a list function.
+ It takes three arguments.
+ They're all optional, so if you don't pass them, they're nil.
+ And it says set mark at this location and then push the old mark onto the mark ring.
+ There's a mark ring as well as a kill ring.
+ We don't need to go into the details.
+ But basically what we're doing here is we're setting the mark at the current location.
+ And then what do we do?
+ We push mark point max.
+ We put the mark at the very end of the buffer.
+ Point max is a function that returns the maximum possible value for point,
+ that is, the highest location that you can reach in the current buffer.
+ We can find out more about point max by saying control H F, point max,
+ and it says return the maximum permissible value of point.
+ The positions in buffers are marked by integers from one to N
+ if it's an N character buffer, and point max returns that value N.
+ Getting back to the source code, we can see we've now marked the maximum point of the buffer,
+ and then we say here go to care mini buffer prompt N, right?
+ Well, that's a little of a hack.
+ I would have said go to care point min.
+ They found a few cases where this is what you want rather than point min,
+ but the basic idea is we've put the mark at the end of the buffer
+ and we've put point at the start of the buffer,
+ which means now the region is the entire buffer,
+ and that's what control X H is supposed to do.
+ It's supposed to make the region the entire buffer.
+ The source code has told us extra little details that only apply in some circumstances,
+ but if those circumstances are what you cared about, the source code will tell you.
+ Now, if you wanted to sort of deal with this, right,
+ there's another function I wanted to tell you about,
+ so I'll type control H F global set key, right?
+ So what this function does is it binds a keystroke that you type to a command, right?
+ There's fancier ways of doing it.
+ I'm giving you the old simple way of doing it,
+ but the basic idea here is that if we want to, we can decide,
+ so let's do, let's change what happens whenever we type,
+ I don't know, global set key.
+ I don't know, let's try open square bracket, right?
+ And we'll want open square bracket to be say mark whole buffer.
+ What will happen when I execute this function is that the open square bracket keystroke will now,
+ instead of what it used to do, which is insert itself, it'll run that function.
+ So I'll type control J here.
+ Now I'll type an open square bracket, and notice we've marked,
+ we now have sort of affected how key Emacs behaves.
+ We've changed what open square bracket means.
+ Now, I don't recommend running that particular global set key command
+ because you need to type square brackets to get your work done,
+ but you can put character sequences into there.
+ And, you know, you can decide that control meta open square bracket
+ means mark whole buffer, and then that might be something useful you want to do.
+ So this is how you can change how Emacs behaves.
+ You can affect it by writing your own code and defining your own keystrokes.
+ Yes?
+ So you're saying, oh, why did I need the apostrophe there?
+ If I didn't have the apostrophe there, it would wonder,
+ what's the value of the variable mark whole buffer, and it would give me an error message.
+ I just want the symbol there so that global set key can see the symbol and say,
+ okay, that symbol names the function that I want to call.
+ Question?
+ You can use the same command for several different keystrokes.
+ That's allowed, right, because, you know, maybe you want also,
+ I don't know, close square bracket to also mean mark whole buffer.
+ That's allowed.
+ What you can't do is to have the same key mean two different commands.
+ A key can only mean one command at a time.
+ All right.
+ We'll talk more about it next time.
+ Let's take this offline.

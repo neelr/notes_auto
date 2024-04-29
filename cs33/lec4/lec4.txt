@@ -1,0 +1,2103 @@
+ All right.
+ Good morning.
+ This is a shirt that students gave me
+ in this class a couple of years back because
+ of the repeated questions of what does Leak do again.
+ We'll see how many we get.
+ But anyway, I should have worn this last time
+ to be more appropriate.
+ But today, my kids have something where if I wear it,
+ I get to embarrass them more.
+ So there's kind of a sweet revenge on that.
+ Anyway, CPU memory.
+ We've talked before last time about the overall structure
+ of this machine that we're programming.
+ We have an instruction pointer that
+ tells us what the next instruction is
+ to pull out of memory.
+ Once we get that instruction, we execute it,
+ meaning we allow that instruction
+ to affect the architectural state.
+ If I have an add instruction, it's adding a register,
+ maybe a memory value, could be two registers.
+ But it's adding two operands together
+ and overwriting one of those operands.
+ If I have a negate operation, it's flipping the bits
+ and adding one.
+ It's affecting the architectural state
+ of the machine with respect to the register file
+ and the memory itself.
+ If I have an add instruction that writes to--
+ let's say it writes to RAX.
+ So it's changing that value.
+ And then I have a subtract instruction that reads from RAX.
+ This is a data dependency.
+ If I trace the data flow of the program,
+ I would say that this instruction feeds
+ a value to the subtract.
+ The subtract is dependent on the add.
+ This is a data dependency.
+ It's the data that is flowing between the two instructions.
+ This is different than what we're
+ going to cover today, which is a control flow dependency.
+ The control flow dependency affects the setting of RIP.
+ Normally, if I have instructions like add and subtract,
+ I just do the next instruction in memory.
+ And finding that next instruction is not trivial.
+ But we're going to kind of ignore that for our purposes
+ as programmers.
+ That's a problem for the architecture
+ to have to figure out.
+ If you have multi-byte instructions of variable
+ length, where does the next one start?
+ Where does the current one end?
+ But let's assume that we can just grab the next one in memory.
+ What's different about today's lecture is we're
+ going to look at cases where instructions change the RIP
+ to something other than the next instruction in memory,
+ or have the potential to change that.
+ So today, we're going to talk about control flow as a whole
+ and get into jump instructions, conditional moves,
+ and then look at some larger C-level primitives,
+ like if statements, while loops, or for loops,
+ or do whiles, and switch statements,
+ and see how they get translated down into assembly language.
+ The bigger headache is going to be procedure calls.
+ That also changes RIP, but there's some other baggage
+ that comes with that, so we'll do that next week.
+ So this week is lighter weight change of control flow.
+ There's another piece that I added here
+ that we didn't talk about last time,
+ and that's condition codes.
+ Condition codes are one-bit registers
+ that are written by the last arithmetic instruction
+ that executed on the processor,
+ with the exception of LEAK.
+ LEAK is all kinds of monkey wrench in this thing
+ because it doesn't do everything the way
+ the rest of the arithmetic instructions do.
+ So LEAK does not change the control codes,
+ but other arithmetic instructions
+ will affect these control codes.
+ These are one-bit registers that tell us
+ the nature of the last arithmetic instruction,
+ and we use them as kind of a one-two punch
+ to be able to implement certain types
+ of control flow activity.
+ So we're going to talk more about that,
+ but the basic idea is if I want to say if something,
+ and then conditionally execute code based on the something,
+ based on the condition that I'm evaluating,
+ the one-two punch is I have some instruction
+ that does an arithmetic check,
+ and then I have some instruction
+ that looks at a condition code.
+ And we'll talk about these two instructions more,
+ but I just want to give you the overall flow.
+ The two instructions that work together
+ is an arithmetic setting of condition codes,
+ and then a condition code check.
+ So look for that pattern as we start emerging through.
+ All right, the condition codes are listed up here.
+ There's four of them.
+ And again, single bit.
+ So let's look at carry flag, or CF.
+ The condition code carry flag, or CF,
+ will look at the last arithmetic computation that was done,
+ and it will set its bit to a one
+ if there was a carry carried out
+ for an unsigned computation.
+ That basically means that there was overflow.
+ There's also an overflow flag
+ which is set when there is a signed computation.
+ So there's a slightly different approach to evaluating this
+ because of signed versus unsigned interpretation.
+ For a signed interpretation, you would have overflow
+ if your polarity of your operands are both one way,
+ so they're both positive or both negative,
+ and the outcome or result had a different polarity.
+ You could detect overflow in that way
+ for addition, for example, or multiplication.
+ Carry is I had a result
+ which wrapped around that modulo addition.
+ So if I had an arithmetic operation
+ where I kept adding beyond Umax
+ and I wrapped around back to zero,
+ that would be an instance of a carry flag.
+ Zero flag is if the result was zero,
+ the output of the flag is one.
+ If the output is anything other than zero,
+ the output is a zero.
+ Signed flag just checks the most significant bit
+ of the computation that was accomplished
+ to tell you if you had a one or a zero.
+ Okay, so with these particular sets,
+ and you can see some details here,
+ the key point is these are implicitly set.
+ If I did add just by itself here
+ without the subtracting context,
+ if I just did an add,
+ all four of these bits would be set to some value.
+ What they were set to will depend
+ on the actual computation that took place,
+ but there is nowhere in the add instruction
+ where it mentions the carry flag, the signed flag,
+ or any of that.
+ It will just be set implicitly.
+ How you use these now, so the arithmetic operation
+ sets the condition codes, carry flag, zero flag,
+ overflow flag, and signed flag.
+ Okay, so we've set those four bits.
+ How we use them now is gonna be
+ this next instruction that follows up,
+ and it's gonna consume it like a data dependence.
+ It's gonna consume that value,
+ but from the condition code register.
+ In addition to having arithmetic operations that can set it,
+ we have some instructions that explicitly
+ set the condition codes, and nothing else.
+ I think this is one point of confusion
+ that people get hung up on, so let me try to explain.
+ We have a limited resource in our register file.
+ We only have 16 general purpose registers,
+ one of which is the stack pointer,
+ which is gonna be used for another purpose
+ we haven't talked about,
+ so really only 15 that are really up for grabs.
+ If I have only 15 registers,
+ and I wanna preserve them for operations
+ that need those registers to reduce latency,
+ I don't wanna just create values for no reason.
+ If I'm doing an if statement,
+ where I'm comparing if a is less than zero,
+ and that's all I wanna do,
+ I don't have to save the result of this anywhere.
+ I'm just creating this comparison
+ to know whether or not I'm gonna execute what's inside here.
+ This is different than if I say x equals y plus z,
+ and then I use x later, I'm actually using the data value.
+ The result of the comparison here
+ is really just true or false.
+ Everybody with me?
+ Okay.
+ So, in that case, I wanna have operations
+ that just set the condition codes
+ without setting the register files at all,
+ and the first one is the compare queue, CMP queue.
+ It takes two sources
+ and does not have a register destination.
+ It only sets the condition codes,
+ and what it does is it performs subtraction.
+ So subtract queue versus compare queue
+ do exactly the same operation,
+ but compare queue doesn't write to the register file.
+ It throws away the result of the subtraction.
+ It only sets the condition codes.
+ So you often will see compare queue
+ as this arithmetic operation that sets the condition codes
+ followed by something like a branch instruction,
+ which we'll talk about in a second,
+ where the branch will use the results of the compare
+ and nothing else will use it.
+ In the case of a compare queue,
+ it shows on the bottom how it sets
+ the various conditional, the different condition codes,
+ but as an example, if I were to do a compare queue
+ of A and B, these are my two sources,
+ whatever they might be.
+ One could be a memory, one could be a register,
+ it could be two registers, whatever,
+ and they were equivalent.
+ The subtraction would lead to zero, everybody see that?
+ And so in that case, the zero flag being set
+ might tell me that A equals B.
+ So if my check internal here was, hey, does A equal B,
+ I would use a compare queue and then use the zero flag
+ to do whatever it was that I wanted to do,
+ whether it was branch or conditionally set a value
+ or whatever, yep.
+ (student speaking off mic)
+ (student speaking off mic)
+ Yep, so in all these cases,
+ you won't have both operands for memory, that's correct.
+ All right.
+ If I wanted to check to see if the result of the subtraction
+ was less than zero, right, one way, for example,
+ to do the A less than zero, this is one way,
+ not the best way, but one way to do it
+ would be to subtract A and zero
+ and see if my result was negative.
+ That would tell me if A was less than zero
+ because A minus zero would just be the sign of A.
+ So it's one way to extract the sign of A.
+ Okay.
+ Another way, in addition to compare queue,
+ so one of our ways of setting this compare queue
+ is to do a test queue.
+ Test queue is the same as an and operator,
+ but again, it doesn't set the register file.
+ So if I do A and B, this is a bit level operator.
+ Can I have overflow from a bit level operation?
+ No.
+ Anding two things would never give me overflow.
+ So the carry flag and the overflow flag have no meaning
+ when you do a test.
+ But zero flag and sign flag do.
+ And so you often see the test queue used
+ when you're just trying to check if something is zero.
+ You and something with itself
+ and then see if the result is zero.
+ So it's a good zero detector.
+ Once you have this, so you've done either a compare queue
+ so that my possibilities are I've done a compare queue
+ or I've done a test queue
+ or some other random arithmetic operation
+ that's not LEA queue, I've set my condition codes.
+ Once I've done that, there's a number of ways
+ that I can actually use the result.
+ One way that you're not gonna see very often,
+ especially in the code that we create for this class,
+ but it is possible, is to just save the value
+ of the condition code into a register.
+ All you're doing is just reading from the condition code
+ and setting the register file
+ based on a particular condition.
+ This is not often used,
+ but this particular set of instructions
+ is gonna follow the same pattern
+ for conditional moves and jumps.
+ So I just wanna go through the pattern briefly
+ to be able to anticipate what we're gonna see for the rest.
+ In this case, it only sets the lower order byte.
+ You don't have to set everything
+ because all you're doing is really creating
+ a single bit of significance,
+ but it sets the full eight bits
+ of the lower portion of the register.
+ If I do, let's go through them.
+ Does everybody understand the motivation?
+ I haven't gotten to the actual instructions yet,
+ but do we see the motivation?
+ I created condition codes which could be used
+ as a way of evaluating an expression
+ like a compare or a test.
+ And now I'm gonna save it in the register file
+ for use later.
+ Maybe I will have another instruction later
+ that makes use of the same thing
+ if I do the same comparison twice.
+ And for some reason, my compiler wasn't smart enough
+ to fuse these two if statements together or it couldn't
+ because there was an interleaving instruction.
+ Then it might make sense for me to save the result
+ of a less than zero and use the comparison again
+ assuming a doesn't change in the interleaving time.
+ All right.
+ So the first one, or let's go with the first two.
+ Is setting equal or not equal?
+ This is often used with a compare queue
+ where I subtract two values
+ to see if they're the same or not.
+ So what'll happen with a set E?
+ Let's go for that example.
+ Let's say I did a compare queue and a set E.
+ And the compare queue compared RAX and RBX.
+ So it subtracted RAX and RBX
+ and one of the flags it will set is the zero flag.
+ The zero flag told me if the result of the subtraction
+ was zero or not zero.
+ If the result of my subtraction was zero,
+ zero flag would be set to one.
+ And if I wanna conditionally set a value of let's say RDX,
+ based on whether or not the zero flag was a one,
+ I use the set E suffix, which means set equal.
+ It checks the zero flag and will set RDX to one
+ if the zero flag is a one.
+ If the zero flag is a zero, it sets RDX to zero.
+ The intuition here is this whole thing
+ could be replaced with RAX equals RBX stored into RDX.
+ Everybody see that?
+ It's basically storing the comparison
+ of these two registers.
+ Similar chainings could be for set and E.
+ I'm setting if they are not equal,
+ so I check the complement of the zero flag.
+ Then it gets a little bit more complex as we go on,
+ but set sign and set not sign is checking
+ to see if it's negative or non-negative.
+ It's only checking the sign flag.
+ So the first four just check one flag
+ or the complement of a particular flag.
+ The next four, set G, set GE, set L, set LE,
+ are used for sign comparisons.
+ They're checking less than or equal,
+ greater than or equal, greater than,
+ or greater than or equal.
+ In this case, they're checking a combination
+ of the sign flag, the overflow flag, and the zero flag.
+ Why?
+ Because if I didn't have overflow to worry about,
+ and I did a compare queue,
+ and I compared R15 to R,
+ no, that's not a thing, to R14,
+ if I checked these two values together,
+ and then I did a set less than,
+ if I didn't have to worry about overflow,
+ if I wanted to know if this resulted
+ in R15 being less than R14,
+ what would I do?
+ What would I check for?
+ Yeah, I would check the sign flag,
+ because if I'm doing compare queue,
+ what operation am I doing?
+ Subtraction.
+ If I subtract two values and the result is negative,
+ that tells me that the value I subtracted
+ was bigger than the value I subtracted from.
+ And so I would know it was less
+ if the result was negative.
+ So if I just checked the sign flag alone,
+ and I didn't have to worry about overflow,
+ then the sign flag alone would tell me what I need to know.
+ Now what if I had to deal with overflow?
+ What might happen if I have a value that gets to be,
+ that wraps around and becomes negative?
+ What could happen?
+ I have a positive value, I subtract a negative value,
+ and that results in a larger positive value
+ that wraps around to negative, right?
+ So if I'm subtracting, I have Tmax and I subtract Tmin,
+ this would result in a positive overflow
+ that would give me a negative value.
+ But Tmax is not less than Tmin.
+ So it's not just the sign flag.
+ Anybody see that?
+ Yep.
+ (audience member speaking)
+ Oh, did I flip it?
+ Sorry, thank you.
+ I thought I was numerically increasing, but I was not.
+ Thank you.
+ Excellent point.
+ Great.
+ Somebody was paying attention, I love it.
+ Wasn't me.
+ Okay, so if I have Tmax and Tmin and it wraps around,
+ sign flag is no longer going to give me what I want,
+ but what would tell me that something went wrong?
+ Overflow flag.
+ It's a signed computation where I wrapped around.
+ So in this case, could I just check to see
+ if either one is set?
+ Would that be enough?
+ No.
+ It wouldn't be enough to see if either one is set.
+ I wouldn't want to see that both are set,
+ because there could be some cases
+ where I don't have overflow, but the sign flag is set.
+ So what I want is a case where either one or the other,
+ but not both is set, and that's why they use exclusive work.
+ Either the sign flag was properly set,
+ or there was overflow and the sign flag was not set,
+ but if both were set, then that was an overflow,
+ like in this case, where I don't want
+ to represent it as less than.
+ So set g through set le represent comparisons
+ of signed values, and then because we have to deal
+ with unsigned values that don't use the overflow flag,
+ but use the carry flag, we have set above and set below.
+ I know, it's confusing because if you see set above
+ and set greater, they seem to be doing
+ overlapping functionality, but set above is for unsigned,
+ and set greater is for signed.
+ So one uses the overflow flag,
+ and one uses the carry flag.
+ Yep?
+ - So it's like the carry flag and the overflow flag.
+ They have similar purposes, but one's for all the symbols.
+ - Exactly.
+ Alright, like I mentioned, the set instructions
+ are not what you're gonna see most commonly used.
+ So let's get to something that you'll actually see
+ in the code that we're gonna be having for the bomb lab
+ and for tests and that kind of thing,
+ and those are jump instructions.
+ So let me again just get into this idea of control flow.
+ When you take compilers, what you'll see is
+ that we often translate our code
+ into what are called basic blocks.
+ At a high level, a basic block is
+ a contiguous sequence of instructions.
+ There's a little bit more to it than that,
+ but for right now, let's just consider that.
+ I have an add instruction, followed by a subtract,
+ followed by a multiply, and eventually,
+ your sequence of instructions will get to an instruction
+ that branches, that has a difference in behavior.
+ So I'm gonna put a J here.
+ The J instruction, if you've used
+ more flexible programming languages like basic,
+ there are what are called go-tos,
+ where you have an unconditional jump in your code.
+ A jump is just that.
+ It goes to one destination,
+ which may not be a contiguous address.
+ This might be that I went through addresses,
+ I might be the jump at 4.096,
+ and maybe where it goes is 16.384, okay?
+ It may be that it jumps further away in the code,
+ it could jump backward, it could jump forward,
+ but it's jumping to a different address
+ than the next consecutive instruction.
+ And so maybe that's gonna have an and,
+ an or, an XOR, and then it reaches a point
+ where it gets to another branch.
+ This one might be a JGE.
+ This branch is another decision in the code.
+ And in this case, instead of only having one destination,
+ there might be two.
+ A taken path and a not taken path.
+ If the jump is taken or if the jump is not taken.
+ If the jump is not taken,
+ we just grab the next instruction contiguously in memory.
+ If the branch is taken,
+ we might go somewhere else entirely.
+ So this is the idea of control flow.
+ Your program is executing instructions
+ that are making decisions
+ as to where the instruction flow is going to go,
+ where RIP is going to take our program.
+ If there's only one possibility for a jump,
+ this is what's called an unconditional branch.
+ There's no check that I have to do,
+ but the processor still has to know that it's a branch
+ and it has to change the RIP.
+ This is actually harder in pipeline processors
+ than you might think, as we'll talk about later.
+ Then, if I have a choice, it's a conditional branch.
+ The JGE instruction has to be executed and evaluated
+ before I know where the rest of the program flow is going.
+ Again, this is problematic
+ in what are called pipeline processors,
+ and we'll talk about that later in the class.
+ Is everybody with me on this idea of control flow?
+ If you want an example of what might do
+ these kinds of things, an if statement
+ is a great example of a conditional branch.
+ An if statement is checking if something is true,
+ execute code that's here.
+ Otherwise, execute code that's here.
+ These are the two possibilities for this condition.
+ I have a taken path and a not taken path.
+ A while loop is a good example of an unconditional jump.
+ I have a piece of code that executes and does some stuff
+ and then bounces back to the top to check a condition.
+ This is unconditionally bouncing to the top,
+ whereas I might conditionally exit.
+ We'll talk more about this translation in a second,
+ but in principle, the idea is that I might want to go back
+ to a prior piece of code and continue execution.
+ All right, any high-level questions about that
+ before we get into the details?
+ Yes?
+ For the unconditional, you said is there a,
+ if it doesn't choose to do the jump?
+ Is that what you said?
+ Oh, we'll get to that.
+ So there's gonna be a conditional branch for the while loop.
+ You're right, otherwise it would be an infinite loop.
+ So we'll talk about how while loops get translated,
+ but one way to do it would be to have
+ a conditional branch first.
+ And then you're checking each time to know
+ whether I should execute this code,
+ and then I just keep going back to that condition.
+ That's one way to think about it,
+ but we'll see if there's a better way.
+ Other questions?
+ Yes?
+ I mentioned if you take the not-taken path,
+ it goes to the next contiguous instruction in memory.
+ Is that what you said?
+ That's right.
+ (student speaking off mic)
+ Oh, you're saying maybe it could be the same bubble?
+ (student speaking off mic)
+ Oh.
+ (student speaking off mic)
+ You're right, you're right.
+ So I understand what you're saying.
+ The mapping of these to actual memory
+ may be different than what it looks like
+ in this layout here.
+ That's fair.
+ I could have swapped these and it would have been clear.
+ I think you're right.
+ But let's see how it looks when we really translate it.
+ Yeah, that's a good point.
+ I like that.
+ Okay.
+ So in terms of the jumps,
+ I put J, but it should be JMP.
+ Switching ISAs, my bad.
+ So JMP is the unconditional one.
+ It doesn't evaluate any condition code.
+ It's always taken.
+ The other evaluations should have similar patterns
+ to what we just saw for set.
+ There's a JMP if things are equal in the comparison,
+ a JMP if it's not equal, a JMP based on sign,
+ a JMP based on four JMPs that are based on sign comparisons,
+ less than, greater than, or equal to,
+ and then two JMPs that are based on unsigned comparisons,
+ above and below.
+ Okay.
+ I think part of the problem of laying things out like this
+ is when we get too detached from high level code,
+ it starts to become unclear how we use this stuff.
+ So I think the best way is to dive in with examples
+ and show how these things get translated and actually used.
+ I think that helps cement it
+ if you're still awake at this point.
+ All right.
+ So the first thing we're gonna do is we have GCC here.
+ There's an optimization that's turned on
+ called no-if conversion.
+ We're gonna talk about what if conversion is for a second.
+ But just so you know, that f, -f, and then no-if conversion
+ is a way of turning off certain compiler flags.
+ The compiler is smart.
+ And it's able to take this code and optimize it
+ to something other than what we're gonna look at here.
+ This is a relatively simple branch
+ that is easy for us to inspect.
+ But if we were to use this on a real compiler,
+ the compiler would do something better with this
+ that we'll see in a second.
+ But this still applies to more complicated branches
+ that the compiler can't if convert.
+ So it's not like I'm teaching you something that isn't used.
+ All right.
+ On the left-hand side, I've got a if statement
+ that checks if x is greater than y.
+ And then it changes the way the subtraction is performed
+ for the result based on x minus y or y minus x.
+ Basically taking an absolute difference.
+ If we look at the code on the right,
+ this is compiled with no optimization.
+ And what it does is, you'll notice a few,
+ let me start with a few things.
+ First off, do you see a, b, s, d, i, f, f
+ in the compiler code?
+ That is a label.
+ Labels are gonna disappear when we actually link things
+ at the end stage.
+ So that abs_diff will disappear in the final version
+ of this code that's optimized.
+ L4, .l4 is another label.
+ These are hooks that the compiler can use
+ to know where to inject in certain addresses.
+ So what you'll notice in a lot of the code
+ that we're gonna go over from your book
+ is that they use these labels as placeholders for addresses.
+ When you're actually doing object dumps
+ or going through GDB, those labels will be gone
+ and you'll have actual addresses.
+ So this right now is kind of a learning crutch,
+ but it's gonna get worse.
+ All right.
+ The first thing that this code does is a compare_q.
+ What does a compare_q do?
+ Subtraction.
+ RSI and RDI are subtracted.
+ Where does it write the result, to RSI or RDI?
+ Neither, it writes to the condition codes.
+ Compare_q subtracts,
+ but does it write to the register file?
+ It's followed immediately by a jle.
+ What does le stand for?
+ Less than or equal to.
+ So the two instructions together, working together,
+ compare_q and then jle is gonna perform a subtraction
+ and then a comparison of certain condition codes
+ that will be able to effectively create
+ a less than or equal sign.
+ And in this case, it's comparing and checking
+ if x is less than or equal to y.
+ Okay.
+ Those two instructions together give me a check
+ if x is less than or equal to y.
+ And what happens if it's true?
+ What if x is actually less than or equal to y?
+ We branch.
+ My RIP is gonna be set to L4.
+ That's what's being shown with the jle instruction.
+ Yes?
+ In terms of subtraction,
+ because the normal way a subtraction would be done
+ would be destination minus equals source,
+ and because we do source and destination,
+ that's why in this case, it's flipped.
+ For a compare_q, there is no equal sign,
+ so it's just destination minus source, if that makes sense.
+ So the second operand minus the first.
+ Move_q goes source destination.
+ All right.
+ Yeah?
+ - [Man] Yeah, L4 for the else,
+ like is that the label for the else stuff, or the--
+ - Okay, so what will eventually happen
+ is L4, when we get to the linker,
+ will be placed into a memory location.
+ Let's say it goes into 4096.
+ The instruction that begins at address 4096
+ will be the red move_q.
+ So it is for the else, in that sense.
+ But it is the location
+ of where the move_q will be in memory.
+ L4 will be replaced by an address at the linkage step.
+ Yep?
+ Yes, what we basically created here
+ was code that has a compare_q and a JLE,
+ and then makes a choice.
+ If the branch is taken, which means that L4,
+ which means that X was less than Y,
+ we go to an address that starts with L4,
+ and that's the red code.
+ If we don't take the branch,
+ we fall through to the blue code.
+ Yeah?
+ (audience member asking question)
+ Yeah, so unfortunately this does involve a return,
+ so let's talk through that.
+ So the two return statements here
+ return to whatever called absolute difference.
+ There is no function call inside of this function.
+ So the return goes to whatever
+ originally called absolute diff.
+ So if you either, you will either execute the red code
+ or the blue code, but not both.
+ They could have ended this particular instruction
+ with a jump instead of a return,
+ and then had a single return,
+ but that would be pointless to add
+ another branching instruction at this point.
+ This was the last thing that this code had.
+ So they just replicate the return.
+ All right, so the blue instructions
+ and the red instructions are conditionally executed.
+ What this basically looks like
+ is you've got this return at the end,
+ and then both of these will rejoin
+ at whatever called absolute difference in the first place.
+ So the control flow splits,
+ we choose a particular path,
+ and then we reform together.
+ All right.
+ This is an example of doing the same thing
+ with a goto statement.
+ This is, yeah, oh, go for it.
+ - I have a question on the last slide.
+ - I can go back.
+ Go for it.
+ - So .L4, is that considered to be
+ like an operand of JLE for that call?
+ - So L4 is the operand for JLE,
+ but it will eventually be replaced
+ with an actual address value
+ for where the red move queue is in memory.
+ But you can think of it as an operand
+ because it's the input that JLE takes
+ and conditionally sets RIP to that if it's taken.
+ Question.
+ - So how does JLE evolve to a less than or equal?
+ - How does JLE reduce to a less than or equal?
+ Is that what you said?
+ So what it's checking,
+ if you go back to the flags,
+ is it's checking the sign flag and the zero flag.
+ The zero flag covers the equal part,
+ so there's an or there.
+ If they were equal, that would be flagged.
+ And the sign flag and overflow,
+ as we discussed before,
+ kind of handle the check for a correct subtraction
+ where there was no overflow
+ and a subtraction where there was overflow.
+ So together, those three flags
+ give you the full picture of a less than or equal.
+ Yep.
+ - If it didn't have an else statement,
+ and we should always execute the code after it,
+ what would it have to do?
+ - So you're saying if the red,
+ if it was no else,
+ but the red was unconditionally after that blue area,
+ then what we could have is a way
+ of jumping over the blue area.
+ Notice, okay, this is something we didn't talk about.
+ Notice the original if statement was x greater than y.
+ What did we check?
+ We checked x less than or equal to what?
+ So we effectively inverted the comparison
+ and then branched to the else.
+ If we did what you suggested,
+ we didn't have the else statement at all,
+ we would do exactly the same thing.
+ We would branch to L4,
+ but I would just get rid of the return,
+ the first return.
+ And that means that I would either execute the blue code
+ and then the red code, or just the red code.
+ And I would be conditionally guarding the execution
+ of the blue code in your example.
+ Her example again was,
+ I don't have the else.
+ I just have a check around the blue code.
+ Yeah.
+ - What did you write there?
+ Is it like true and what's the right branch?
+ - Sorry, what was that?
+ - What did you write in the, is that not?
+ - Oh, this here?
+ - Oh, sorry about that.
+ - That's not taken, yeah.
+ So, not taken.
+ I use that as an empty.
+ - Okay, cool.
+ - Yeah.
+ Yeah.
+ - Okay, so from like, I think the first one you did,
+ or like, where you got rid of the else,
+ and you just kind of like,
+ dissolved by the other one.
+ - Yes.
+ (muffled speaking)
+ So, the question is, if we didn't have the else,
+ and we just had if, then the blue code,
+ and the red code was not inside of the else.
+ The conditional flow for that,
+ so this is a different scenario, not the else,
+ would be I have the compare queue,
+ JLE would take me to the blue,
+ yeah, it would not, if not taken,
+ I would go to the blue code.
+ If taken, I go to the red code,
+ and then I have a fall through from blue to red.
+ So in that sense, the red code would be definitely executed.
+ Yeah.
+ (muffled speaking)
+ These two returns will go to the same location.
+ We haven't talked about what a return is yet,
+ but just understand that the return
+ is a special type of branch, called an indirect branch,
+ and that will lead us to the same location.
+ Other questions?
+ You guys are loud, yeah.
+ (muffled speaking)
+ Sorry, can you say it one more time?
+ (muffled speaking)
+ (muffled speaking)
+ You're saying at the JLE, if it is not less than or equal,
+ we will fall through to the blue code,
+ but if it is, we'll go to the red code.
+ That's correct, yeah.
+ Okay.
+ If you've programmed with go-tos,
+ this next slide might be helpful.
+ If you haven't, I don't really think this is helpful
+ for most modern programmers, so I'm gonna skip this one.
+ And let's talk about a general translation
+ for if statements.
+ For those who have not seen this particular nomenclature,
+ you can do an if statement and see a small if statement
+ with this kind of setup.
+ Hey, you guys, if you guys wanna keep talking,
+ can you go outside?
+ It's kinda loud.
+ Thank you.
+ Okay.
+ If I have this setup here,
+ it does a particular test, like let's say x is equal to y,
+ and then I have statements where I have the then part
+ and the else part.
+ So in C, I can create something like that,
+ and the general version that would be created out of that
+ would look like this in terms of a go-to.
+ It flips the test and says, if not test,
+ so taking the logical not of this particular test,
+ and then checking if it's not done, I go to the else.
+ Otherwise, I fall through to the then.
+ Without talking more about the processor architecture,
+ it's difficult to explain why they flip
+ and they have the taken path be the else,
+ but the basic idea is that most times
+ when you have an if statement,
+ that check, you usually end up taking it,
+ statistically in terms of code.
+ And so they have the else statement that follows a path
+ that requires a change to a taken path.
+ The not taken is easier for the processor architecture
+ to be able to execute.
+ Not important for our purposes yet,
+ but just something to keep in mind.
+ A lot of the choices they make in terms of
+ how to set up the compiler code
+ is based on how the hardware is gonna perform.
+ Yep.
+ - In this else version, what happens after the else branch?
+ Let's say value equals else in this version.
+ - Yeah, so the idea here is that the code it's creating,
+ which is a little different than here,
+ is that there's a done.
+ And the done is the address of the code
+ that follows the if statement.
+ So if I have the then path and the else path,
+ where the else is taken and the then is not,
+ I need a way to reconnect to the done portion.
+ And so the then path has a jump
+ that takes me unconditionally to the done portion,
+ and the else has a fall through.
+ It just executes the next instruction in memory.
+ So what's key here is that when we set this up in memory,
+ the else path should be directly above the done path
+ so that it just falls through.
+ Otherwise we would need another go to.
+ Yeah.
+ All right.
+ We turned off a particular optimization
+ to make code that looks like this.
+ This is great for if statements
+ where there's a lot of work to be done,
+ where there's procedure calls,
+ but in many cases where it's a small, simple if statement,
+ where there's a one or two statement payload,
+ they can change that and use something
+ called a conditional move.
+ Out of my curiosity, because I'm not always sure
+ what I'm getting in terms of a class setup,
+ how many of you already heard of conditional moves?
+ Okay, a couple people.
+ All right, good.
+ That's great.
+ So I would be surprised if that was something
+ that the majority of people knew.
+ But,
+ let's take on faith right now,
+ and I'll explain more when we get to the architecture section
+ that it is difficult for the processor to handle a branch.
+ Not impossible, 'cause we obviously use them all the time,
+ but there is a performance inefficiency that can arise
+ when processors have to handle branches.
+ What most modern architectures do
+ is something called branch prediction.
+ They make a guess.
+ The processor guesses the direction of a branch,
+ and if they're wrong, they have to recover.
+ Instead of a branch, we could try to convert this
+ from a control flow problem into a data flow problem.
+ So, let me take a generic if statement
+ where I have a test that's performed,
+ and then I have a then and an else,
+ and I end up at the same path eventually.
+ All of this control flow can slow the processor down.
+ So what I would like to do instead is to say,
+ let's have the then path and the else path
+ be executed unconditionally.
+ And in this case, double the amount of storage
+ that I would need.
+ So if the else path computes something in one way,
+ and the then path computes it in another way,
+ maybe I have a, let's say the result is X1.
+ Sorry, the result is X.
+ And X is either gonna be equal to Y
+ or X will be equal to Z, just as an example.
+ On the then path, X is Y, and on the else path, X is Z.
+ At the end of the day, I'm just changing the value of X.
+ That's what this if statement does.
+ Whether it's based on Y or Z is up to the test condition.
+ So what if I created two variables, X1 and X2,
+ and I set it up so that I have both being done?
+ Both are ready to go.
+ But then I have a special type of move instruction.
+ Move normally copies from one to the other, right?
+ But what if I could say,
+ instead of X1, X2, the original X will be X equals Y,
+ and then X2 is equal to Z.
+ And I'll conditionally move X2 into X
+ under certain situations.
+ And now, all these instructions get executed no matter what.
+ I don't have to have a check.
+ I don't have to change my RIP.
+ I'm executing some instructions
+ which might be useless depending on the path.
+ But I'm gonna execute them no matter what.
+ And then at the end of the day,
+ this instruction gets executed no matter what.
+ But it may or may not actually have an effect.
+ So that's a bit of a mind bender,
+ so let's make sure we got the idea.
+ Saying, no matter what, we execute the conditional move,
+ but whether or not the move has an effect,
+ and whether or not the move happens,
+ is up to some condition.
+ Does that make sense?
+ All right.
+ So the idea behind the conditional move
+ looks something like this.
+ Take the same code we had on the left.
+ And now, what we're gonna do is
+ we'll subtract X minus Y and Y minus X.
+ We'll do both.
+ And then, at the end,
+ after we've done both of those operations,
+ we'll have a comparison to see
+ which one we should have done.
+ And then we'll do a C move to make sure
+ that the end result is set up properly.
+ So,
+ in blue, I set up the result into R-A-X,
+ because the destination, it's source then destination.
+ The destination for the blue subtract is R-A-X.
+ So the blue one is saying the result I'm gonna return
+ will be X minus Y.
+ But that may not be right.
+ So the red path sets up a parallel path,
+ which is in R-D-X, let's put Y minus X.
+ So after the execution of the blue and red,
+ R-D-X has the kind of else path,
+ and R-A-X has the then path.
+ And then the last part is a compare queue
+ that checks the same thing we would have checked before,
+ X versus Y, to see if they are less than or equal.
+ And if it's actually less than or equal,
+ we do a C move L-E.
+ C move is conditional move,
+ and the condition that it's gonna evaluate
+ is less than or equal.
+ If I find that X is less than or equal to Y,
+ I will copy the value from R-D-X into R-A-X.
+ Effectively achieving the same thing I would have had
+ with all the if statements,
+ but with code that executes one at a time
+ instead of having to do any branching at all.
+ Yep.
+ (audience member speaks off microphone)
+ So,
+ let me give you the basic high-level view of why it's bad,
+ and then we'll get into more detail.
+ I don't wanna spend too much time on this
+ because we've got so much other things to cover,
+ but I do understand that it's kinda confusing
+ as to what's the big deal with branching.
+ A processor pipeline
+ is kind of like an automobile assembly line, right?
+ You've got stages where different things are done
+ as you move through.
+ Typically, the first few stages decode an instruction
+ and fetch it from memory,
+ so you have to fetch an instruction and then decode it.
+ Then maybe you read registers,
+ maybe you finally get to execution here.
+ If this is a pipeline, wow,
+ if this is a pipeline,
+ and things are moving lockstep through,
+ maybe here's instruction A, B, C, D, E, F, G.
+ Instruction G could be fetching
+ while instruction E is decoding,
+ figuring out what the instruction is,
+ while C is reading its registers while A is executing.
+ In a real processor,
+ all these things are happening at the same time.
+ And the problem is if A is a branch,
+ and A could either go to B
+ or it could go to X,
+ and then we fetch Y and then we fetch Z,
+ how do I know if A gets evaluated all the way over here
+ what to pull into my pipeline?
+ If I don't keep feeding the pipeline,
+ there's a stall,
+ and the pipeline is not effective,
+ and so there's a latency impact.
+ So that's why I guess.
+ And so the processor will guess and say,
+ oh, I think it's going to B.
+ And if it was right, everything is great.
+ We don't have to worry.
+ If it's wrong,
+ it does something called a poison bit
+ where it kills off these instructions.
+ A little aggressive,
+ but it kills off these instructions
+ and then replaces and starts to fetch at X and Y.
+ But when you do that,
+ you expose the pipeline and you create a fetch hazard.
+ So I'll get into all that in detail later.
+ Let's not worry about that too much,
+ but that's the high-level idea.
+ All right.
+ Conditional move doesn't work on everything.
+ It doesn't work on cases where you have function calls
+ inside of your evaluation and test.
+ Because function calls can have side effects.
+ And it's one thing for me to say,
+ oh, X is either one of these two values.
+ That's fine.
+ But what if I end up writing memory
+ and blowing away parts of memory
+ and I don't have a way to unroll that or back it up?
+ That's not gonna work.
+ So you can't do things that are destructive
+ and unrecoverable inside of these types of conditional moves.
+ Side effects are not good.
+ Risky computations where you don't know
+ if you have a pointer or not.
+ If you're checking a pointer
+ to see if it's actually not null,
+ you can't just go down the null path
+ and just dereference something that's bogus.
+ So in general, expensive computations,
+ computation of side effects, faulty computation,
+ all those can't work.
+ But you will see these in some of the code that we cover.
+ All right, yes.
+ (audience member speaking off mic)
+ So the set X instruction is taking a condition code
+ and writing it to a register.
+ The C move is, so set X will always execute.
+ It will always move a value from one place to the other.
+ The conditional move always executes
+ but doesn't always have an effect.
+ So it may do nothing.
+ And that's what makes it kind of weird.
+ So it's a unconditional execution
+ but conditional effect, if that makes sense.
+ (audience member speaking off mic)
+ Right.
+ (audience member speaking off mic)
+ All right.
+ Looping.
+ This code on the left is designed to show
+ how many instances of ones there are
+ in a particular, could be integer,
+ in this case, it's an unsigned long.
+ But it's a numeric value, it's checking for ones.
+ So if I gave it, for example, in a four-bit scenario,
+ zero, one, zero, one, the pop count here would be two
+ because there are two ones.
+ Whereas all zeros would be a pop count of zero.
+ So this code is basically going through and counting ones.
+ In terms of the looping behavior, it's a do-while loop.
+ A do-while loop means that we do one iteration of the loop
+ and then we evaluate whether we should continue
+ to do future iterations.
+ This is different, as we'll see, from while or for loops,
+ but for right now, we'll start with the do-while
+ because it is unconditional
+ for the first execution of the iteration.
+ In terms of assembly, it'll look something like this.
+ So, assuming that we have RDI holding my argument x,
+ which is the actual value that we're evaluating
+ for this pop count, and assuming that loop is a label
+ that stores a particular address that we're gonna replace
+ with this L2, L2 is an address in memory
+ where the move queue, the first move queue
+ in this instruction is going to be located.
+ Then, the code before the loop starts is to set REX to zero.
+ Notice that they're using EAX here.
+ Why do they use EAX?
+ (audience member speaks off microphone)
+ Yeah, I mean, it's just zeroing out the lower 32 bits,
+ but the funny thing is, with x86-64,
+ when you set those lower 32 bits,
+ it also clears out the upper 64.
+ So there's really no difference between doing a move L of zero
+ into EAX or a move Q of zero into EAX in terms of,
+ into REX in terms of function,
+ but it is a little bit different to see it here.
+ But you will usually not even see a move of zero into REX
+ in most of the code that you'll see.
+ You'll usually see something like this,
+ XOR, REX with itself.
+ This is the usual way that you'll see
+ of zeroing out a variable.
+ Why?
+ Because it has a cheap operation
+ that lets you get that effectively done.
+ When I move a zero, it takes a bigger amount of space.
+ This is a smaller instruction.
+ All right.
+ I first zero out EAX, and then the loop begins.
+ The first step is I move RDI into RDX.
+ This is to check because AND is a destructive operation.
+ I AND one with EDX.
+ That allows me to strip off the least significant bit of RDX.
+ Then I add RDX to RAX,
+ accumulating the result.
+ If I mask one with a 64-bit value,
+ it's basically gonna give me a zero
+ if the least significant bit is a zero,
+ or a one if the least significant bit is a one.
+ This is a way of finding that least significant bit.
+ Then I add that result to RAX as a running accumulation.
+ Then I shift RDI to the right
+ so that I can check the next least significant bit
+ as I move through.
+ The shift here is the arithmetic operation
+ that's performing the setting of the condition codes.
+ So JNE is checking for what?
+ What does it wanna see?
+ Which flag does it check?
+ The zero flag.
+ It stands for not equal, but it's checking the zero flag.
+ So if I shift to the right and my result were zero,
+ how many ones would be left in that particular number?
+ None.
+ So I wouldn't have to keep doing this loop.
+ So the shift continues until I only have a zero.
+ What if I had a negative value?
+ Wouldn't this shift keep bringing in a one?
+ No, because it's a logical shift,
+ and it's always shifting in a zero.
+ So guaranteed, the most number of iterations
+ that I would need for a 64-bit number would be how many?
+ 64 because I'll always be shifting in a zero,
+ and I will check all 64 bits if I have to.
+ But if I reach a point where the value that I'm shifting
+ becomes zero because there's no more ones left in it,
+ it's time to exit the loop.
+ So the JNE is checking the zero flag
+ to see if the shift set the zero flag to one.
+ If it did not set the zero flag to one,
+ we jump back up to the L2.
+ Yep?
+ - Is the zero flag evaluating?
+ - It checks the entire thing with an,
+ so it's checking the entire thing to see if any bits are one.
+ If there are no one bits, that means everything is zero,
+ then it sets the zero flag to one.
+ - How are we counting the number of iterations
+ to count the number of ones?
+ - How are we counting the number of iterations?
+ There's no count here in terms of the iteration count.
+ There's only a count of the number of ones.
+ So you're saying, like, what's the iterator?
+ Like, you would have for a for loop, right?
+ Is that what you're asking?
+ - I'm asking, like, where he, like, returns,
+ like, what value is storing the number of iterations
+ we've done to return to the entire question.
+ - The answer for the question is not the number
+ of iterations we've done,
+ but the number of ones we've encountered.
+ So I might have, as my value, one followed by all zeros,
+ and I might have to do 63 iterations to find that one.
+ But the value I'm gonna return is still one.
+ It's not based on the iteration count,
+ it's based on the number of ones.
+ Yep.
+ Why does the right shift have an equal sign?
+ Because x is getting assigned the value
+ of its own right shift.
+ It's not that it's, it's supposed to be
+ kinda like x plus equals, where, you know,
+ you do the operator, and then you're also setting.
+ So this is saying, do a shift operation,
+ and then set x equal five by one.
+ Yeah, it's kind of a weird notation, I agree.
+ Yep.
+ And L is stripping out everything
+ with the least significant bit,
+ so that for edx, it will either be a zero
+ if the least significant bit is a zero,
+ or a one if the least significant bit is a one.
+ Yep.
+ S-H-R-Q is the instruction that actually
+ changes the condition code here.
+ There's no implicit, there's an implicit set,
+ but no explicit set.
+ Yep.
+ Why is it starting with an E instead of an R?
+ Because it only needs, it actually could go even lower,
+ but in this case, it only cares about the lower,
+ the lowest byte.
+ So they could have replaced this with an and B
+ of one and ebx, if they had wanted to.
+ But they don't, all they have to do
+ is just affect the lower 32 bits.
+ So they don't have to, it's also,
+ they could have done and Q, one with rdx
+ and gotten the same result.
+ Yep.
+ (muffled speaking)
+ Sorry, which one?
+ Oh, what's the point of the T here?
+ The T is a temporary variable that they're representing,
+ which basically holds either a zero or a one.
+ It's a way of extracting out the least significant bit.
+ So that is an abstraction.
+ That T is for us to better understand,
+ but there's no T in the assembly code, of course.
+ Yep.
+ (muffled speaking)
+ If it's saying, if we, if rdi is non-zero after shifting,
+ we would keep going with the loop.
+ If it is zero, we would exit.
+ (muffled speaking)
+ It is right shifting by one.
+ (muffled speaking)
+ Yep.
+ (muffled speaking)
+ Oh yeah, that's fixing up the stack.
+ Let's not worry, that's a great point.
+ Let's not worry about the rep yet.
+ We'll come back to that rep later.
+ In fact, we won't need it for,
+ for this class, I don't think we'll need to do rep.
+ This is unfortunately there,
+ but that is a way of fixing up the stack
+ that we probably won't have to cover.
+ Yep.
+ (muffled speaking)
+ Yeah, I mean what they show you with the go-to version
+ is to try to look at how you would normally
+ not be taught to write this code,
+ but how it would be closer to the assembly layout.
+ Yeah.
+ Okay, so that's a do-while.
+ And in general, you could think about a do-while
+ as having a test, just like an if statement,
+ and then a body, which is the part that is conditioned
+ based on that test.
+ And so the way they usually translate a do-while down
+ is to have the body be executed once,
+ and then an if statement at the bottom,
+ which branches back conditionally
+ if the do-while is not finished.
+ The do-while is unfortunately the easiest
+ of the three types of loops that we're gonna cover to create
+ because it has an unconditional starting point
+ where you execute at least once,
+ and then you branch back.
+ Doing the other ways with while
+ gets a little bit more tricky.
+ So with while, you don't necessarily know
+ that you're gonna execute the loop body one time.
+ So the naive way that you would do it
+ if you have no optimization enabled in the compiler
+ is to check a go-to that goes to the bottom.
+ So you branch to the bottom,
+ and then you have a test that determines
+ whether or not you're going to go back up to the loop,
+ and then you execute the body.
+ It's basically a while,
+ the while do is basically a do-while with one extra branch.
+ You just branch down to the top.
+ The problem with doing this is that
+ it injects in an extra unconditional branch,
+ which can be expensive.
+ So the better way
+ is to create an initial check
+ which only goes to done if the condition is not met.
+ And the subtlety here is that in most cases,
+ a while loop is executed at least once.
+ And so you're creating a conditional branch
+ that is biased towards going into the branch
+ as opposed to an unconditional branch
+ that jumps to the bottom unconditionally.
+ I know it's hard when we haven't talked about
+ the processor architecture and how it handles branches,
+ but in this case, if you can guess not taken,
+ then that's a better case for the architecture.
+ So they're basically converting this
+ from an unconditional branch that messes up my pipeline
+ to a branch that would normally be taken
+ only when the while loop is never executed,
+ which is uncommon.
+ So this is how it looks in terms of,
+ they only have it in the do-while, was there a question?
+ Okay.
+ Let's talk about for loops, and then I think
+ I wanna take a quick break.
+ For loops also look exactly like the while
+ and do-while versions.
+ The only difference is that they have
+ an initialization portion, a test that's performed,
+ an update, and then the body.
+ So they basically add an init and an update.
+ And the way that this gets translated
+ is to break out the code for the initialization
+ and the update, put the update in the body,
+ put the initialization above the loop,
+ and then just have the same test and body
+ that you would for a while loop.
+ So the overarching theme here is that
+ do-while, while-do, and for loops
+ all get translated the same way.
+ Eventually they all get translated
+ into a do-while with special handling.
+ So,
+ let's take a break, and then we will hit
+ the most difficult part of this lecture today.
+ I know.
+ So let's take a break until 11.10.
+ It gets worse, what?
+ Back to it, switch statements.
+ So, switch statements are far more complex examples
+ of branching behavior.
+ They are a special case of what normally are called
+ indirect branches when implemented fully.
+ So instead of necessarily going to one of two locations,
+ there's multiple possible destinations
+ for a switch statement.
+ In this switch statement up here,
+ we switch based on x, and we enumerate
+ a bunch of possible cases and then a default.
+ So the control flow looks more like
+ one location leading to a bunch of possible destinations.
+ So I want you to keep this in mind
+ because it helps when we get to the actual implementation
+ that we have one sort of source
+ trying to figure out which of a potential set
+ of destinations it's going to.
+ A few things to note.
+ You can have the same label hitting the same location.
+ So here, case five and case six
+ result in the same branch code.
+ By default, you branch to the case
+ and then you start executing.
+ So you'll notice that most of these have break statements.
+ The break statement means you return outside of the switch.
+ You leave the switch, you exit the switch as a whole.
+ So the one that doesn't have it is case two.
+ Case two does the division of y by z
+ and then it goes to case three.
+ So you can have a fall through
+ if you don't set up your breaks.
+ And you'll also notice that some things are missing.
+ There's no case zero, there's no case four.
+ So switch statements have some complexity to them
+ that we have to watch out for
+ when we're creating this implementation.
+ The way that we do a switch statement
+ is through something called a jump table.
+ All right.
+ The jump table idea is that we're gonna have an array
+ of pointers to all the different destinations
+ like I just talked about up in that left corner
+ where I could go depending on my switch statement.
+ Some of these might go to a default case.
+ Some might go to the same location.
+ But the pointers are like following a link list
+ for the instruction pointer, if that makes sense.
+ You're saying based on this jump table,
+ I'll follow a reference to get to the actual RIP that I want.
+ So the jump table is a data structure for control flow.
+ It's telling me where to go in my code
+ based on a particular data value.
+ And then the targets will be code blocks.
+ So this is the overall flow.
+ I have the purple or blue or whatever it is in the middle,
+ that's the jump table,
+ leading to a collection of targets in green.
+ So let's do the example that we just covered.
+ And like I said,
+ this is gonna look intimidating at first,
+ but let's talk through it
+ and see if we can get down to what it means.
+ If I have a switch statement
+ like the one that I covered here,
+ what are the possible values for x?
+ Coming into this particular loop, x is a long.
+ That means that there are two to the 64
+ possible values x could have, right?
+ That's a lot.
+ There's only what, one, two, three, four, five cases
+ that are actually enumerated, and two of them overlap.
+ So the only real numbers that it actually calls out
+ is one, two, three, five, and six.
+ All the other two to the 64 possibilities
+ are not enumerated, and they would go to the default.
+ (keyboard tapping)
+ Are you with me so far?
+ Okay.
+ So the code that they're gonna show you here
+ is designed to eliminate all those other options
+ that we don't care about.
+ So in this particular case,
+ the first thing they do is they move RDX,
+ which is the value of argument z into RCX.
+ That's not important for our purposes for now.
+ They're just saving it so that they can use it later.
+ So don't worry too much about that first statement.
+ The second statement is where really things start to begin.
+ They do a compare Q of six and RDI.
+ RDI is the value of x.
+ A compare Q does a subtraction.
+ It's subtracting RDI minus six,
+ and then it's doing a JA.
+ What's JA?
+ Jump above.
+ Is it signed or unsigned?
+ Unsigned.
+ So if I took x, which is not unsigned,
+ but it's an integer value,
+ and I subtract six from it,
+ and then I jump above,
+ what would be a case where it would actually jump?
+ What would be the range of values where it would jump?
+ So if we think about our number line,
+ and I'm going from T min all the way to T max,
+ the interpretation of an unsigned
+ is actually going to be a little different.
+ It's gonna take these number values here, this is zero,
+ and it's gonna kinda change it so that I've got T max here,
+ and then keep going to U max.
+ So this portion is the same as this portion
+ when you do the unsigned CAS.
+ Does that make sense?
+ You're viewing it as these negative values
+ kinda come over to here.
+ So what happens when I do x minus six?
+ Which values would be affected?
+ So if I had originally six here,
+ that would now be at zero, correct?
+ And if I had anything in this range, where would it be?
+ Yeah, it would be flipped around, okay.
+ So if I'm doing a comparison of six and x,
+ and I'm checking to see if I jump above,
+ which values would I actually jump on?
+ From the original case, anything that was above here
+ or below here, because that becomes really positive,
+ would be jump above.
+ And that would get rid of the whole range of things
+ that were not zero to six.
+ For the things that are left,
+ it would fall through to the next jump statement.
+ So the jump above gets rid of everything
+ but the range I actually was interested in,
+ which is kinda like zero to six, approximately.
+ Because it's an unsigned comparison,
+ it gets rid of my negative values.
+ And so I picked six because that was
+ the maximal positive value I wanted to deal with.
+ Well, I didn't pick it, the compiler picked it.
+ So the Ja handles everything but zero to six.
+ Now some of these are gonna be defaults,
+ but anything else should be branching to default.
+ So notice L8, L8 should be my default case.
+ So we'll keep that in mind.
+ L8 probably is gonna lead to my default.
+ So we'll see the L8 later.
+ L8 is an address in the instruction text segment
+ that is gonna be the code block that represents my default.
+ Below that, it goes to a jump.
+ So the only thing that should be left
+ should be values in the range of zero to six.
+ And so what it'll have here is my jump table.
+ This jump uses the addressing mode from Monday.
+ So it's like taking the worst of today
+ and the worst of Monday and mashing them up.
+ So this addressing mode, remember,
+ puts the displacement on the outside.
+ So it's gonna be to find the address in the jump table,
+ which is a memory location.
+ It's gonna start at L4, which is the base address
+ of the jump table.
+ So L4 will represent the base address of the jump table.
+ And then it's going to go to RDI times eight.
+ Each entry of the jump table is a pointer
+ to a location of a code block.
+ How big is a pointer in memory?
+ Eight bytes.
+ If I have a collection of eight byte pointers
+ and I tell you that I wanna go to the index two
+ of that jump table, and these are each eight bytes,
+ I need to skip 16 bytes, right?
+ So the displacement should be L4 plus 16 bytes.
+ Why 16 bytes?
+ Because it's two in times eight bytes per entry.
+ So the range here is L4 for the base,
+ RDI for the index, and then eight is the size per index.
+ So it's L4 plus RDI times eight gives me the actual start
+ of the pointer in my jump table.
+ The asterisk indicates a dereferencing.
+ So that's a good hit on a test.
+ If I were to give you a switch statement,
+ you would be seeing something of the form
+ with a jump and a star in it to know
+ that it's dereferencing.
+ Yep?
+ (audience member speaking off microphone)
+ Yeah, the compiler looks at the range of case statements
+ and figures out if it's not above some threshold.
+ It has a threshold for what's too big of a jump table
+ 'cause otherwise, if you start making a structure
+ that's too big or sparse in memory, it's pointless.
+ So the compiler has some idea of what a reasonable size
+ jump table is and it constrains it.
+ If you had cases that were up by
+ a non-strided jump,
+ like it was case one, case 403, case million and two,
+ it was all over the place,
+ it wouldn't wanna build a jump table for that.
+ (audience member speaking off microphone)
+ It would do it as a bunch of nested if statements.
+ Yeah?
+ (audience member speaking off microphone)
+ Yeah, that's an immediate that is hard-coded
+ for this particular switch statement.
+ (audience member speaking off microphone)
+ That's right.
+ That's right.
+ All right, let's keep going.
+ The indirect jump looks like this on the right.
+ This is assembly that's a little more hard to read.
+ Let me give you the basics.
+ There's a notion called alignment,
+ which we're gonna talk about in a later class,
+ but this is read-only data that goes along with your code.
+ It's gonna be aligned at eight-byte boundaries,
+ which just means that they are eight bytes per element
+ of the table that it's building up.
+ And then each element is defined as a quad.
+ A quad is an eight-byte quantity that represents a pointer,
+ and it's labeling them as L8, L3, L5, L9, L8, L7, L7.
+ Those are the pointers
+ that are gonna be filled into the jump table.
+ Notice L8, that was supposed to be our default.
+ So if we look at this jump table that it just built,
+ and I'll just hijack this particular piece
+ of rectangle and use it.
+ If I look at the indices for my jump table,
+ it should be zero, one, two, three, four, five, six.
+ These are the potential case values that I have left, right?
+ If I look at the first one, which is at zero, it's L8.
+ L8 is a label that'll represent the actual address
+ in memory of the default case,
+ because zero is not one of my original cases, right?
+ It went right to one.
+ So zero should go to the default.
+ One has a unique label, L3.
+ Two has label L5.
+ Three has label L9.
+ Case four was skipped, right?
+ So it's the default.
+ And then five and six pointed to the same thing.
+ So the code on the right is the assembler's way
+ of building this jump table,
+ preloaded with the values of the labels for now,
+ they'll eventually be actual addresses,
+ of where the code segments are.
+ And then, inside of our actual switch statement,
+ we'll have the individual code blocks.
+ So for example, this is L5, L9, and L6.
+ So L5, L9, and we don't have an L6 here.
+ Let's figure that one out in a second.
+ L5, L9, and L6.
+ So L5 represents what happens on the switch statement for two
+ The code that we would have for two here,
+ two is supposed to do X divided by Z.
+ Let's ignore what the division CQTO is for right now,
+ we'll come back to that.
+ But IDIVQ is, and CQTO are setting up the division
+ so that we can have a division of Y divided by Z in L5.
+ L9 is moving a one into EAX, EAX here represents W.
+ And then L6 is the merge point
+ where we actually do the case statement of three.
+ We're incrementing W by Z.
+ In this particular case,
+ even though we thought two and three
+ would have a fall through between them,
+ the compiler recognized that there was a problem.
+ The problem is that case two explicitly sets the value of W,
+ and case three uses an old value of W.
+ So because W was uninitialized at the point of two,
+ they had to create a piece of code
+ that initialized W for the point of three.
+ So the way it works is they both go to L9,
+ sorry, they both eventually will go to L6,
+ but three starts at L9 and two goes to L5.
+ But they both will lead eventually to L6.
+ And at L9, it just has to initialize W,
+ and then L6 does the actual payload of three,
+ which is the increment W by Z.
+ So in terms of other code blocks,
+ this is one, which is doing L3.
+ It has the multiplication of Y and Z, setting W.
+ So it does an IMULT Q of RDX with RAX
+ to be able to form that.
+ Again, everything that this is creating in terms of W
+ is eventually ending up in RAX.
+ So what will happen,
+ I don't have an overall picture, okay.
+ What will happen overall is
+ all the various parts of this switch statement
+ will align together into this overall set of cases
+ by creating the individual code.
+ So for the default, for example,
+ I don't know if I have the default in here,
+ the default will just be, yeah, there it is,
+ to move two into EAX.
+ That is the default of setting up W equals to two.
+ All right, so,
+ this is pretty hard to follow.
+ And what I have that I'm not gonna go over right now,
+ I wanna pause for questions,
+ but what I have, and I have a video
+ that I'll release for this, which I think helps,
+ is a loop that kind of goes, is a piece of C code
+ that goes through all of this.
+ It goes through an if statement
+ that gets changed into a C move.
+ It goes through a for loop,
+ and it goes through a switch statement.
+ And the switch statement that I use
+ is not just from zero, it starts at 100 to 106.
+ The compiler will displace it down.
+ So I will go through all the source code on video
+ and sort of kind of show you how that works.
+ But let's try to handle the questions
+ on the switch statement for right now and how it works.
+ I think this will probably be the biggest point of confusion.
+ Yep?
+ - Could you go through how that fall through works again?
+ - How the fall through works?
+ Yeah, so this fall through happened to have a problem.
+ Let's look back at the code
+ and see why this one came out so painful.
+ If we go back to the original C code,
+ you can see that in cases one, two, and the default,
+ W gets initially set to a new value.
+ W is not initialized to anything previous to this.
+ Had they simply just set W equal to zero,
+ they wouldn't have had the problems
+ that they're eventually gonna have
+ in terms of these other case statements.
+ But at this point,
+ W is not initialized to anything for the code.
+ So when we get to case two and three and we see case two,
+ it's gonna set W equal to Y divided by Z.
+ And it can do that because W has no initial value.
+ But for case three, it doesn't have a value for W,
+ so it first has to set W equal to one
+ before it can do the increment of W by Z.
+ So they created a new piece of code
+ that wasn't originally part of your switch statement,
+ which was to initialize W by one.
+ If the compiler had decided instead to just set W to one
+ as you indicated in your code in the first place,
+ none of this would have to happen.
+ But because it decided to avoid that instruction
+ in cases where it's not needed
+ and save one instruction of time,
+ it creates a complexity for this case statement.
+ I know that's not satisfying as an answer,
+ but that's the reality is that the compiler
+ saw an opportunity to reduce the control flow
+ by one instruction and it took it.
+ Yep?
+ - So the compiler will do everything.
+ It will give the value of one in x86.
+ - That's right.
+ So that's a great point.
+ As programmers, this is kind of invisible to all of us.
+ We create a switch statement
+ and then the compiler makes it work.
+ But as system creators,
+ we have to kind of know how the compiler does what it does
+ and we'll want to be able to recognize it in x86.
+ Yep?
+ - Can you just go to the next slide please?
+ - Of course.
+ - In the big part, we have indicated L9
+ in the set where w equals to one is finish lines.
+ So with that name, since we don't have any jump comments
+ and return comments,
+ it will automatically fall through to L6.
+ - Great, that's a good question.
+ Yeah, so let's talk about that for a second.
+ So I think the fall through is definitely,
+ has the potential to be confusing.
+ So let's look at this piece of code here.
+ L9, let's say that L9 is at address 4096.
+ So L9, when the compiler is done and it links,
+ this will be replaced and 4096 will be in its place.
+ And the value of the instruction
+ that is the move L will be there.
+ Let's say for right now, I don't know if this is true or not,
+ but let's say that the move L is a three byte instruction.
+ So if this takes up three bytes of space,
+ then the next address would be 4099.
+ And that's where my L6 will be, which is the add queue.
+ So L6 in the code will be replaced with 4099.
+ And there's nothing that uses L6.
+ Everything just kind of, oh, except for the jump.
+ So the jump will be replaced with jump to 4099.
+ There we go.
+ When I execute this move L in the hardware,
+ the hardware figures out, hey, if I grab a chunk of memory,
+ where's the first instruction?
+ It'll figure out that it's a three byte instruction,
+ it'll decode it as a move L,
+ and then it will set the RIP automatically to 4099.
+ So the movement of the next consecutive instruction
+ is done automatically by the architecture.
+ The only reason that we need these labels here
+ is so we can reference it for the purposes of jumps,
+ whether it's the jump table or the jump itself,
+ which is jump relative to L6.
+ And that all gets replaced by the linker.
+ Does that answer your question?
+ - No, so does that mean if we have a,
+ like, a combative pointer in L5,
+ that means we'll have some more combative,
+ maybe, for that length, and that will prevent
+ the pointer to just go through the array and stop it?
+ - You're saying, you know, what stops it
+ from just continuously following that flow
+ of one instruction after the next?
+ That would be control flow instructions like returns,
+ like jumps, like JGEs, all of the instructions
+ that we've been talking about that change RIP
+ would be the ones that allow us
+ to not just do one thing after another, yep.
+ Otherwise, programs just follow one instruction
+ after the next unless we have a change in control flow.
+ That's exactly right.
+ Other questions?
+ Yeah.
+ (student speaking off mic)
+ - Because it's doing it with an unsigned comparison,
+ so from the JA's perspective, you've just biased down
+ to everything that was, you've changed the number line
+ to view everything starting at zero to U max.
+ And so what it's effectively doing with a jump above
+ when it compares to six is it's saying,
+ let's take everything from zero to six and keep that.
+ But if it's above six, get rid of it.
+ And because this includes the range that was negative one,
+ let's me put that the right way, T min to negative one,
+ 'cause that's part of the unsigned representation
+ that's above six, that also gets removed.
+ So it effectively sent us to the default
+ for anything that was more than six unsigned.
+ Does that make sense?
+ Yeah.
+ (student speaking off mic)
+ Yeah, so why did the compiler choose to put the W equals one
+ in such a weird place?
+ So let's talk about that.
+ So if we had done it the way that the compiler
+ was told in the first place, it would set W equal to one,
+ have a switch statement, and then if it was two,
+ then I would set W to something else.
+ And if it was three, I would increment W, right?
+ This is kind of what we set up.
+ Now, if I had just, and there was another one where one
+ also had some kind of setting of W to something else, right?
+ So let's say that I did it the right way,
+ which is just to put W set to one before the switch statement
+ At that point, every single instruction
+ would have done the move, let's say it's a move Q,
+ of one into RAX.
+ Every single instruction would execute that.
+ If it was case one, it would do whatever is required here,
+ let's say it's adding and then storing it into RAX.
+ Whatever it is that it has to do,
+ it does that step of instructions,
+ but it basically is ignoring the current value of RAX.
+ It's blowing away that value.
+ Same with two, it doesn't use it.
+ Three uses it.
+ So for the case where three is here,
+ it was helpful for us to have that.
+ But for one and two, this is a useless instruction,
+ because we are not using that value of one.
+ We are assigning a new value to W.
+ So what the compiler does is says,
+ well, why am I doing this instruction here at all
+ if half of my switch statement doesn't use it?
+ Instead, I'll get rid of this, and I'll move it to here,
+ so that I can assign W equal to one
+ as a special case for three,
+ and one and two never have to touch it.
+ Does that make sense?
+ (muffled speaking)
+ Because I'm executing sequentially.
+ If I execute first here,
+ it's not that the other instructions have to,
+ it's the different paths through the code.
+ Consider my flow here, where this is case one,
+ case two, case three.
+ And there's a little bit of a loop here,
+ because two goes to three, right?
+ If I have the setting of W equal to one here,
+ that's experienced on all paths.
+ It's an extra instruction on every path.
+ But if instead I get rid of it,
+ and I only put it here, setting it to one,
+ then only certain paths will have to execute
+ that instruction.
+ Does that make sense?
+ - Yeah. - Got it.
+ Yeah.
+ (muffled speaking)
+ Yeah, that's part of the division.
+ It's a setup for division.
+ So it's setting up the quotient
+ by initializing certain variables and setting things up.
+ But let's not worry too much about that yet.
+ We'll get to that one later.
+ Yep?
+ (muffled speaking)
+ So the left, so I think I said uninitialized.
+ Maybe I should have been more clear.
+ The switch statement does initially say set W equal to one
+ before the switch statement starts.
+ So according to the program correctness
+ of what was intended, W should have been one,
+ and then it gets overwritten by cases one and two.
+ But the compiler said if it's written to one
+ and then written again, that value is not live.
+ So what the compiler does
+ is something called liveness analysis.
+ It says for a particular value,
+ when is it born and when is it dead?
+ And so in this case, if the one was here
+ and then died here and here, but it's still alive here,
+ it figures out why not shorten its lifespan
+ so that I don't have to track it for as long
+ by making it born at the three
+ and then not even seen at one and two, if that makes sense.
+ I'm doing too much personification with these things.
+ Yeah, go ahead.
+ (muffled speaking)
+ Wait, you said for non-default there's what?
+ Oh, are you talking about star sign?
+ Are you talking about the jump with the asterisk?
+ (muffled speaking)
+ This one.
+ Okay, so that's saying you're not taking the address
+ of L4 plus RDI times eight, but you're dereferencing it
+ and grabbing the contents at that address.
+ Does that make sense?
+ It's like following a pointer.
+ Yeah?
+ (muffled speaking)
+ Why not as a register?
+ Is that what you're saying?
+ So this is leveraging the fact that the jump table
+ is not a variable that changes.
+ The jump table address is always the same.
+ So why put that in a register file
+ and then consume a register,
+ instead of just using a constant
+ and then saving yourself the register space?
+ Yeah?
+ (muffled speaking)
+ Because there's no base register.
+ So it's representing the fact that this displacement mode
+ typically has a D, R, B, R,
+ I, and then an S.
+ And so if you decide not to use RB,
+ you still have to disambiguate it from RI,
+ so you just have a comma with nothing there.
+ Yeah.
+ Yep?
+ (muffled speaking)
+ The jump table is something the compiler created
+ to do what's called an indirect branch.
+ It doesn't necessarily know where the branch is taken to,
+ it just knows that there will be a branch taken,
+ and so it creates an array
+ based on the set of case statements,
+ and then you have a way of indexing in
+ once you sort of fix up the index to the jump table
+ to come up with where the case is gonna take you,
+ where the switch is gonna take you.
+ Yeah?
+ (muffled speaking)
+ Because an if statement has only two possibilities.
+ You either take the branch or you fall through.
+ So we don't need to look up the possible addresses,
+ we only have one location.
+ (muffled speaking)
+ If you had a ladder of if and else,
+ you should have created it as a switch.
+ - Okay. - Right.
+ Yep?
+ Go for it.
+ (muffled speaking)
+ Yeah, so ultimately the jump instruction
+ is gonna jump to an address,
+ but the question is which address.
+ So if I have my jump table,
+ and L4 is the starting address,
+ I don't wanna jump to that.
+ I wanna jump to L4 plus the index times eight,
+ which would be, let's say here, is another address.
+ Do I wanna jump to that?
+ No, I wanna jump to the content of that address.
+ So the asterisk kinda tells you to dereference the address
+ that you just calculated, and then actually jump
+ to the contents of that.
+ Yeah?
+ (muffled speaking)
+ Yeah, that's what someone else asked.
+ So the reason that we don't have L4 inside
+ is remember these two are register specifiers,
+ register addresses, RAX, RBX, whatever.
+ This is a scaling factor, it's a literal.
+ And this is a displacement that's also a literal.
+ So in this case, L4 is a literal, it doesn't change.
+ I don't have to put it in a variable.
+ And so I put that on the outside.
+ I know, the syntax sucks, but that's what it is.
+ You had a question.
+ (muffled speaking)
+ The jump table and the pointers that they hold,
+ is that what you said?
+ Yeah, okay.
+ The jump table is an array of pointers
+ to the instruction blocks for the implementation
+ of the cases.
+ So when we get to a switch statement,
+ what it kind of looks like is,
+ I think this is a pretty fair representation.
+ When I get to a switch, it's basically saying
+ there's gonna be one of the cases within the switch
+ that handles the particular value of X,
+ whether it's one of the ones that's explicit or default.
+ And so the jump table enumerates a range of values
+ that aren't automatically default.
+ If the compiler can distill down
+ to a range of possible values,
+ the jump table holds the location for the case statements
+ of all those possible values.
+ So here we distilled it down to zero to six.
+ For the code I'm giving you all for fun tonight,
+ it's I think 100 to 100 and something,
+ I forget what I did.
+ But I distilled it down to another set of range of values.
+ So depending on that range,
+ that's what the jump table is supposed to handle.
+ And then inside, these are pointers,
+ these Ls are gonna be instruction addresses eventually
+ that are the locations for the code
+ to implement the different cases.
+ Does that answer your question?
+ All right, cool.
+ Other questions?
+ Yeah.
+ Say it one more time.
+ (faintly speaking)
+ Does the RIP change?
+ Itself, does it change?
+ Yeah, so the RIP is gonna change by the architecture.
+ I think I got rid of it.
+ When it evaluates a particular instruction,
+ the RIP is gonna change in and of itself
+ to the next instruction by default.
+ So if I execute an add,
+ the processor architecture changes RIP
+ to be the instruction after the add.
+ If the instruction changes RIP itself,
+ like this jump instruction that we have up here,
+ or the jump above, or a procedure call, or a return,
+ if it changes RIP itself,
+ then instead of just doing the next instruction,
+ the architecture will change the value of RIP
+ to whatever that target is.
+ But even though I mentioned that the architecture
+ is doing many things in parallel,
+ in fact, the complexity of the hardware design
+ is not to be, it's nowhere near
+ what we were expecting from the ISA.
+ The ISA is a very simple, high-level idea
+ of what the architecture does.
+ Even though the architecture's doing all this complexity,
+ the idea still is that there's one instruction pointer
+ that it's tracking at a functional level,
+ and it's supposed to be doing one instruction at a time
+ from our perspective as programmers.
+ The reality is it's not.
+ But that's at least the illusion that it's providing.
+ The reality is that it's doing multiple instructions,
+ speculating on paths that may or may not be correct.
+ But we hide that abstraction,
+ so the programmers just see a world
+ where it's one instruction at a time.
+ Yeah?
+ (audience member speaking)
+ Yeah.
+ (audience member speaking)
+ (audience member speaking)
+ It depends.
+ So the question was, if we have a evaluation
+ that's writing for the condition codes,
+ does it actually get written somewhere?
+ So let's take the case here of this SHRQ.
+ In the case of the SHRQ, the shift itself
+ is what's setting the condition codes
+ for the corresponding JNE.
+ So in that case, the register file
+ is getting written by the result of the shift,
+ but the condition code, in this case which is a zero flag,
+ is not getting written anywhere
+ but the condition code registry.
+ So the condition code itself doesn't get stored
+ in the register file explicitly
+ unless we do a set instruction, one of the set Xs.
+ Otherwise, for something like SHRQ,
+ while it writes to the register file,
+ it's not writing to the condition code.
+ And then for something like test or CMPQ,
+ it doesn't write to the register file at all.
+ Yep?
+ (audience member speaking)
+ Yeah, so if for loop, do while, and while
+ are all basically the same at the machine level,
+ why do we have different ones?
+ Because there is one implicit difference
+ from a programmatic standpoint,
+ which is that a while do versus a do while
+ would execute the do while at least once,
+ and the while do doesn't have to execute at least once.
+ So from a programmer standpoint, there's a difference.
+ But when it gets down to the actual code
+ that it's implemented as, there's no difference.
+ So the fundamental loop body itself keeps the same.
+ There's just a little bit of supplementary code
+ from initialization, the initial check,
+ the update that gets added in.
+ So it's a convenience for programmers.
+ But we could have gotten rid of them,
+ it would have been much nicer, I agree.
+ All right, other questions?
+ All right, so what I wanted to say was,
+ I don't know how many of you actually watched,
+ I won't embarrass anyone to ask you to raise hands,
+ but I don't know how many of you actually
+ watched the video of going through the code.
+ But I did see someone ask on Piazza about,
+ what can I do to stay engaged in lecture?
+ That to me was code for, I'm falling asleep
+ and I can't stay up.
+ So what I would say is that this is dense
+ and really hard to go through, right?
+ It's really hard to look at C code by itself,
+ but to have to sit and look at it
+ getting translated to assembly, it's not easy.
+ I would strongly encourage you to look at the videos
+ that I create, okay?
+ When I go through the ones for today,
+ and I go through creating C code,
+ analyzing the switch statement that results,
+ analyzing the while loop and for loop
+ and that kind of thing, I think that's something
+ you could do on your own.
+ I think that's something that would help
+ cement this stuff in your head.
+ So I would recommend that.
+ I'll see you all on Monday.

@@ -1,0 +1,1771 @@
+ [INTERPOSING VOICES]
+ So last time we were talking about UTF-8.
+ And if you'll recall, this is the general pattern.
+ And the idea is that we have a way of representing characters,
+ which in Unicode are numbers from 0 up through 10FFF
+ hexadecimal versus bytes, in which ASCII characters are
+ represented by single bytes, represented by themselves,
+ and non-ASCII characters are represented
+ by multi-byte sequences.
+ So what I'd like to do today is I'd
+ like to finish talking about UTF-8
+ and then start talking about client server and internet
+ and basically the things underlying our next assignment.
+ So what sort of problems can we run into when
+ we're dealing with UTF-8?
+ Well, one obvious problem is invalid bytes.
+ You just see the byte, and it's not any of these patterns.
+ So in particular, you can see a byte in which the top five
+ bits are one, and then the remaining bits are anything
+ else.
+ They can't possibly appear anywhere in a UTF-8 sequence.
+ So you see a byte like this in your byte sequence.
+ You know it's invalid UTF-8.
+ Suppose someone sends you a document and says,
+ this is a UTF-8 document.
+ And you see a byte like this somewhere in it.
+ What that means is you have an encoding error
+ if this is a UTF-8 stream.
+ If you're a browser and you're trying to, I don't know,
+ render a web page, and the web page
+ contains a byte like that, which the network can transmit,
+ then the browser needs to do something about it.
+ It's fairly common when a browser sees an encoding error
+ to display a special sort of symbol on the screen that's
+ not a valid character.
+ A common one for that is a symbol that looks like this.
+ It's sort of an outline of a question mark inside a diamond.
+ And they choose this because they
+ hope no one would ever want a character that looks like this.
+ And this is the browser's indication
+ that what you have here is not a character.
+ It won't necessarily tell you which invalid byte you got,
+ but you know that you got some sort of invalid byte.
+ But there's another way that you can
+ get invalid data, which is you can get an unexpected
+ continuation byte.
+ And this will happen when you see
+ something that looks like this.
+ I'm sorry, 1, 0.
+ And the bottom bits can be anything you like.
+ But this byte is not preceded by one of these guys.
+ It's not part of a multibyte character.
+ You just see a random continuation byte, something--
+ maybe it's immediately preceded by an ASCII byte.
+ In that case, it's a continuation byte
+ that you didn't expect.
+ And it's another form of encoding errors.
+ Both of these are considered encoding errors.
+ And you might see a funny character
+ like this on your screen.
+ Or if you're doing this in Python
+ and you start off with a byte sequence
+ and ask to decode it into a character sequence,
+ you'll get a runtime error.
+ Third possibility is that you get a truncated sequence.
+ So for example, suppose the input looks like this.
+ The first byte is three 1's followed by a 0.
+ The second byte is 1, 0 followed by something, a continuation
+ byte.
+ And that's the end of file.
+ That's the end of your web page or the end
+ of your byte sequence that you got.
+ Well, that's not a valid character either, right?
+ So this will also count as an encoding error.
+ So far, so good.
+ Yes?
+ What would make that valid again?
+ So if we added something at the end--
+ Yes, right.
+ So this truncated sequence is kind of a special case.
+ Because let's say, for example, the communication
+ dropped while the server was transmitting to you.
+ You'll see this truncated sequence.
+ And maybe if you'd gotten all the data,
+ you would have seen the full character.
+ But if you think this is the end of file,
+ you've got to report it as an encoding error.
+ And it might be completed later on.
+ So your encoding error will turn into a valid character
+ if there's some way to recover later.
+ But for now, it counts as an encoding error.
+ That's kind of a tricky business because it's fairly common
+ to have just gotten part of a web page.
+ And so the browser needs to look at this and decide whether,
+ is this really the end of file?
+ Or am I going to get more data later?
+ And then keep track of these two bytes
+ here because it might need to use them later.
+ Yes?
+ Can you remind me again why these patterns are invalid?
+ Was it because those were the only patterns?
+ It's because these are the only valid byte sequences, right?
+ Here's a one byte, two byte, three byte, four bytes.
+ In UTF-8, those are the only ones that are valid.
+ Therefore, anything that doesn't fit this pattern is invalid.
+ And to some extent, what I'm coming up with here
+ is this is the negation of that, right?
+ I want to say everything that's not in this,
+ I want to write it down over here.
+ And to some extent, this is because you'll probably run
+ into corrupted data of some sort.
+ You'll need to deal with it.
+ You'll need to know what might cause it, or that sort of thing.
+ All right, these three are pretty obvious.
+ The last category that I'd like to talk about
+ is less obvious, so un-obvious that when UTF first came out,
+ there wasn't a category four.
+ The category four is as follows.
+ Suppose you see a bit pattern that looks like this, right?
+ It's a byte sequence.
+ It's two bytes, and it starts off with 110 here.
+ Let's get that just right, 110.
+ And over here, there's a 10, right?
+ So far, so good.
+ But the thing that's a little bit unusual about this
+ is that these trailing bits look like this, right?
+ And then this is, I don't know, 1, 1, 1, 0, 1.
+ So there's five bits here, and then there's six bits here.
+ Oh, and then another one, right?
+ This one is trouble, even though initially it
+ looks like it's OK.
+ And the reason it's trouble is the way
+ you figure out which Unicode character this represents
+ is you look at the payload bits, which are these bits,
+ you concatenate them.
+ And you say, OK, that's the character that I want, right?
+ And if you convert this, I don't know, to hexadecimal,
+ this is 7a, right?
+ So you would say, oh, this is the character u++7a, right?
+ And that's going to be an ASCII character, right?
+ Because ASCII characters are characters
+ that fit into the 7-bit encodings.
+ There's seven bits here.
+ So this is a valid ASCII character.
+ So what we have here is a two-byte representation
+ of a character that we could have used one byte to represent,
+ but we decided to use two bytes, right?
+ It's an inefficient representation for which
+ we have a more efficient one.
+ But the problem here is the fact that we
+ have multiple representations for this same ASCII character.
+ There's only one character here, but we have two different ways
+ to write it.
+ Actually, come to think of it, we have three ways to write it,
+ four ways to write it.
+ This situation is called an overlong encoding.
+ And when UTF-8 was first invented,
+ it was thought, oh, that's all right.
+ You've got multiple ways to represent the ASCII character
+ 7a.
+ I've forgotten what it is.
+ You can look it up.
+ But what's the problem?
+ Turns out that it is a problem.
+ And the reason it's a problem is that if you
+ allow overlong encodings, code like this stops working.
+ This is the thing that you can give an arbitrary string, right?
+ And then here, you give a character.
+ And imagine this is some string that came from the input.
+ The way C-H-R works is it looks for this bit pattern
+ in any byte in the input string.
+ And it tells you whether it finds an input byte whose
+ encoding is lowercase a.
+ But if there's a different way to represent lowercase
+ a with an overlong encoding, this code,
+ which used to work with ASCII, stops working.
+ Because it'll only capture lowercase a's
+ that are written this way.
+ It won't capture.
+ It won't find any lowercase a's that
+ are written in some other way.
+ Yes?
+ Is this still problematic if we're using, for example,
+ three bytes to represent two bytes?
+ I can see what they're asking for [INAUDIBLE]
+ would two between you also be problematic?
+ Yeah, you can also have an overlong encoding.
+ That is, you can use a three-byte encoding
+ when a two-byte encoding would do.
+ And that's also considered to be overlong, because now you
+ have two different representations
+ for the same character.
+ It won't be an ASCII character, but it's still
+ two representations for the same character.
+ And the problem with it is that you now
+ have multiple representations for the same character.
+ It's going to complicate a lot of code
+ that needs to search for either ASCII
+ or maybe for some other strings.
+ And it turns out that this complication
+ has been exploited by attackers.
+ That is, you may have, I don't know,
+ some sort of program that's looking
+ for possible patterns of attack and input.
+ And it's looking for a particular string pattern
+ when it does that.
+ If it has to worry about overlong encodings,
+ it's going to be a lot more complicated,
+ because it has to look at all the possible ways
+ that the attacker could spell the magic word rather than just
+ one way.
+ And because some overlong encodings were actually
+ used in some attacks some years ago,
+ they decided to, in effect, retroactively ban them.
+ Overlong encodings are no longer considered to be valid.
+ And so this now counts as an encoding error as well.
+ There's only one way to say lowercase a in UTF-8,
+ and it has to be the ASCII way.
+ Question?
+ The way that overlong encoding is enforced
+ is that if you add a second bit, like you have [INAUDIBLE]
+ the first byte must have a string that is not all zeros.
+ Well, yeah, in fact, since there's six bits here,
+ and the seventh bit means that it'll just be ASCII.
+ And what that means is that one of these bits
+ here has to be non-zero.
+ You can't have all four bits non-zero here.
+ Because if you did, then you could represent it
+ as an ASCII character.
+ And you can have a similar rule to deal with these other guys.
+ All right.
+ Any questions about the possible way-- and in effect,
+ this is everything that's not UTF-8.
+ Question?
+ So for the string for that expression,
+ so that one only captures dot utter for the [INAUDIBLE]
+ Yeah, this function was designed back in the ASCII world.
+ And so it only works, really, for ASCII characters here.
+ It won't work for characters that
+ don't fit into a single byte.
+ But you'll run into a similar problem
+ if you're searching for any other character, right?
+ You could do, I don't know, something like this.
+ strstr basically looks for this byte string somewhere
+ within this byte string.
+ Both byte strings are null-terminated.
+ This code will work with UTF-8.
+ It wouldn't work if we allowed overlong encodings.
+ Because all strstr does is it just treats them
+ as byte strings.
+ It doesn't know about the fact that we
+ have multibyte characters.
+ So if we allowed overlong encodings,
+ then this wouldn't match the other encodings
+ for these characters.
+ So that's another reason to disallow overlong encoding.
+ All right.
+ So that's problems with UTF-8.
+ And I've tried to nail them all down as much as possible.
+ But there's another sort of related area,
+ which is problems with Unicode.
+ These problems would occur even if we didn't use UTF-8.
+ That is, even if we had 32-bit characters in our files.
+ So our files would be a lot bigger
+ if they're representing ASCII characters.
+ If we did that, we'd be avoiding all the UTF-8 problems.
+ But we'd still have problems that have
+ to do with a Unicode itself.
+ One problem is the problem of homoglyphs.
+ Homoglyphs occurs when you have two different characters
+ that look the same.
+ Two characters, different characters.
+ That look the same.
+ So for example, this is an uppercase C in ASCII.
+ And this is an uppercase S in Cyrillic.
+ And unless-- I mean, we could try it, right?
+ Cyrillic letter, capital letter S. We'll get there.
+ It's one of these characters.
+ Oh, capital letter, oh, it isn't working.
+ What went wrong?
+ We'll just do Cyrillic in general
+ and see what we've got here.
+ Well, we'll just use this one, because it's first on the list.
+ Here's the Cyrillic capital letter A.
+ It looks a lot like the capital A that you're used to in Latin.
+ But they're different characters, right?
+ If I go to this character in Emacs and type control-U-X-E,
+ it'll say, oh, this is the character 0x410.
+ So it's Unicode hexadecimal 410 character.
+ And yet, it looks just like a capital A.
+ As you can imagine, homoglyphs can cause real problems
+ in many applications.
+ You could be looking for a string,
+ or you could fool users by saying,
+ I'm going to visit, I don't know, ucla.edu, except that.
+ There's a Cyrillic A and not the Latin A that you're used to.
+ And we'd be visiting the wrong domain.
+ You think you're logging in and checking your grades,
+ but you're looking at some bad person's website.
+ So homoglyphs are going to be a problem.
+ Another problem is kind of the opposite problem.
+ That's synoglyphs.
+ These are characters that are the same characters,
+ but they look different.
+ So an example of that would be, I don't know,
+ but we'll just do sort of a capital S or a capital S.
+ Those two are the same characters.
+ They're just in a different font.
+ This is sort of a script font.
+ This is more of a sans serif font
+ that you might normally see.
+ They look quite a bit different, but they're actually
+ the same character.
+ This tends to be less of a problem,
+ but if you have some gussied up fonts in your web browser,
+ you might run into this situation as well.
+ Another problem is the problem of normalization.
+ This problem occurs because in many languages,
+ there are accent marks that attach to characters.
+ So yes, there is this character.
+ That's a single character.
+ It's a lowercase Latin A with an acute accent over it.
+ But there's another way to do it in Unicode.
+ You can write a normal lowercase A,
+ and then there's this funny accent character
+ that I'll draw this way.
+ This little dotted circle means this character,
+ when you render it, is supposed to appear right
+ on top of the previous character.
+ With this approach, we can follow our character
+ with multiple accents, maybe this one.
+ And even though there are three Unicode characters here,
+ the way it's displayed looks like this.
+ And there might be some unusual Western European language
+ that actually wants to have an A with a Cedilla under it
+ and an acute accent over it.
+ And if you have this approach, you
+ can have lots and lots and lots of characters.
+ The number of possible characters
+ grows exponentially with the number of accents
+ that you have, that sort of thing.
+ But you have the problem now that there's
+ two different ways of representing
+ the same character, this way and this way.
+ These two essentially are supposed
+ to represent the same way.
+ Even if you are worried only about the unusual characters,
+ there's going to be two ways of representing
+ this unusual character here.
+ You can do it this way.
+ You can do the Cedilla first, and then the acute accent.
+ Or you can do it this way.
+ They both represent the same character.
+ So normalization occurs when you take all of these sequences
+ and come up with a single way to represent characters.
+ So for example, you sort the following accents
+ and always put them in a particular sorted order.
+ When you have a character that's composed out
+ of simpler characters, you just represent them
+ as a simpler string.
+ But normalization is going to slow down comparison
+ and all that sort of thing.
+ So this turns into another problem
+ once you start dealing with character data.
+ It gets a little worse than this.
+ There are two different Unicode symbols that look like this.
+ One is-- and I'll write the numbers down--
+ U plus 00B5, which is the micro sign.
+ And one is U plus 03BC, which is the Greek small letter U.
+ So we can write them down here.
+ Here's a micro sign.
+ And down here is Greek small letter U.
+ And they look identical, but they're different characters.
+ And presumably, you're supposed to use one in some cases
+ and one in the other.
+ To some extent, these are now widely
+ considered to be mistakes.
+ And there is a school of thought in Unicode
+ that you should only use this one.
+ Never use this.
+ It's just going to confuse people.
+ But that doesn't prevent people from actually using them.
+ Any questions about these characters?
+ Yes.
+ Is the micro sign considered a homoglyphs or a [INAUDIBLE]
+ Yeah.
+ This is sort of a homoglyph situation.
+ And this one's kind of a weird one.
+ The reason there's two characters
+ is there was one 8-bit character set that actually
+ had two different symbols--
+ one for scientific applications, one for writing Greek.
+ It was a mistake, but the Unicode
+ tries to be compatible with all these national standards,
+ so they felt compelled to do this.
+ There's a few other examples, like the Kelvin symbol
+ and capital K are two different symbols in Unicode.
+ Same basic problem.
+ All right.
+ Then there's an even bigger or more complicated situation,
+ which is called compatibility equivalence.
+ This allows even more kinds of comparison.
+ For example, there's a symbol in Unicode
+ called the 1/4 symbol that looks like this on your screen.
+ But you could also write 1/4.
+ And in some sense, that's just two different ways
+ of writing the same thing, even though, obviously,
+ if you compare them as Unicode character strings,
+ they'll be different.
+ And one last thing I'll mention is ignoring case.
+ There's a long tradition on the internet
+ that case should be ignored in many important applications.
+ One of them I alluded to already,
+ which is you can use this as a domain name,
+ and you can also use this as a domain name.
+ And they're equivalent.
+ They're two different names for the same IP address.
+ They're always the same.
+ So ignoring case is sort of an important part
+ of comparing strings.
+ Ignoring case turns into a bigger problem,
+ though, once you start ignoring case with Unicode.
+ So for example, if you ignore case in German,
+ this should be the same as this.
+ That is, this is the S set character,
+ which stands for two S's.
+ And it should compare equal to two S's.
+ Another one is that in Greek, this
+ is ignoring case equivalent to this kind of sigma,
+ but it's also equivalent to this kind of sigma.
+ They have two lowercase S's in Greek.
+ So you have to worry about all this
+ if you wanted to put Greek in domain names
+ or do something similar in any sort of language
+ that ignores case.
+ All right.
+ So question.
+ What's the problem with compatibility with the--
+ like, what's wrong with having just one fourth of the document?
+ What's wrong with having this situation?
+ No, it's the compatibility with the one fourth [INAUDIBLE]
+ Well, a problem here is that you can
+ get sort of ambiguous situations in that sort of thing, right?
+ What would be an example?
+ Suppose the input looks like this.
+ Is that a one and a slash followed by the 3/4 symbol
+ or a 1/3 symbol followed by a slash followed by a four?
+ So there's some weird situations that
+ can come up when you do compatibility-- when you try
+ to do compatibility equivalence.
+ I'm not really an expert in it, but that's
+ just one that comes to mind.
+ Yes?
+ Is the one quarter one character?
+ Yes, this is one character.
+ There is a character that looks like this in Unicode, yes.
+ OK.
+ Is the one slash 4/3 characters?
+ Yeah.
+ OK.
+ Right.
+ And there's a one third symbol in that sort of thing.
+ Yes?
+ So two questions.
+ First, it seems like many of the compilers [INAUDIBLE]
+ are they part of the normalization
+ because they are both trying to convert something that
+ represents the same thing into--
+ Right, so one way you can ignore case
+ is you can come up with a normalized version
+ of your string in which all the characters are, say,
+ lowercase characters.
+ So that's one way to ignore case, yes.
+ So they're all just subcases of normalization?
+ Well, I would say in Unicode, normalization
+ is referring to the kinds of problems that I mentioned here,
+ and ignoring case is considered to be a separate problem.
+ But to some extent, that's just a terminology issue.
+ Other comments on these funny characters?
+ Yes?
+ How do you look up the [INAUDIBLE]
+ Oh, in Emacs, I type Control-X-8, Enter,
+ and it lets you insert any character that you like,
+ right?
+ So for example, I could put in a 3BC here by typing 3BC,
+ and that inserted that little mu.
+ But also, I can type Control-X-8, Return,
+ and then type Tab, which prompts me with all the possible
+ answers I can do here.
+ So Emacs has a list of all the Unicode characters,
+ and it sorts them alphabetically.
+ So the first one is the abacus symbol,
+ which is that funny sort of colored thing,
+ and then there's AC current and that sort of thing.
+ So I can insert an abacus symbol here by typing the name,
+ and there's my abacus character.
+ I don't know why they put an abacus in there,
+ but I guess they thought it was fun.
+ All right?
+ Other comments on odd characters?
+ Yes?
+ [INAUDIBLE]
+ Well, you would have a generous comparison function
+ that would look at this and say, well, I'm
+ going to treat that as equal to these three characters, right?
+ And one way to do that is, again, you
+ do some sort of compatibility normalization.
+ So you look at this character.
+ You mentally convert it to 1/4, and then if you see a 1/4,
+ you say OK.
+ Other comments?
+ Yes?
+ [INAUDIBLE]
+ [INAUDIBLE]
+ Yeah, the protocol for resolving domain names
+ is independent of browsers.
+ So the browser, it can just take your uppercase domain
+ name and ship it off to the domain name server,
+ and it'll get the right answer.
+ So you're saying two people have two versions of my website,
+ one uppercase, one lowercase?
+ They can't.
+ They can't?
+ Right, because the domain name system ignores case.
+ At least it ignores ASCII case, right?
+ So there's only-- this is just two different names
+ for the same domain, for the same website,
+ for the same IP address.
+ You can't try to have one person in charge
+ of the uppercase version and one in charge
+ of the lowercase version.
+ OK, well, enough character stuff.
+ It's time to start talking about the internet.
+ I should give you a warning here.
+ Things move faster in this part of the class.
+ And by faster, that doesn't mean I talk faster.
+ I can only talk at the same speed I can talk.
+ It means I cover topics more quickly, more sketchily.
+ I skip over a lot of stuff.
+ And I trust you to fill in the blanks.
+ I don't expect you to fill in the blanks at lecture time,
+ necessarily.
+ What you'll have to do at times is write stuff down,
+ say what in the world is going on there,
+ and then go and find out by looking
+ at the assignments which have suggested readings
+ or maybe asking the Google or something like that.
+ That's OK.
+ A lot of software construction is like this.
+ You'll be asked to work using new technology that you haven't
+ run into.
+ And you'll have to come up to speed on it.
+ And you've gotten some practice with that already
+ in this class.
+ And now you'll get more practice by me being sketchier.
+ There's a couple other reasons why I'm going faster.
+ First off, the assignments due pretty soon.
+ And we don't really have much time.
+ It's OK.
+ It's an easy assignment, assignment three.
+ Second, this is the first area where
+ it's safe to say that the technology led and the software
+ construction followed.
+ So I need to talk more about the underlying technology
+ and less about the software construction.
+ Otherwise, you won't understand what the software is doing.
+ And third, I'll be totally honest.
+ I'm not an expert in Node and React and that sort of thing.
+ So I'm going to refrain from talking a lot about stuff
+ that I don't know a lot about.
+ So it's kind of a combination of those three things.
+ But that's all right.
+ We'll get the basic ideas going and see
+ how far we can get with that.
+ Question?
+ [INAUDIBLE]
+ Oh, yes.
+ I'm not going to test as much detail about the stuff
+ that-- in terms of the software construction
+ and minutia of JavaScript.
+ I definitely-- but I will ask you
+ questions about the big picture, which is what
+ I'm planning to talk about here.
+ All right.
+ So it's fairly common to build applications on the web.
+ And what I want to talk about first
+ is sort of the basic idea of a client-server app,
+ because that's the kind of app that
+ is sort of most common on the web.
+ First, I should say that it's not the only way to do things.
+ In fact, let's put it in sort of the bigger universe
+ of possible ways, app styles.
+ The simplest app style is standalone.
+ You just have a program.
+ It's running on your computer, and it just runs.
+ This is what you covered in CS 31, and 32 if you took it,
+ and 35L.
+ It's sort of classic computing.
+ You've got one computer.
+ Maybe it's multi-core, but it's still just one computer.
+ Next style is going to be client-server.
+ In some sense, it's the simplest generalization of standalone,
+ because the basic idea here is you have two computers that
+ talk to each other.
+ One is the client, one is the server.
+ And we'll talk more in detail about how that happens
+ and what goes on.
+ But there are other possibilities.
+ Fairly common approach these days is peer-to-peer,
+ sometimes called P2P for short.
+ Under this approach, you have lots
+ of computers on your network, and they all talk to each other.
+ If this is sort of the network connection,
+ they're all talking to the network.
+ I'm assuming in here this is just the network.
+ There are no computers here.
+ There's just a bunch of communication links.
+ In a peer-to-peer approach, none of the computers is in charge.
+ Each one of them is sort of equal.
+ That's why they're called peers.
+ And yet they still get something done.
+ Another possible approach is sort of a primary-secondary
+ approach.
+ Under this approach, you have one primary node
+ that I'll label P that talks to the network,
+ and then a bunch of secondary nodes.
+ The secondary nodes are all worker bees.
+ They just wait to be assigned tasks from the primary node.
+ And whenever the primary node wants work to be done,
+ the primary node says, OK, you do this.
+ It sends a message to S, and it sends a message to this.
+ The primary node here is in charge.
+ And in particular, what it's going to do
+ is it's going to do scheduling.
+ It's going to try to keep the secondary nodes as
+ busy as possible, doing productive work.
+ And so it's going to think hard and all this sort of thing.
+ But typically, the primary node itself
+ doesn't do any work other than the scheduling work.
+ So there's other possibilities.
+ This is a good way to start, anyway.
+ Which of these architectures is the hardest to set up and run?
+ Peer-to-peer, right?
+ Because nobody's in charge.
+ That means everybody has to be willing to let
+ somebody else do the scheduling.
+ But maybe I'll do the scheduling.
+ It's more amorphous and that sort of thing.
+ Primary secondary is very popular in machine learning.
+ You'll have the single primary node typically running Python,
+ shipping off a bunch of jobs to be run on secondary nodes.
+ These guys are doing either the training or that sort of thing
+ and then getting results back.
+ So this is a very popular approach.
+ Client-server, of course, is a big deal on the web.
+ And standalone is quite pop--
+ I would say this is probably the most popular approach even
+ today.
+ Most programs are standalone because they're running breaks
+ in your car or something.
+ Yes?
+ What prevents peer-to-peer from encountering deadlock
+ if there's no strip hiring?
+ Very clever programmers.
+ Right?
+ Deadlock is an approach where you
+ can't make any progress because everybody's
+ waiting on everybody else.
+ That can happen with peer-to-peer.
+ It can happen with primary-secondary.
+ It can even happen with client-server.
+ It can even happen standalone, which you'll
+ see once you take CS 111.
+ Yes?
+ Is there a difference between client-server and primary
+ secondary?
+ Is there more than one client?
+ Or is there three clients and one server?
+ Yes, so client-server generalizes, obviously,
+ to have client one, client two, client three.
+ In primary and secondary, the primary node
+ does all the scheduling and is in charge
+ of when computations occur and that sort of thing.
+ In multi-client single-server approaches,
+ the clients are in charge of figuring out
+ what's going to happen next.
+ This is a web browser.
+ It's waiting for you to type something.
+ When you type something or hit the mouse or something,
+ it's going to send off a message to the server.
+ The server is not in charge of that.
+ The client is.
+ Now, that being said, very commonly in client-server mode,
+ the server is in charge of something.
+ The server is in charge of the shared state
+ amongst all the clients.
+ This can be a bank server keeping
+ track of everybody's bank accounts
+ and how much is in them.
+ It can be talking to multiple clients.
+ But if somebody wants to change the amount of money
+ in their bank account, it's really the server
+ that's in charge of that.
+ All the clients are in charge of is deciding
+ when to initiate requests.
+ But the server decides whether or not
+ to actually do the request.
+ Other comments on architectures.
+ Now, I should also say it's fairly common to have hybrids.
+ You can have a client-server system
+ that if you look deep inside it, somewhere inside the server,
+ it's really a primary-secondary system.
+ A lot of that sort of happens.
+ So don't think that you have to pick exactly one
+ of these approaches.
+ You can mix and match.
+ We're going to focus on this one because it's the simplest
+ one that's not standalone.
+ You are already experts on standalone
+ because you've done CS31.
+ So all right.
+ What are some of the issues that come up in client-server?
+ Well, first off, pretty much any issue
+ that you'll run into in a standalone approach,
+ you can run into with client-server.
+ You write a bad C++ program.
+ It dereferences a null pointer.
+ It crashes.
+ Hey, that can happen with client-server as well.
+ So all the stuff that you know about that caused you trouble
+ in CS31 is still going to cause you trouble.
+ What I can bring to the table here for this class
+ is I can give you new forms of trouble.
+ And you're going to love it because this trouble comes
+ with good stuff as well.
+ But since I'm an engineer, I'd like to focus on the problem.
+ So what are some of the issues here?
+ First off, you'll run into performance issues.
+ Of course, you ran into performance issues before.
+ But now you get new kinds of performance issues,
+ and they fall into two major categories.
+ The first one is throughput.
+ Throughput is the number of problems
+ that you can solve in a unit of time,
+ the number of, say, transactions per second
+ or the number of queries per second that you can do.
+ I'll just call them actions per second.
+ In a client-server approach, typically throughput
+ is a server issue because the clients are sort of bombarding
+ the server with requests.
+ And the server has to satisfy as many clients as it can.
+ And as the number of clients increase or if they get faster,
+ the server gets more and more loaded,
+ you worry about the throughput of the server.
+ And that's going to be one of your issues.
+ So how can we improve throughput?
+ Classic way that the server sort of improves throughput
+ is if it gets bombarded with requests,
+ it'll start executing the requested actions in parallel.
+ It won't do them sequentially.
+ To improve it, the server can operate in parallel.
+ I'll put in parallel in quotes because it
+ has to be careful about doing this sort of thing.
+ If it's a bank application and two clients
+ are talking about two different bank accounts,
+ then it's OK if the server does a deposit into one bank account
+ and a withdrawal from another bank account in parallel
+ because they can't possibly collide with each other.
+ Those actions are fine.
+ But if these two clients are both accessing the same bank
+ account and the server attempts to deposit and withdraw
+ at the same time, you can imagine
+ you might run into sort of problems with that.
+ So really, a better way of saying this is in quasi-parallel.
+ And by quasi-parallel, I mean the following.
+ The classic way that a server can do this
+ is it can do actions in parallel such
+ that there is a sequential explanation for the results
+ you got.
+ So it does actions in parallel.
+ The actions actually done in parallel,
+ but they could be justified by some sequential sort
+ of explanation.
+ And that explanation-- I'll put it a bit in quotes--
+ means, I don't know, suppose the bank auditor shows up later
+ and says, I want to see all the transactions that were done,
+ and I want to know that you never, say, allowed a bank
+ account to drop below zero.
+ You can give that bank auditor the explanations of the actions
+ that you did, and as long as it matches the behavior that all
+ the clients observe, that's good enough.
+ It doesn't matter that you actually did some of them
+ in parallel as long as you can explain them sequentially.
+ So that's a key notion in getting throughput up
+ while not losing correctness.
+ A real problem with doing stuff in parallel
+ is you could do things wrong that way,
+ but if you can do things in parallel
+ and come up with a good explanation for it,
+ you're fine.
+ Any questions about throughput?
+ Next major problem, performance problem in client server apps,
+ is latency.
+ With latency, we're not so much worried about the point of view
+ from the server.
+ Throughput is really a server-side issue.
+ You're trying to get as much work out of the server
+ as you can.
+ Latency, you're looking at from the client side.
+ So latency is the distance in time or the time interval
+ between the client making a request
+ and the client getting a response back.
+ You want to have high throughput,
+ you want to have low latency.
+ The lower the latency, the better.
+ And we need techniques to improve latency
+ because people don't like to sit around and look at their web
+ browser and wonder what in the world is happening.
+ What's the most common way to improve latency in a client
+ server application?
+ Yes.
+ Is it to make a guess on what's going to be called
+ and then it sets the request and gets cached?
+ Guessing can be part of it, but the key
+ part of it is caching.
+ I'll write that in capital letters.
+ The way that you can improve latency
+ is if the user asks a question that's already been asked,
+ you don't need to go and consult the server again and wait.
+ The server might be in Tokyo.
+ It's going to take, I don't know,
+ 40 milliseconds to get the answer back.
+ 40 milliseconds is a long time.
+ It's like, that takes too long, right?
+ You want to get it faster than that.
+ But if you've already asked the server in Tokyo that question
+ 10 minutes ago, just reuse it.
+ Cache the answers you already have,
+ and then replay them from the cache in the client
+ rather than going back to the server.
+ This approach is used over and over again
+ in client server apps using some fairly tricky techniques.
+ We won't have time to go into them all,
+ but the fundamental idea here is cache.
+ Now, you can combine that with your suggestion, which
+ is to guess what the answer will be.
+ That's a little trickier, because you
+ have to deal with the possibility
+ that your guess is wrong.
+ With a cache, you already have the right answer.
+ Just reuse it.
+ What can go wrong?
+ So what can go wrong with a cache?
+ Yes?
+ [INAUDIBLE]
+ Right.
+ Well, part of that is Google is just messing with your brain.
+ They don't want to give the same answer to everybody.
+ If I ask Google a question in Los Angeles
+ and ask Google exactly the same question in Beijing,
+ there's a good chance it'll give me a different answer
+ for various reasons-- some legal, some because they
+ want to give an answer that they think you'll like, whatever.
+ So you have to be careful about the cache in terms
+ of when I say the same question, part of that question
+ is not simply the question that you typed,
+ but it's identification about your browser
+ and that sort of thing.
+ But there's another issue that comes up with caches.
+ Yes?
+ [INAUDIBLE]
+ Right.
+ So the basic problem here is the problem of stale caches.
+ And the common technique used to deal with that
+ is called cache validation.
+ Cache validation occurs when your client
+ worries that its cache is out of date
+ and then checks with the server to make sure
+ that the cache is not stale, or at least this part of the cache
+ is not stale.
+ And if it can do that efficiently,
+ more efficiently than actually getting the answer back again,
+ that's going to be a with.
+ But this, as you can imagine, is a bit of a tricky business.
+ How do you decide that the cache is stale?
+ Is it stale when it's 10 seconds old, 100 seconds old,
+ that sort of thing?
+ There are going to be some judgment calls
+ to deal with here as well.
+ Any comments about these two performance problems?
+ Yes?
+ [INAUDIBLE]
+ Right, so if I start up a browser
+ and visit www.ucla.edu, and then 10 minutes later,
+ visit that same website again, how much work
+ is done the second time compared to the first time?
+ So for example, it'll put out some pretty picture
+ of Murphy Hall-- well, they don't put up Murphy Hall.
+ That's an ugly building, but Royce Hall in the springtime,
+ and everybody's smiling.
+ And then 10 minutes later, they'll
+ show you the same picture.
+ But you're not getting the bytes of that JPEG image
+ or whatever it is image again.
+ You've cached it in your browser,
+ and your browser knows that and doesn't
+ bother refetching the image.
+ Yes?
+ How does caching work in a browser?
+ Because on hardware, there's an actual physical cache
+ that's similar for a browser.
+ Yes, the caches we're talking about here
+ are more abstract or higher level than that.
+ So we're not talking about level 1 cache or level 2 cache
+ or the stuff that you saw in CS33 if you've taken 33.
+ We're talking about cache kind of from the point of view
+ of JavaScript, or if you were writing Python code,
+ it would be Python.
+ So it's stuff kept in sort of, from your point of view,
+ RAM that you've sort of copied over from some website.
+ Or maybe the browser actually, once the cache
+ starts getting big, starts taking this stuff in RAM
+ and putting it into a local temporary area
+ on a flash drive or that sort of thing.
+ That will still count as cache from our point of view.
+ Yes?
+ So for our purposes, is the cache just
+ something that's more quickly accessible than the server?
+ It's local, right.
+ And the assumption here is that stuff that's local
+ is more quickly accessible than the foreign stuff.
+ That's not always true.
+ But for now, we can pretend that it's true.
+ Other comments on caching?
+ Yes?
+ How do you know when the cache is valid?
+ How do I know when the cache is valid?
+ You don't always.
+ And after the break, maybe we'll have a chance
+ to talk about that.
+ So let's take a break and start up again in maybe one
+ past the hour.
+ All right, so what I'd like to do next
+ is talk about some of the underlying technology
+ that we're going to use to build client server apps.
+ And to some extent, the rest of this lecture
+ is computer science 118, our networking class,
+ condensed to about 40 minutes.
+ So I told you we were going to go fast.
+ So here we go.
+ It's just a subset of 118.
+ So I'm going to start with perhaps the most plausible way
+ to build a networking system.
+ And it was the way that was used before the internet became
+ popular.
+ And the technology that was used back then
+ is called circuit switching.
+ The basic idea is pretty simple.
+ I'm sitting here in Los Angeles, and I've
+ got a telephone, a plain old-fashioned telephone
+ with a dial, something that looks like this.
+ And I want to talk to somebody in Boston,
+ my colleague at MIT or something who also had a telephone.
+ And now, one possibility that couldn't possibly work
+ would be we would just string a wire from Boston to LA.
+ Actually, for technical reasons, you need two wires.
+ Why?
+ Well, because I want to talk to Boston at the same time
+ that Boston wants to talk to me.
+ So we just string a long wire pair between the two places.
+ Now, there's a couple of reasons why this idea is terrible.
+ First off, if I want to talk to any of the other 300
+ million telephones in the country,
+ I'm going to need a pair of wires to them
+ as well, which means I will need 300 million squared
+ over two wired pairs scattered all over the country.
+ We simply don't have enough copper to do it.
+ Second reason is my telephone has a weak transmitter.
+ It can transmit signals, but there's
+ no way those signals are going to survive
+ 3,000 miles of copper.
+ So the way the telephone companies
+ solve this problem traditionally is they said,
+ your telephone doesn't have to talk all the way to Boston.
+ It can just talk to your central office here.
+ The central office is going to be a room somewhere on campus
+ so that it's short enough that my telephone connection can
+ go to the central office and the signal is still
+ strong enough to get there.
+ And this central office would be the UCLA central office.
+ And also, my colleague at MIT would
+ be talking to the central office at MIT, right?
+ And we wouldn't have to have these huge transmitters
+ in the funds.
+ We could just have transmitters in the central office.
+ That still doesn't really solve the problem, though.
+ We cut down on the amount of connectivity, right,
+ because we have all these phones here.
+ We can all talk to this central office,
+ and all the phones at UCLA can talk to its central office.
+ But we're still-- we don't have 300 million central offices.
+ We have maybe only, I don't know, 30 million or, no,
+ 3 million, but still, that's too many wire pairs.
+ And also, even the central offices
+ with their stronger transmitters still
+ can't send a signal all the way from here to there.
+ How do we solve the problem?
+ Add more central offices.
+ More central offices.
+ Well, except these guys, this is what we're going to do.
+ We're going to add switches in the middle, right?
+ I need a different flavor for this.
+ Here's a switch.
+ Here's a switch.
+ Here's a switch.
+ And so here's a switch in downtown LA.
+ Here's a switch in Barstow.
+ Here's a switch in Phoenix, right?
+ And the idea is that I build a sequence of switches
+ all the way across.
+ Each one of them gets a signal, re-amplifies it,
+ retransmit it.
+ Plus, these switches are in a network.
+ So there's also one down here in San Diego.
+ It can talk to the one in Barstow if you like,
+ but it can also talk directly to Phoenix, right?
+ We have a network of switches, all the way over to here.
+ Here's one in New York.
+ Here's one in Cleveland.
+ But there's another switch over here in DC.
+ And you can get to Chicago either way and so forth
+ and so on.
+ There's a whole network here.
+ And the path that my telephone conversation take
+ depends on how busy the switches are.
+ If, for example, I don't know, Chicago is really busy right
+ now, my telephone conversation will be routed through San
+ Diego and through, I don't know, Houston and bypass Chicago.
+ But the rule for circuit switching is as follows.
+ When I pick up the phone and dial Boston,
+ circuit switching reserves a pair of wires
+ through all of those switches all the way to Boston.
+ So it will sort of dynamically, as I make the call,
+ say, well, we should go this way, down here,
+ and then up this way, and then down this way,
+ because this wire is out, and then up this way and this.
+ The route is chosen dynamically as you start the call.
+ But once you've established the call,
+ you now have a pair of wires all the way across the country.
+ You've reserved the connection.
+ So circuit switching means reserve a pair of wires.
+ It's not really a single pair of wires.
+ It's a concatenation of pairs of wires.
+ Each of these switches has thousands
+ of wires hooked into it.
+ I just need to reserve two of them
+ and all that sort of thing.
+ But the point is that once I've got that reservation,
+ I can now talk to Boston, and I will know
+ that I have a good connection.
+ I'm not going to get any dropouts.
+ I'm not going to get any sort of zzzz or that sort of thing.
+ It's all going to work.
+ In some sense, circuit switching is better
+ than common telephone conversations are now.
+ Because if I'm using, I don't know, a Wi-Fi call,
+ and it drops out, those are symptoms
+ I didn't observe back in the 1960s
+ when I was making calls back then.
+ All right, so an advantage of this approach
+ is that you have sort of guaranteed performance.
+ Not only do you have guaranteed throughput, that is,
+ you've got a pair of wires with a certain capacity.
+ They can transmit, I don't know, let's say back in the day,
+ 50 kilobits per second.
+ You know you could always do 50 kilobits per second
+ no matter what.
+ You also have guaranteed latency.
+ Whatever circuit was established,
+ maybe it'd be worse, maybe it'd be better,
+ but once it was established,
+ you would know how long it would take.
+ It's speed of light over electricity,
+ that sort of, over copper, that sort of thing.
+ You would have guaranteed throughput and latency.
+ These are both nice things to have.
+ It made the telephone system very reliable.
+ But there's a downside.
+ In fact, there's multiple downsides.
+ Can you see the disadvantages of doing circuit switching?
+ Yes.
+ Okay, but the current internet does too.
+ What's bad about this infrastructure?
+ You're onto something, but I need more detail.
+ Yes.
+ Right, so a downside here is if a link goes down
+ or a switch goes down,
+ you lose your connection.
+ In the initial negotiation,
+ you can worry about dealing with bad lengths
+ or bad switches,
+ but once you start talking,
+ because you've reserved everything,
+ if one of those switches dies, you're dead.
+ The telephone company made it very unlikely
+ that that would happen,
+ but that's going to be a possibility.
+ Any other problems?
+ Well, here's one.
+ When I talk to someone at MIT,
+ what am I spending most of my time doing
+ on that telephone conversation?
+ Saying nothing.
+ Likewise for my colleague at MIT, right?
+ Most of the time, I'm not saying anything.
+ It's rare that we both talk at the same time,
+ and when I'm talking, she's not,
+ and when she's talking, I'm not.
+ So most of the time,
+ there's gaps in between the conversation.
+ We're wasting capacity here.
+ Or to use telephone lingo,
+ we are over provisioning.
+ We have to build way more wires and switchers
+ that we really need
+ because when people have reserved the wires,
+ they're mostly kind of not using them.
+ They need them,
+ but they're spending most of that sort of capacity
+ of that wire doing nothing.
+ So these problems the telephone company lived with
+ by spending lots of money,
+ and since the money came out of the rate payers,
+ they didn't mind,
+ but in the 1960s,
+ there came the worry
+ due to a problem that we're still living with,
+ the problem of potential nuclear war,
+ and so the question came up,
+ suppose the Russians attack
+ and they bomb Chicago.
+ What's going to happen to our conversations
+ on the telephone?
+ And these conversations will have defense implications,
+ that sort of thing.
+ We'll want people to be able to call each other
+ even if there's a nuclear war.
+ Let's try to think of a better way
+ of building the network,
+ one that will survive nuclear catastrophe,
+ okay, and see what we can do with that.
+ So an alternate approach
+ now called packet switching was invented
+ partly due to those fears of a nuclear catastrophe, right?
+ So the basic idea here is that,
+ oh, I should tell you who invented it.
+ So I named Paul Buran
+ at the Rand Corporation,
+ which is in Santa Monica,
+ and Paul Buran is or was a UCLA alumnus.
+ I'm doing a little blowing UCLA's horn here, right?
+ Because there's gonna be a lot of UCLA in this technology.
+ Anyhow, so what he proposed
+ is something called packet switching.
+ And the basic idea here is we're going to give up
+ guaranteed throughput and latency.
+ Instead, the idea is as follows.
+ In LA, I'm going to take my conversation,
+ I'll still have a telephone maybe,
+ but instead of reserving a wire
+ or a pair of wires all the way to Boston,
+ I'm just going to divide my voice message,
+ I'll convert it into bits,
+ and I'll divide the bits into packets.
+ So you can digitize audio and video as is well known, right?
+ So we'll take the digitization of what I'm trying to say
+ and break it up into packets,
+ and these packets will be relatively small.
+ Let's say about a kibbe byte.
+ The exact size doesn't matter.
+ The point is to keep them small enough
+ so that we can easily keep them in RAM.
+ We don't want them so big that they'll overflow RAM.
+ Now we gotta retrieve them from flash
+ and that turns into a hassle.
+ We wanna keep things small and fast, right?
+ And what we're going to do
+ is we're going to take this stream of packets,
+ I'll call them A and B and C and D and E, right?
+ Each of these is about a kibbe byte worth of voice data.
+ And we will send them over a wire
+ to our central office, shall we say,
+ but to some extent under the packet switching mode,
+ it doesn't really matter
+ whether it's a central office or a switch,
+ so I'll just use a circle for either one.
+ Each one of these switches,
+ and there'll be one say at UCLA,
+ one in downtown LA, one in Phoenix,
+ one in San Diego, right?
+ So, you know, we still have the same network
+ sort of crossing the country
+ and we eventually get to Boston over here.
+ But the attitude is completely different
+ because each of these packets
+ is sent independently to Boston, right?
+ Packet A might decide to go this way.
+ Here's packet A's route, right?
+ And eventually gets here.
+ Packet B might go a different route.
+ At each moment in time,
+ you'll have a bunch of packets in the network.
+ Each packet is trying to get to its location.
+ Each packet is residing at one of the switches
+ or nowadays we call them routers.
+ (footsteps tapping)
+ And each of the routers has a sort of a boatload of packets
+ sitting in its ram and it's trying to figure out
+ where to ship this packet off to.
+ Router doesn't wanna keep a packet.
+ A router wants to make sure
+ that the packet gets to its destination, okay?
+ So under this approach,
+ you can think of packet switching
+ as sort of being a best effort
+ (footsteps tapping)
+ at getting the packet
+ to the destination
+ without reserving a pair of wires.
+ So there are some things that can go wrong
+ with packet switching.
+ First off, it's possible, in fact, it's fairly common
+ for routers to get overloaded.
+ Too many people are sending packets into this router.
+ It doesn't have enough ram to hold all the packets, right?
+ In that case, what'll it do?
+ It's gonna give up.
+ It's gonna forget some of the packets.
+ If I don't have enough ram, I'll just throw some away, right?
+ So one problem here is that packets can be dropped.
+ (footsteps tapping)
+ Fairly common action in today's internet.
+ Second problem, if I sent packet A this way
+ and sent packet B down here,
+ it's possible that these packet B's routers
+ are faster than packet A's routers
+ or less congested or something.
+ So the packets may arrive at the destination out of order.
+ Right?
+ (footsteps tapping)
+ (marker squeaking)
+ Okay, that happens all the time in today's internet.
+ Neither of these problems can happen
+ in a circuit switch network, right,
+ because you've made nice reservations.
+ Everything's gonna come in the same order
+ and unless something pretty bad happens,
+ you're not gonna lose any information.
+ Can you see any other problems
+ that can happen with a packet?
+ Yes?
+ (muffled speaking)
+ Well, yes and no.
+ That is, if B arrives before A,
+ you might have to wait for A to show up
+ before starting to say rrr, right?
+ But you don't have to wait for all the packets to arrive.
+ You can just wait for the first few
+ and as long as those few are in order,
+ you can start activating the speaker in positive.
+ But yeah, there is gonna be a latency issue here.
+ And this latency,
+ a lot of it comes from this out of order stuff.
+ Some of it comes from the drop stuff as well.
+ If a packet gets dropped,
+ maybe you have to retransmit it, that sort of thing.
+ Yes?
+ (muffled speaking)
+ A very good question for CS118, all right?
+ They worry about this intensely.
+ We have one of the world's leading expert
+ on that particular question as a professor in our department.
+ I'm not an expert, okay?
+ This is part of the stuff I take for granted.
+ Other questions about packets, all right?
+ There's one thing that may seem a little less obvious,
+ but I'm gonna write it down.
+ (keyboard clacking)
+ Packets can be duplicated.
+ I'm not an expert as to why that was happening.
+ I once asked an expert and he told me,
+ "Well, you can misconfigure a router as a bridge."
+ And does anybody here know what that means?
+ All I know is routers,
+ I mean, the internet is not centrally managed.
+ There are routers that are busted
+ and the protocols have to sort of deal with that.
+ There are routers that are half busted,
+ they're misconfigured, they can get confused,
+ and then they can start spitting out copies of packets
+ that they've already spit out.
+ And then Boston will get two copies of packet A
+ when you have a misconfigured router.
+ All right, so we have some issues here
+ that we didn't have with circuit switching.
+ I can recall, I talked to someone
+ who co-founded an internet service provider
+ and in the 1980s, he went to AT&T
+ and told them about this wonderful new technology
+ called packet switching and suggested that they get
+ into the internet transmission business.
+ And the AT&T executives looked at him
+ and their first question is,
+ "How are we gonna bill for this?"
+ And since they couldn't figure it out, they took a pass.
+ So he had to found a company
+ and become a billionaire instead.
+ I'm not sure about the billionaire part, but whatever.
+ All right, so, okay, let's see, what have we got here?
+ But there are some nice properties of this approach.
+ That is, if a link or a switch goes down,
+ yeah, some packets might get lost,
+ but as long as the protocols can deal with busy
+ or missing links or missing routers and reroute,
+ then our connection won't entirely die.
+ Maybe the quality will go down,
+ we'll miss some packets and that sort of thing,
+ but we are attacking this problem.
+ And that appealed to the Defense Department in the 1960s,
+ which is why they got funding to build this thing.
+ Another property of packet switching over circuit switching
+ is it attacks this over provisioning problem.
+ It tends to utilize the network more efficiently.
+ Or another way of putting is it keeps the switches busier
+ than a circuit switching approach does.
+ So you spend less money to build a network
+ with the same capacity.
+ As long as you're willing to deal with the problems
+ that you get with packet switching, it's gonna be a win.
+ All right, so I see I have a couple of terminology things
+ I should mention here.
+ So packets themselves are bit strings,
+ but typically they're going to be byte strings, right?
+ Or maybe I should call them sequences, right?
+ In the internet world,
+ these bytes are sometimes called octets
+ because the assumption is that we have eight bit bytes,
+ but a byte is an octet.
+ It's the same thing on all practical machines nowadays.
+ So I'll call them byte sequences.
+ And these byte sequences typically are divided
+ into two major parts.
+ The first part of the packet is the header.
+ And the second part is the payload.
+ The header is information about the packets.
+ It's information that might be used by the router
+ or might be used by the networking software
+ in order to get the packet to where it wants to go, right?
+ So you can think of this as being, how shall I call it?
+ The networking overhead.
+ You gotta have the header,
+ otherwise the packet won't get to where you want it to go.
+ But as far as the application is concerned,
+ the header isn't what I care about.
+ What I care about here is the payload.
+ This is the application data.
+ Packets are exchanged between nodes on the network
+ and switches and all that sort of thing
+ by what are called protocols.
+ Protocols, the word here comes from diplomacy.
+ There are rules that countries use to talk to each other.
+ You send an ambassador over to the other country,
+ they make an appointment with the foreign minister,
+ they use polite language, all that sort of thing.
+ And if an ambassador comes to the foreign country
+ and doesn't make an appointment with a foreign minister,
+ they don't get to talk, right?
+ So these protocols are rules for conversation.
+ And the penalty for not following the rules
+ is people won't talk to you, right?
+ It's not that your computer will be turned
+ into a fountain of flame or anything like that.
+ It's just that you'll be sending messages
+ to elsewhere on the internet
+ and they won't be able to figure out what's going on
+ so they won't send messages back, right?
+ Same rule that we use in diplomacy to some extent.
+ These protocols are now so popular.
+ I'm now seeing this phrase used for sort of software as well.
+ So what I would call an API,
+ some people are now calling protocols,
+ at least if it's software intended
+ to sort of talk across the internet, that sort of thing.
+ And it is a very similar notion.
+ An application programming interface, right,
+ is a set of conventions by which a program
+ can call code in a library, that sort of thing.
+ If you don't follow the convention,
+ you can't talk to the library.
+ Protocols to some extent are just APIs over the wire, right?
+ Or over your ethernet or whatever.
+ All right, so we need to have protocols.
+ We need to know what the rules are.
+ There's been various attempts to come up with protocols
+ using various different networking technologies.
+ By far the winner these days, the most popular protocols,
+ are the protocols from the Internet Protocol Suite.
+ And the basic idea that it uses is the idea of layers.
+ The idea of layers is one that we see
+ in software construction all the time.
+ It also applies to messages being sent over the internet.
+ At the lowest layer, we can have
+ what's called the link layer.
+ Link layer protocols exist only when you're talking
+ from one point to an adjacent point on the internet, right?
+ So if you have two routers connected by a physical wire,
+ right, this is one wire, right?
+ They'll have a low level link layer protocol
+ that knows what to do with that particular wire,
+ what signals to send at the hardware level
+ and all that sort of thing.
+ I'm going to skip over the link layer mostly
+ because that's really low level hardware stuff.
+ That's stuff you would mostly talk about in ECE
+ rather than in computer science.
+ But the important point about the link layer
+ is it's just from one node to an adjacent node.
+ You can't run an internet, right,
+ if all you talk about is a link layer.
+ You need something bigger to organize your network.
+ At the next level up from that
+ is what's called the internet layer.
+ The internet layer says, oh, we've got a network of nodes
+ that can talk to each other and they have links
+ and the link can be sort of an arbitrary graph like this.
+ I guess on occasion it can be partitioned.
+ You can have multiple internets
+ that can't talk to each other,
+ but usually you want to have it all connected.
+ And so the idea here is that
+ the way the internet layer works is it does packets.
+ That is the primitives at the internet layer are is
+ I want to send a packet from this node to this node.
+ And from the user's point of view,
+ that's kind of what matters.
+ We need to set up the protocols
+ so that the packet will get there,
+ even though we're using, say, the link layer
+ at the low level, we need to have the next layer up
+ that'll let us get the packet from point A to point B.
+ The level up from the internet layer
+ is called the transport layer.
+ We have the same network as before.
+ We don't add new nodes or anything like that.
+ But instead the transport layer says
+ I don't want to send packets.
+ And the reason I don't want to send packets
+ is all these problems.
+ Packets can be dropped, they can write out an order,
+ they can be duplicated.
+ I want to send data from point A to point B
+ and not worry about these three problems.
+ So the standard model at the transport layer
+ is to think of data streams
+ in which the sender puts data into the stream
+ and the recipient gets data out of the stream
+ and it gets the data out in the same order that it was sent
+ and there's no packet data loss or anything like that.
+ And then the layer above this is the application layer.
+ From the point of view of software construction,
+ this is the fun layer, right?
+ This is the layer where you can say, okay,
+ assuming we can send reliable data streams
+ from point A to point B,
+ what sort of applications can we want?
+ What sort of programs can we run?
+ So here we have lots of possibilities, right?
+ We have the web, we have file transfer.
+ We have, I don't know, video streams,
+ lots of other stuff here.
+ There's a lot of different application layers,
+ but they're built atop the lower layers, right?
+ The idea being that is
+ when you're designing the transport layer,
+ you can assume the internet layer works
+ and use that as your building block
+ and that way you don't have to worry at the transport layer
+ about what the link layer is doing.
+ So as you can imagine,
+ the internet layer is in some sense
+ the fundamental layer here.
+ We have lots of low-level link layers,
+ some of them manufacturing dependent
+ and all that sort of thing.
+ You've got to know a lot of details.
+ The internet layer is in some sense the simplest layer.
+ There's only one or two protocols that matter here, right?
+ Everything from here on up gets more complicated.
+ So we complicated, simple, complicated, complicated.
+ Let's start with simple.
+ All right, so here we go.
+ (audience clapping)
+ At the internet layer,
+ there is one protocol to rule them all
+ called the internet protocol or IP for short, right?
+ It is currently used in two major versions.
+ The first one is IP version four.
+ There was versions one, two, and three
+ but they're not being used anymore.
+ It came out in 1983.
+ And it was specified by a team that was led by John Postel.
+ Of course, was a UCLA guy.
+ And it's packet oriented, of course.
+ It does not believe in connections.
+ It's connectionless because that would require, you know,
+ something more like a circuit switching.
+ And a good way to sort of see what IPV4's capabilities are
+ is to look at the headers.
+ So here we're talking about IPV4 packets.
+ So the header contains a small number of bytes
+ and these bytes contain the length.
+ I believe that's a two byte quantity.
+ So you can represent any packet length
+ from zero up to 64 kibibytes, right?
+ A protocol number.
+ And you may be saying, wait a second, protocol number?
+ We're talking about the internet protocol.
+ Why do we need a protocol number in an IPV4 packet
+ since it's the internet protocol?
+ And the answer is IPV4 is designed
+ to be a low level sort of protocol
+ that gets used by higher level stuff.
+ And if you want to build a transport layer
+ or application layer stuff across a top IP,
+ you might need to specify which protocol,
+ higher level protocol you want this packet to be part of.
+ And that's what that protocol number is for.
+ It also contains the source and destination address.
+ Each of these addresses is a 32 bit quantity
+ because in 1983, they figured 4 billion IP addresses,
+ which is roughly two to the 32nd, is more than enough.
+ We're never going to have more than 4 billion computers
+ in the world, right?
+ These IP addresses are commonly written
+ using a dotted decimal notation.
+ So for example, 192.54.239.19.
+ These represent the four bytes of the IP address
+ in decimal notation.
+ So you can think of it as being a 32 bit number
+ that starts off, I don't know what all these things are,
+ but here's eight bits and then eight bits
+ and then eight bits and then eight bits, right?
+ Each packet tells you where it came from
+ and where it wants to go to.
+ Another thing that's in the packet is a TTL,
+ which is short for a time to live.
+ (typing)
+ You can think of this as being a hop count.
+ Each time a packet is received by a router
+ and then sent on further to the next router,
+ that hop count grows by one, right?
+ And then, you know, eventually you,
+ actually, I take it back.
+ It's the negative of the, all right, so it shrinks by one.
+ Eventually it drops to zero and when that happens,
+ then the packet is now dead, right?
+ This prevents cycles.
+ We don't want packets to go into the network
+ and the packet keeps trying to get to Boston.
+ It gets to Chicago.
+ Chicago says, "Oh, Cleveland's pretty busy.
+ "I'll send it down to Houston."
+ Houston says, "Oh, I'll send it over to Florida."
+ Florida says, "Let's send it back to Chicago," right?
+ That sort of looping could happen if it weren't
+ for the TTL field.
+ And then it has a checksum.
+ This is a 16-bit checksum.
+ It's a very simple checksum.
+ It's like exclusive or slightly shipped.
+ It's not like one of these fancy checksums.
+ It's only 16 bits.
+ So that means if you have random byte errors
+ in transmission, what are the chances
+ that it won't get caught, right?
+ So there's a two to the minus 16th error rate, right?
+ That is, you'll have sort of a corrupted packet,
+ but you won't notice because the checksum
+ just lucks out and matches, all right?
+ All right, any questions about the IPv4 packets?
+ Yes.
+ (indistinct)
+ This would be, say, the destination address.
+ And then you'll have a similar 32-bit number
+ for the source address.
+ The destination address is more important, right?
+ Because the router is trying to get the packet
+ to its destination.
+ The router doesn't much care where the packet came from.
+ It's trying to sort of send it forward.
+ Are there questions about the packet organization here?
+ Now, yes, question.
+ (indistinct)
+ It's basically a number that's intended for use
+ by higher-level protocols, right?
+ So the IPv4 sort of makes space
+ to support higher-level protocols,
+ and you can put the higher-level protocol number there.
+ Question.
+ - When you ask command prompt or terminal or people
+ or whatever for your IP addresses,
+ they give you your source address.
+ - What command prompt are we talking about here?
+ Like if I, I don't know,
+ I type IP address, right?
+ So this is saying, what are the IP addresses
+ used by the interfaces on my computer?
+ And as you can see, there is,
+ it's 131.179.64.
+ Where's the IP address?
+ It should be in there somewhere.
+ 139.179.64.200.
+ That's the IP address of that particular machine, right?
+ And if I want to send a packet to that machine,
+ then the destination address should be that 32-bit number.
+ When it sends packets to some other machines,
+ it'll put that in the source address.
+ Now, it was at some point recognized
+ that 32 bits wasn't enough.
+ So the other commonly used form of IP is IPv6,
+ which came out in 1998.
+ It has a number of improvements over IPv4.
+ In particular, it has this 128-bit addresses
+ under the theory that we'll never have
+ more than two to the 128th computers.
+ Which so far has been a safe assumption,
+ and it should be safe for quite some time, right?
+ But IPv4 has the advantage of incumbency.
+ So a good chunk, certainly, of the US uses IPv4
+ because, hey, it's cheaper.
+ We like to save money, right?
+ What's happened is that places that came
+ to the internet later, like, I don't know,
+ Nigeria tend to get stuck with IPv6 addresses
+ because they were there second, that sort of thing.
+ All right, so any questions about this layer?
+ All right, we'll do the next layer up.
+ The transport layer has multiple protocols.
+ I'll talk about, oh, I don't know, a couple of them,
+ just to give you a feeling.
+ So the idea of the transport layer
+ is we're trying to send data between point A and point B,
+ but we don't really care yet what sort of the application is.
+ We want application-independent data transfer.
+ So here are a couple of protocols at that level.
+ The simplest one is called UDP,
+ which is the User Datagram Protocol.
+ And it was designed by David Reid, who's not from UCLA.
+ Oh, well, right?
+ But UDP is very simple.
+ You can think of it as being a very thin layer atop IP.
+ Offhand, I don't recall anything that UDP gives you
+ that IP doesn't.
+ There are probably a few minor things.
+ But it's still packet-oriented, and it's
+ intended for applications that don't mind packets being lost
+ or duplicated or reordered.
+ There are applications like that.
+ You're just trying to send, I don't know, some simple,
+ I don't know, weather application,
+ where you're trying to send the temperature from point A
+ to point B. You can fit that all in one packet.
+ So just use UDP.
+ You don't need anything fancier than that.
+ A more interesting one at the transport layer is TCP,
+ which is short for the Transmission Control Protocol.
+ And it was designed by Vint Cerf, who is a UCLA alum,
+ although at the time he was in exile at Stanford,
+ and by Bob Kahn, who came from Princeton,
+ and also the Advanced Research Project Agency, the Defense
+ Department Agency that was funding all this stuff.
+ What it does is it gives you streams of data.
+ So in some sense, it's the fundamental protocol
+ of the transport layer.
+ And this stream of data is reliable in the sense
+ that if a packet gets dropped, TCP
+ arranges for retransmission.
+ That is, the networking software at the recipient
+ notices, hey, there's a packet missing,
+ because the packets have sequence numbers on it.
+ Packet number 47 didn't show up.
+ It sends a packet back to the sender saying,
+ please resend packet number 47.
+ The sender keeps around packets until it
+ knows that it doesn't need to resend them.
+ Yes?
+ So then if all packets are sent to the sender,
+ like a confirmation packet will be like dropping around?
+ Yes.
+ They have some very clever algorithms
+ for making sure that you don't have to keep packets forever.
+ Yes?
+ What exactly is a stream of data?
+ I've got this two terabyte file.
+ I want to copy it from UCLA to MIT.
+ So I think of that as being a big stream of two trillion
+ bytes, right?
+ So it doesn't get split up into packets?
+ Oh, yes.
+ At the lower level, everything's packets.
+ It's all packets at the lower level.
+ So what TCP will do is it will take this stream of data,
+ split it into packets that are suitable for whatever
+ technology it's using, and then ship them out and make sure
+ that if the packets come out of order,
+ the recipient will reorder them appropriately
+ because there'll be something in these packets that tells you
+ what the sequence number is, that sort of thing.
+ So sequence numbers are a big part of TCP.
+ So you get reliable.
+ You get, of course, ordered via the recipient reordering.
+ If it gets them out of order, it reorders them
+ to be in the proper order and error checked.
+ Now, this last one may sound a little bit funny, right?
+ Because doesn't IP have a checksum?
+ Yes, it does.
+ TCP has its own error checking built atop IP.
+ So in some sense, it doesn't trust IP.
+ It says, I want to make sure that I have my own checksum,
+ and I'll do that checksumming as well as the IP checksum.
+ All right?
+ So basically, in order to get this to work,
+ it needs to divide stream into packets.
+ It needs to do retransmission and reassembly.
+ But the last thing it needs to do,
+ and the one that's perhaps the least obvious,
+ is it has to do flow control.
+ And by flow control, I mean the following.
+ You don't want to take your two-terabyte file
+ and split it up into two billion packets
+ and ship them out onto the wire all at once, all right?
+ Because you're going to overload your routers.
+ The routers are going to drop most of those packets.
+ And then you're going to waste time.
+ The recipient will say, oh, packet number 1,999,000,000
+ didn't get through.
+ Oh, packet-- you just spend all of your time
+ doing retransmission, and you'll flood the network
+ and everybody will be mad at you.
+ Instead, what TCP does is it arranges to do flow control.
+ It sends some packets, and then it
+ sees how well they got through.
+ If they all got through, it says, oh,
+ and then starts sending packets at a greater rate.
+ If it starts losing packets, it says, oh,
+ and then it starts slowing down.
+ The idea is you want to use the network as much as you feasibly
+ can, but you don't want to overly saturate it,
+ because then you get less throughput than if you sort
+ of calm down a bit.
+ And the algorithms to do that have been finely tuned
+ over the years.
+ All right.
+ So these are kind of the top two protocols
+ at the transport layer.
+ I wanted to mention one other protocol, or maybe two.
+ Oh, we're out of time.
+ We got more protocols, RTP, and HTTP,
+ RTP, and that's good enough.
+ You can look those up, and I'll talk more about them next time.
+ (indistinct chattering)
